@@ -1,1 +1,4 @@
 .Rhistory
+*.py[co]
+*.egg*
+*.zip
