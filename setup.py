@@ -19,6 +19,7 @@ setup(
 
     install_requires = get_install_reqs(),
 
+    test_suite = 'nose.collector',
     package_data = {
         'cmput410-project': ['data/*']
     },
