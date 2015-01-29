@@ -1,4 +1,10 @@
 .Rhistory
+
+# Python
 *.py[co]
 *.egg*
 *.zip
+
+# Vim
+*.sw[po]
+*~
