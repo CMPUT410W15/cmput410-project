@@ -13,7 +13,7 @@ def get_install_reqs():
 
 
 setup(
-    name='Cmput410Project',
+    name='SocialDistribution',
     version = "0.1",
     packages = find_packages(),
 
@@ -21,8 +21,8 @@ setup(
 
     test_suite = 'nose.collector',
     package_data = {
-        'cmput410-project': ['data/*']
+        'socialdistribution': ['data/*']
     },
 
-    description='Our Cmput 410 project',
+    description='An alternative to other social media',
 )

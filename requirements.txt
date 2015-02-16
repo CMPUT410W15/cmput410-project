@@ -1,3 +1,4 @@
 docutils>=0.3
 setuptools
 nose>=1.0
+django
