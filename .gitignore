@@ -1,0 +1,11 @@
+.Rhistory
+*.sqlite3
+
+# Python
+*.py[co]
+*.egg*
+*.zip
+
+# Vim
+*.sw[po]
+*~
