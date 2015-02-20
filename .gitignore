@@ -9,3 +9,6 @@
 # Vim
 *.sw[po]
 *~
+
+# django
+*/migrations/*
