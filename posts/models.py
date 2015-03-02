@@ -24,12 +24,18 @@ CONTENT_TYPE = ((PLAINTEXT, 'PlainText'),
 
 # Create your models here.
 class Image(models.Model):
-    uid = models.CharField(max_length=36, unique=True, default=gen_uuid)
-    image = models.CharField(max_length=1) #TODO Proper images
+    uid = models.CharField(max_length=36, unique=True,
+                           editable=False, default=gen_uuid)
+    image = models.ImageField()
+    visibility = models.IntegerField(choices=VISIBILITY, default=PRIVATE)
+
+    def __unicode__(self):
+        return '%s' % self.uid
 
 
 class Post(models.Model):
-    uid = models.CharField(max_length=36, unique=True, default=gen_uuid)
+    uid = models.CharField(max_length=36, unique=True,
+                           editable=False, default=gen_uuid)
     title = models.CharField(max_length=36)
     content = models.CharField(max_length=500)
     content_type = models.IntegerField(choices=CONTENT_TYPE,
@@ -41,6 +47,9 @@ class Post(models.Model):
     receive_author = models.ForeignKey(Author, null=True,
                                        related_name='receiving_authors')
     image = models.ForeignKey(Image, null=True)
+
+    def __unicode__(self):
+        return '%s' % self.title
 
     def add_comment(self, author, comment):
         return Comment.objects.create(
@@ -58,9 +67,13 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    uid = models.CharField(max_length=36, unique=True, default=gen_uuid)
+    uid = models.CharField(max_length=36, unique=True,
+                           editable=False, default=gen_uuid)
     content = models.CharField(max_length=200)
     published = models.DateTimeField(auto_now_add=True)
 
     author = models.ForeignKey(Author)
     post = models.ForeignKey(Post)
+
+    def __unicode__(self):
+        return 'Author: %s Post: %s' % (self.author, self.post)

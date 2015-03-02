@@ -2,6 +2,7 @@
 import uuid
 
 from django.db import models
+from django.contrib.auth.models import User
 
 
 def gen_uuid():
@@ -10,16 +11,20 @@ def gen_uuid():
 
 # Create your models here.
 class Author(models.Model):
-    uid = models.CharField(max_length=36, unique=True, default=gen_uuid)
-    name = models.CharField(max_length=100)
+    uid = models.CharField(max_length=36, unique=True,
+                           editable=False, default=gen_uuid)
     vetted = models.BooleanField(default=False)
     host = models.CharField(max_length=100)
     url = models.CharField(max_length=100)
     github = models.CharField(max_length=100)
 
+    user = models.OneToOneField(User)
     connection = models.ManyToManyField("self", through='Connection',
                                         symmetrical=False,
                                         related_name='connected_to')
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.user, self.uid)
 
     def follow(self, author, friend_request=True):
         return Connection.objects.create(
@@ -62,3 +67,6 @@ class Connection(models.Model):
     to_author = models.ForeignKey(Author, related_name="to_authors")
     follows = models.BooleanField(default=True)
     friendship_requested = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return 'From (%s) to (%s)' % (self.from_author, self.to_author)
