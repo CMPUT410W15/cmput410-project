@@ -1,0 +1,19 @@
+<!--### Source material taken from:
+###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+### 	March 2, 2015
+### No explicit license -->
+<script type="text/JavaScript">
+	//Redirects people to main page to log in
+	setTimeout("location.href = '/';",3000);
+</script>
+{% extends "base.html" %}
+{% block title %}Registration Successful{% endblock %}
+{% block head %}
+ Registration Completed Successfully
+{% endblock %}
+{% block content %}
+    <p>Thank you for registering.</p>
+	
+	<p>You will be redirected to the login page in in 3 seconds</p>
+	<a href="/">Click here to proceed immediately</a>	
+{% endblock %}
