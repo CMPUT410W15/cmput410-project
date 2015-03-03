@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'author',
     'posts',
     'management',
+	'login',
 )
 
 MIDDLEWARE_CLASSES = (
