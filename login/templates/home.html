@@ -2,15 +2,11 @@
 ###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
 ### 	March 2, 2015
 ### No explicit license -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-    <head>
-        <title>Django Login Application |
-        {% block title %}{% endblock %}</title>
-    </head>
-    <body>
-        <h1>{% block head %}{% endblock %}</h1>
-        {% block content %}{% endblock %}
- 
-    </body>
-</html>
+{% extends "base.html" %}
+{% block title %}Home page{% endblock %}
+{% block head %}Home page{% endblock %}
+{% block content %}
+
+ <p> This is {{user.username}} </p>
+ <a href="/logout/"> Logout </a>
+{% endblock %}

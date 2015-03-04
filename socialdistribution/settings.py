@@ -97,6 +97,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# Put strings here, like "/home/html/static" or "C:/www/django/static".
+# Always use forward slashes, even on Windows.
+# Don't forget to use absolute paths, not relative paths.
+
+#Added by Paul for twitter bootstrap
+STATICFILES_DIRS = (os.path.join(BASE_DIR,'static',),)
+
 # Added by Ben - May revisit
 TEMPLATE_DIRS = (
 	os.path.join(os.path.dirname(__file__), 'templates'),
