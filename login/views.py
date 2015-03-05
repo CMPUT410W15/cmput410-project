@@ -12,9 +12,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
- 
+
+from author.models import Author
 @csrf_protect
 def register(request):
+    #Create both a user and an author every time someone registers
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -23,6 +25,8 @@ def register(request):
             password=form.cleaned_data['password1'],
             email=form.cleaned_data['email']
             )
+            author= Author(user=user)
+            author.save()
             return HttpResponseRedirect('/register/success/')
     else:
         form = RegistrationForm()
