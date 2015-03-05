@@ -46,7 +46,7 @@ class Post(models.Model):
     send_author = models.ForeignKey(Author, related_name='sending_authors')
     receive_author = models.ForeignKey(Author, null=True,
                                        related_name='receiving_authors')
-    image = models.ForeignKey(Image, null=True)
+    image = models.ForeignKey(Image, null=True, blank=True)
 
     def __unicode__(self):
         return '%s' % self.title

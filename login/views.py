@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
 from author.models import Author
+from posts.models import Post
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -50,7 +51,9 @@ def logout_page(request):
  
 @login_required
 def home(request):
+    #Note: attributes passed in here are all lowercase regardless of capitalization
+    posts= Post.objects.all()
     return render_to_response(
     'home.html',
-    { 'user': request.user }
+    { 'user': request.user , 'author': request.user.author, 'posts':posts}
     )

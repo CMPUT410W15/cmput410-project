@@ -8,5 +8,21 @@
 {% block content %}
 
  <p> This is {{user.username}} </p>
+ <h3> Posts (if any) below: </h3>
+
+ <!-- Display posts, if any -->
+
+ {% if posts %}
+ 	{% for p in posts %}
+ 		{% if p.visibility == 4 %}
+ 			<p> Public post by {{p.send_author}} to {{p.receive_author}} : {{p.content}} </p>
+ 		{% else %}
+ 		{% endif %}
+
+ 	{% endfor %}
+ {% else %}
+ 	<p> There are no posts to display.</p>
+ {% endif %}
+
  <a href="/logout/"> Logout </a>
 {% endblock %}
