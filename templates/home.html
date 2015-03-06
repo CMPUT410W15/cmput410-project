@@ -2,27 +2,12 @@
 ###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
 ### 	March 2, 2015
 ### No explicit license -->
+
 {% extends "base.html" %}
 {% block title %}Home page{% endblock %}
 {% block head %}Home page{% endblock %}
 {% block content %}
 
  <p> This is {{user.username}} </p>
- <h3> Posts (if any) below: </h3>
-
- <!-- Display posts, if any -->
-
- {% if posts %}
- 	{% for p in posts %}
- 		{% if p.visibility == 4 %}
- 			<p> Public post by {{p.send_author}} to {{p.receive_author}} : {{p.content}} </p>
- 		{% else %}
- 		{% endif %}
-
- 	{% endfor %}
- {% else %}
- 	<p> There are no posts to display.</p>
- {% endif %}
-
  <a href="/logout/"> Logout </a>
 {% endblock %}
