@@ -20,8 +20,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '11j5@b*%7^avks6ito7_hku6srkh%v0d0=4gb-57tavit079x1'
+
 import django.contrib.auth
 django.contrib.auth.LOGIN_URL = '/'
+
+#Allow access to these urls without logging in
+LOGIN_EXEMPT_URLS = (
+ r'^register/',
+ r'^admin/',
+
+) 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,6 +68,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'management.middleware_custom.LoginRequiredMiddleware',
+
 )
 
 ROOT_URLCONF = 'socialdistribution.urls'
