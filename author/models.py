@@ -9,6 +9,9 @@ def gen_uuid():
     return str(uuid.uuid1().hex)
 
 
+class FollowYourselfError(Exception): pass
+
+
 # Create your models here.
 class Author(models.Model):
     uid = models.CharField(max_length=36, unique=True,
@@ -28,6 +31,8 @@ class Author(models.Model):
         return self.user.username
 
     def befriend(self, author):
+        if author == self:
+            raise FollowYourselfError
         return Connection.objects.create(
             from_author=self,
             to_author=author,
@@ -35,6 +40,8 @@ class Author(models.Model):
             friendship_requested=True)
 
     def follow(self, author):
+        if author == self:
+            raise FollowYourselfError
         return Connection.objects.create(
             from_author=self,
             to_author=author,
