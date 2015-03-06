@@ -7,5 +7,26 @@
 {% block title %}Home Page{% endblock %}
 {% block content %}
 
- <p> This is {{user.username}} </p>
+<p> This is {{user.username}} </p>
+ <!-- Can be fixed later, display public posts and posts by friends/to friends (if not private) by only content for now, if any -->
+<div class= 'container'>
+{% if posts %}
+	{% for p in posts %}
+ 		{% if p.visibility == 4 %}
+			<p> Public post by {{p.send_author}} to {{p.receive_author}} : {{p.content}} </p>
+		{% else %}
+			{% if p.visibility == 1 %}
+				{% if p.send_author == author or p.receive_author == author %}
+					<p> Friend post by {{p.send_author}} to {{p.receive_author}}: {{p.content}} </p>
+				{% else %}
+				{% endif %}	
+			{% else %}
+			{% endif %}
+		{% endif %}	
+ 	{% endfor %}
+{% else %}
+	<p> There are no posts to display.</p>
+{% endif %}
+</div>
+
 {% endblock %}

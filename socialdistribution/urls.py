@@ -12,7 +12,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^friends/', include('author.urls')),
+    #Gives an error when uncommented likely because there is no urls.py in author app 
+    #url(r'^friends/', include('author.urls')),
 
 	url(r'^$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page),

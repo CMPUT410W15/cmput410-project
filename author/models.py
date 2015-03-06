@@ -24,7 +24,8 @@ class Author(models.Model):
                                         related_name='connected_to')
 
     def __unicode__(self):
-        return '%s (%s)' % (self.user, self.uid)
+        #return '%s (%s)' % (self.user, self.uid)
+        return self.user.username
 
     def follow(self, author, friend_request=True):
         return Connection.objects.create(
