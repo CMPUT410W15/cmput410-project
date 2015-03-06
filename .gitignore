@@ -12,3 +12,5 @@
 
 # django
 */migrations/*
+
+env
