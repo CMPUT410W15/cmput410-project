@@ -8,7 +8,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en">
   <head>
-    <title>dsn</title>
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap3.3.2/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -31,14 +32,22 @@
         <div class="container-fluid">
           <div class="navbar-header">
             
-            <a class="navbar-brand" href="/home">dsn</a>
+            <a class="navbar-brand" href="/home">Distributed Social Network</a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li class="active"><a href="./">Sign In<span class="sr-only">(current)</span></a></li>
+              {% if request.user.is_authenticated %}
+                  <li {% if request.get_full_path == "/home/" %}class="active"{% endif %}><a href="/home/">Home{% if request.get_full_path == "/home/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                  <li {% if request.get_full_path == "/friends/" %}class="active"{% endif %}><a href="/friends/">Friends{% if request.get_full_path == "/friends/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                  <li {% if request.get_full_path == "/post/" %}class="active"{% endif %}><a href="/post/">Post{% if request.get_full_path == "/post/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                  <li><a href="/logout/">Logout</span></a></li>
+              {% else %}
+                  <li {% if request.get_full_path == "/" %}class="active"{% endif %}><a href="/">Sign In{% if request.get_full_path == "/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                  <li {% if request.get_full_path == "/register/" %}class="active"{% endif %}><a href="/register">Register{% if request.get_full_path == "/register/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+              {% endif %}
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->

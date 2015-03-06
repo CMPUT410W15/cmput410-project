@@ -53,7 +53,7 @@ def logout_page(request):
 def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts= Post.objects.all()
-    return render_to_response(
+    return render(request,
     'home.html',
     { 'user': request.user , 'author': request.user.author, 'posts':posts}
     )

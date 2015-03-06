@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
 )
 
 INSTALLED_APPS = (
@@ -109,7 +110,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR,'static',),)
 '''
 # Added by Ben - May revisit
 TEMPLATE_DIRS = (
-	os.path.join(os.path.dirname(__file__), 'templates'),
+	os.path.join(BASE_DIR, 'templates'),
 )
 '''
 
