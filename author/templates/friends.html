@@ -1,0 +1,94 @@
+<!--### Source material taken from:
+###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+### 	March 2, 2015
+### No explicit license -->
+
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}Friends{% endblock %}
+{% block content %}
+
+{% if friend_requests %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">Friend Requests</h1>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            {% for author in friend_requests %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
+                        <div class="caption">
+                            <h3>{{ author.user.username }}</h3>
+                            <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.user.username }}';">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">Friends</h1>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            {% for author in friends %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
+                        <div class="caption">
+                            <h3>{{ author.user.username }}</h3>
+                            <button type="button" class="btn btn-danger" onClick="window.location='/friends/unbefriend/{{ author.user.username }}';">Unbefriend</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">Following</h1>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            {% for author in following %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
+                        <div class="caption">
+                            <h3>{{ author.user.username }}</h3>
+                            <button type="button" class="btn btn-danger" onClick="window.location='/friends/unfollow/{{ author.user.username }}';">Unfollow</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">Other Authors</h1>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            {% for author in not_friends %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
+                        <div class="caption">
+                            <h3>{{ author.user.username }}</h3>
+                            <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.user.username }}';">Befriend</button>
+                            <button type="button" class="btn btn-primary" onClick="window.location='/friends/follow/{{ author.user.username }}';">Follow</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -26,12 +26,19 @@ class Author(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.user, self.uid)
 
-    def follow(self, author, friend_request=True):
+    def befriend(self, author):
         return Connection.objects.create(
             from_author=self,
             to_author=author,
             follows=True,
-            friendship_requested=friend_request)
+            friendship_requested=True)
+
+    def follow(self, author):
+        return Connection.objects.create(
+            from_author=self,
+            to_author=author,
+            follows=True,
+            friendship_requested=False)
 
     def unfollow(self, author):
         Connection.objects.filter(
@@ -41,12 +48,14 @@ class Author(models.Model):
     def get_followees(self):
         return self.connection.filter(
             to_authors__follows=True,
-            to_authors__from_author=self)
+            to_authors__from_author=self,
+            )
 
     def get_followers(self):
         return self.connected_to.filter(
             from_authors__follows=True,
-            from_authors__to_author=self)
+            from_authors__to_author=self,
+            )
 
     def get_friends(self):
         return self.connection.filter(
@@ -57,9 +66,9 @@ class Author(models.Model):
 
     def get_friend_requests(self):
         return self.connected_to.filter(
-            from_authors__follows=True,
             from_authors__friendship_requested=True,
-            from_authors__to_author=self)
+            from_authors__to_author=self,
+            )
 
 
 class Connection(models.Model):
