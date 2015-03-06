@@ -12,7 +12,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^friends/', include('author.urls')),
 
 	url(r'^$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page),
