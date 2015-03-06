@@ -14,9 +14,9 @@ class Author(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
     vetted = models.BooleanField(default=False)
-    host = models.CharField(max_length=100)
-    url = models.CharField(max_length=100)
-    github = models.CharField(max_length=100)
+    host = models.CharField(max_length=100, blank=True)
+    url = models.CharField(max_length=100 , blank=True)
+    github = models.CharField(max_length=100, blank=True)
 
     user = models.OneToOneField(User)
     connection = models.ManyToManyField("self", through='Connection',
