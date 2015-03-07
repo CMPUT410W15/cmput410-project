@@ -32,6 +32,12 @@ class PostTests(TestCase):
                       'send_author': self.author1,
                       'content_type': PLAINTEXT,
                       'visibility': PUBLIC}
+        self.post4 = {'title': 'Post4',
+                      'content': 'I choose you!',
+                      'send_author': self.author3,
+                      'receive_author': self.author1,
+                      'content_type': PLAINTEXT,
+                      'visibility': FRIEND}
 
     def test_create_post(self):
         post = Post.objects.create(**self.post1)
@@ -40,6 +46,12 @@ class PostTests(TestCase):
         self.assertEqual(post.content, self.post1['content'])
         self.assertEqual(post.visibility, self.post1['visibility'])
         self.assertEqual(post.content_type, self.post1['content_type'])
+
+    def test_create_post_to_specific_author(self):
+        post = Post.objects.create(**self.post4)
+        self.assertEqual(post.send_author, self.author3)
+        self.assertEqual(post.receive_author, self.author1)
+        self.assertEqual(post.visibility, FRIEND)
 
     def test_get_posts(self):
         post = Post.objects.create(**self.post1)
