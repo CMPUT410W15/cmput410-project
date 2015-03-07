@@ -78,6 +78,12 @@ class Author(models.Model):
             from_authors__to_author=self,
             )
 
+    def get_posts(self, visibility=None):
+        if visibility == None:
+            return self.sending_authors.all()
+        else:
+            return self.sending_authors.filter(visibility=visibility)
+
 
 class Connection(models.Model):
     from_author = models.ForeignKey(Author, related_name="from_authors")
