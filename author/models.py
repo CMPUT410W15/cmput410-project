@@ -84,6 +84,9 @@ class Author(models.Model):
         else:
             return self.sending_authors.filter(visibility=visibility)
 
+    def get_comments(self):
+        return self.comment_set.all()
+
 
 class Connection(models.Model):
     from_author = models.ForeignKey(Author, related_name="from_authors")
