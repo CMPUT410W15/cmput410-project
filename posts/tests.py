@@ -81,3 +81,67 @@ class PostTests(TestCase):
         self.author3.follow(self.author2)
         friends = self.author3.get_friends()
         self.assertEqual(len([p for f in friends for p in f.get_posts()]), 3)
+
+    def test_comment(self):
+        post1 = Post.objects.create(**self.post1)
+        c = post1.add_comment(self.author2, 'hello!')
+        self.assertEqual(c.author, self.author2)
+        self.assertEqual(c.post, post1)
+        self.assertEqual(c.content, 'hello!')
+
+    def test_get_no_comments(self):
+        post1 = Post.objects.create(**self.post1)
+        post2 = Post.objects.create(**self.post2)
+        self.assertEqual(len(post1.get_comments()), 0)
+        self.assertEqual(len(post2.get_comments()), 0)
+
+    def test_get_comments(self):
+        post1 = Post.objects.create(**self.post1)
+        post2 = Post.objects.create(**self.post2)
+        post3 = Post.objects.create(**self.post3)
+        post1.add_comment(self.author2, 'hello!')
+        post3.add_comment(self.author3, 'ello!')
+        post2.add_comment(self.author1, 'llo!')
+        post1.add_comment(self.author2, 'lo!')
+        post2.add_comment(self.author3, 'o!')
+        post1.add_comment(self.author1, '!')
+        num = sum([len(p.get_comments()) for p in [post1, post2, post3]])
+        self.assertEqual(num, 6)
+
+    def test_get_author_comments(self):
+        post1 = Post.objects.create(**self.post1)
+        post2 = Post.objects.create(**self.post2)
+        post3 = Post.objects.create(**self.post3)
+        post1.add_comment(self.author2, 'hello!')
+        post1.add_comment(self.author3, 'ello!')
+        post1.add_comment(self.author3, 'llo!')
+        post1.add_comment(self.author2, 'lo!')
+        post1.add_comment(self.author3, 'o!')
+        post2.add_comment(self.author1, '!')
+        self.assertEqual(len(self.author1.get_comments()), 1)
+        self.assertEqual(len(self.author2.get_comments()), 2)
+        self.assertEqual(len(self.author3.get_comments()), 3)
+        self.assertEqual(post2.get_comments()[0].content, '!')
+
+    def test_get_specific_comments(self):
+        post1 = Post.objects.create(**self.post1)
+        post2 = Post.objects.create(**self.post2)
+        post3 = Post.objects.create(**self.post3)
+        post1.add_comment(self.author2, 'hello!')
+        post1.add_comment(self.author3, 'ello!')
+        post1.add_comment(self.author1, 'llo!')
+        post1.add_comment(self.author2, 'lo!')
+        post1.add_comment(self.author3, 'o!')
+        post2.add_comment(self.author1, '!')
+        self.assertEqual(len(post1.get_comments()), 5)
+        self.assertEqual(len(post2.get_comments()), 1)
+        self.assertEqual(len(post3.get_comments()), 0)
+        self.assertEqual(post2.get_comments()[0].content, '!')
+
+    def test_remove_comment(self):
+        post1 = Post.objects.create(**self.post1)
+        post1.add_comment(self.author2, 'hello!')
+        post1.add_comment(self.author3, 'ello!')
+        c = post1.add_comment(self.author1, 'llo!')
+        post1.remove_comment(c.uid)
+        self.assertEqual(len(post1.get_comments()), 2)
