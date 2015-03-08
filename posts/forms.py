@@ -18,12 +18,12 @@ class PostForm(forms.Form):
     FOAF = 3
     PUBLIC = 4
     SERVERONLY = 5
-    VISIBILITY = ((PRIVATE, 'Private'),
+    VISIBILITY = ((PUBLIC, 'Public'),
               (FRIEND, 'Friend'),
               (FRIENDS, 'Friends'),
               (FOAF, 'Friend Of A Friend'),
-              (PUBLIC, 'Public'),
-              (SERVERONLY, 'Server Only'))
+              (SERVERONLY, 'Server Only'),
+              (PRIVATE, 'Private'),)
  
     title = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=36)), label=_("Title"))
     content = forms.CharField(widget=forms.Textarea, label=_("Content"))
@@ -38,7 +38,7 @@ class PostForm(forms.Form):
 
     def clean_recipient(self):
         try:
-            recipient = User.objects.get(username__iexact=self.cleaned_data['username'])
+            recipient = Author(User.objects.get(username__iexact=self.cleaned_data['username']))
         except:
         	pass
 
