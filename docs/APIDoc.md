@@ -4,19 +4,19 @@
 
 ### Posts
 
- - [Get all posts visible to the currently authenticated user.]
- - [Get all posts marked as public on the server.]
- - [Get all posts by a specific author visible to the currently authenticated user.]
- - [Get a specific single post.]
- - [Add a comment to a post.]
+ - Get all posts visible to the currently authenticated user.
+ - Get all posts marked as public on the server.
+ - Get all posts by a specific author visible to the currently authenticated user.
+ - Get a specific single post.
+ - Add a comment to a post.
 
 ### Friends
 
-- [Get all authors on host.]
-- [Get information and connections about one author on host.]
-- [Query whether one author is following another.]
-- [Query whether which members of a list of authors are following a specified author.]
-- [Get the authors on the host following a specific author on a specific host.]
+- Get all authors on host.
+- Get information and connections about one author on host.
+- Query whether one author is following another.
+- Query whether which members of a list of authors are following a specified author.
+- Get the authors on the host following a specific author on a specific host.
  
 ## API Requirements
 
@@ -31,7 +31,7 @@ All requests must make use of HTTP Basic Auth using a username and password nego
 The objects returned by the methods of the API are specified below in commented JSON format.
 
 - **Author:** An author is the user entity on the host.  An author is associated with one host and has a username that is unique on that host.
-
+```
       {
 	    # unique id to each author, either a sha1 or a uuid
 		"id":"9de17f29c12e8f97bcbbd34cc908f1baba40658e",
@@ -40,10 +40,12 @@ The objects returned by the methods of the API are specified below in commented 
 		# the display name of the author
 		"displayname":"Lara"
       }
+```
 
 
 - **Post:** Authors create posts which contain optionally a text body and image.
 
+```
       {
 	    # A list of posts
 		"posts":[
@@ -86,7 +88,8 @@ The objects returned by the methods of the API are specified below in commented 
 		    # SERVERONLY means only those on your server (your home server) can see the post
 		  }
         ]  
-      }  
+      }
+```      
 
 ### Options
 
