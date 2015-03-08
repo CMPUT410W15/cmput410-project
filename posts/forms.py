@@ -31,22 +31,17 @@ class PostForm(forms.Form):
     visibility = forms.ChoiceField(widget=forms.Select, choices=VISIBILITY)
     receive_author = forms.CharField(required=False, widget=forms.TextInput(), label=_("Recipient"))
     send_author = models.ForeignKey(Author)
-
-    def clean_username(self):
-        try:
-            user = User.objects.get(username__iexact=self.cleaned_data['username'])
-        except User.DoesNotExist:
-            return self.cleaned_data['username']
-        raise forms.ValidationError(_("The username already exists. Please try another one."))
  
     def clean(self):
        
         return self.cleaned_data
 
-    def clean_recipient(username):
-        if User.objects.filter(username=username).count():
-            return True
+    def clean_recipient(self):
+        try:
+            recipient = User.objects.get(username__iexact=self.cleaned_data['username'])
+        except:
+        	pass
 
-        return False
+        return recipient
 
  

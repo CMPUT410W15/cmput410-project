@@ -14,8 +14,8 @@ from posts.forms import *
 def post(request):
     # Create post
     context = RequestContext(request)
-    author = Author.objects.get(user=request.user)
-    print author
+    me = Author.objects.get(user=request.user)
+    friends = me.get_friends()
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -26,7 +26,7 @@ def post(request):
                     content_type = form.cleaned_data['content_type'],
                     visibility = form.cleaned_data['visibility'],
                     receive_author = Author(form.cleaned_data['receive_author']),
-                    send_author = author,
+                    send_author = me,
                 )
             else:
                 post = Post.objects.create(
@@ -34,7 +34,7 @@ def post(request):
                     content = form.cleaned_data['content'],
                     content_type = form.cleaned_data['content_type'],
                     visibility = form.cleaned_data['visibility'],
-                    send_author = author,
+                    send_author = me,
                 )
             post.save()
             return HttpResponseRedirect('/home')
