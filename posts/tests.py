@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from posts.models import Post, Comment
+from posts.models import Post, Comment, Category
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.models import PLAINTEXT, MARKDOWN
 from author.models import Author
@@ -157,3 +157,21 @@ class PostTests(TestCase):
         c = post1.add_comment(self.author1, 'llo!')
         post1.remove_comment(c.uid)
         self.assertEqual(len(post1.get_comments()), 2)
+
+    def test_adding_categories(self):
+        post1 = Post.objects.create(**self.post1)
+        post2 = Post.objects.create(**self.post2)
+        cat1 = Category.objects.create(category="Turtles")
+        cat2 = Category.objects.create(category="Penguins")
+        cat3 = Category.objects.create(category="Lizards")
+
+        post1.add_category(cat1)
+        post2.add_category(cat2)
+        post2.add_category(cat3)
+        self.assertEqual(len(post1.get_categories()), 1)
+        self.assertEqual(post1.get_categories()[0].category, "Turtles")
+        self.assertEqual(len(post2.get_categories()), 2)
+
+        p2_categories = [c.category for c in post2.get_categories()]
+        self.assertEqual("Penguins" in p2_categories, True)
+        self.assertEqual("Lizards" in p2_categories, True)

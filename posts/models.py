@@ -33,6 +33,13 @@ class Image(models.Model):
         return '%s' % self.uid
 
 
+class Category(models.Model):
+    category = models.CharField(max_length=100, unique=True)
+
+    def __unicode__(self):
+        return self.category
+
+
 class Post(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
@@ -47,6 +54,7 @@ class Post(models.Model):
     receive_author = models.ForeignKey(Author, null=True,
                                        related_name='receiving_authors')
     image = models.ForeignKey(Image, null=True, blank=True)
+    categories = models.ManyToManyField(Category)
 
     def __unicode__(self):
         return '%s' % self.title
@@ -64,6 +72,12 @@ class Post(models.Model):
 
     def get_comments(self):
         return Comment.objects.filter(post=self)
+
+    def add_category(self, category):
+        return self.categories.add(category)
+
+    def get_categories(self):
+        return self.categories.all()
 
 
 class Comment(models.Model):
