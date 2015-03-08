@@ -106,7 +106,7 @@ Returns all posts visible to the currently authenticated user.
 
 ##### Request:
 
-    GET /posts/
+    GET /posts
     
 ##### Response:
 
