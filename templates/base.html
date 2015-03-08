@@ -45,7 +45,7 @@
                   <li {% if request.get_full_path == "/post/" %}class="active"{% endif %}><a href="/post/">Post{% if request.get_full_path == "/post/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
                   <li><a href="/logout/">Logout</span></a></li>
               {% else %}
-                  <li {% if request.get_full_path == "/" %}class="active"{% endif %}><a href="/">Sign In{% if request.get_full_path == "/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                  <li {% if request.get_full_path == "/accounts/login/" %}class="active"{% endif %}><a href="/accounts/login/">Log In{% if request.get_full_path == "/accounts/login" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
                   <li {% if request.get_full_path == "/register/" %}class="active"{% endif %}><a href="/register">Register{% if request.get_full_path == "/register/" %}<span class="sr-only">(current)</span>{% endif %}</a></li>
               {% endif %}
             </ul>
