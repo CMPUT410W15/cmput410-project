@@ -2,17 +2,21 @@
 
 ## Contents
 
-### Friends
-
-- Get all authors on host.
-- Get information and connections about one author on host.
-- Get the authors on the host following a speicific author on a specific host.
-
 ### Posts
 
- - Get all posts by an author.
- - Get all comments on a post.
- - Add a comment to a post.
+ - [Get all posts visible to the currently authenticated user.]
+ - [Get all posts marked as public on the server.]
+ - [Get all posts by a specific author visible to the currently authenticated user.]
+ - [Get a specific single post.]
+ - [Add a comment to a post.]
+
+### Friends
+
+- [Get all authors on host.]
+- [Get information and connections about one author on host.]
+- [Query whether one author is following another.]
+- [Query whether which members of a list of authors are following a specified author.]
+- [Get the authors on the host following a specific author on a specific host.]
  
 ## API Requirements
 
@@ -22,18 +26,67 @@ All URIs in this document are located at the endpoint: `http://cs410.cs.ualberta
 
 All requests must make use of HTTP Basic Auth using a username and password negotiated at time of server setup.
 
-### RSA Keys
-
-To create a connection between two hosts, both hosts will be required to share the public key portion of an RSA key pair that is unique to that host.
-
-This allows for encrypted communication, and confidence in the source of communication.
-
 ### Objects
 
+The objects returned by the methods of the API are specified below in commented JSON format.
+
 - **Author:** An author is the user entity on the host.  An author is associated with one host and has a username that is unique on that host.
-- **Connection:** An author has 0 or more connections with other authors. A connections is a one-way relationship indicating that the connecting author *"follows"* the connected author. When two authors *"follow"* each other, they are said to be *"friends"*.
+
+      {
+	    # unique id to each author, either a sha1 or a uuid
+		"id":"9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        # the home host of the author
+		"host":"http://127.0.0.1:5454/",
+		# the display name of the author
+		"displayname":"Lara"
+      }
+
+
 - **Post:** Authors create posts which contain optionally a text body and image.
-- **Comment:** A comment is created by and author and associated with a post. It has a text body.
+
+      {
+	    # A list of posts
+		"posts":[
+		  {
+            # title of a post
+		    "title":"A post title about a post about web dev",
+		    # a brief description of the post
+		    "description":"This post discusses stuff -- brief",
+		    # an image URL
+		    "image": "imageURL",
+		    # The content type of the post
+		    # assume either
+		    # text/x-markdown
+		    # text/plain
+		    "content-type":"text/plain",
+		    "content":"Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
+		    "author": <AUTHOR OBJECT>,
+		    # categories this post fits into (a list of strings)
+		    "categories":["web","tutorial"],
+		    # comments about the post
+		    "comments":[
+		      {
+		        "author": <AUTHOR OBJECT>,
+		         "comment":"Sick Olde English"
+		         "pubDate":"Fri Jan 3 15:50:40 MST 2014",
+		         "guid":"5471fe89-7697-4625-a06e-b3ad18577b72"
+		      }
+		    ]
+		    # when published
+		    "pubDate":"Fri Jan 1 12:12:12 MST 2014",
+		    # ID of the post (uuid or sha1)
+		    "guid":"108ded43-8520-4035-a262-547454d32022"
+		    # visibility ["PUBLIC","FOAF","FRIENDS","PRIVATE","SERVERONLY"]
+		    "visibility":"PUBLIC"
+		    # for visibility PUBLIC means it is open to the wild web
+		    # FOAF means it is only visible to Friends of A Friend
+		    # If any of my friends are your friends I can see the post
+		    # FRIENDS means if we're direct friends I can see the post
+		    # PRIVATE means only you can see the post
+		    # SERVERONLY means only those on your server (your home server) can see the post
+		  }
+        ]  
+      }  
 
 ### Options
 
@@ -44,21 +97,99 @@ In addition to the specified query parameters of the methods below, the followin
 
 ## API Methods
 
+### Get all posts visible to the currently authenticated user
+
+Returns all posts visible to the currently authenticated user.
+
+##### Request:
+
+    GET /posts/
+    
+##### Response:
+
+An array of post objects in chronological order.
+
+    [
+      <POST OBJECT>,
+      ...
+    ]
+    
+### Get all posts marked as public on the server
+
+Returns all posts marked as public on the server
+
+##### Request:
+
+    GET /posts/public
+    
+##### Response:
+
+An array of post objects in chronological order.
+
+    [
+      <POST OBJECT>,
+      ...
+    ]    
+
+### Get all posts by a specific author visible to the currently authenticated user 
+
+Returns all posts by passed author that the requesting author is authorized to view.
+
+##### Request:
+
+    GET /author/<AUTHOR_ID>/posts
+    
+##### Response:
+
+An array of post objects in chronological order.
+
+    [
+      <POST OBJECT>,
+      ...
+    ]
+
+### Get a specific single post
+
+Returns a single post with passed ID.
+
+##### Request:
+
+    GET /posts/<POST_ID>
+
+##### Response:
+
+A single post object.
+
+    <POST OBJECT>
+
+### Add a comment to a post
+
+Add the post body contents as a comment to the specified post
+
+##### Request:
+
+    POST /posts/<POST_ID>/comment
+    
+    Comment Body
+    
+##### Response:
+
+The response will be HTTP status code `201 Created` on success.    
+
 ### Get all authors on host
 
 Returns all authors on the host.
 
 ##### Request:
 
-    GET /authors
+    GET /friends
     
 ##### Response:
 
-An array of author names in alphabetical order.
-
+An array of author objects in alphabetical order of display name.
 
     [
-      "username": "Ben",
+      <AUTHOR OBJECT>
       ...
     ]
 
@@ -68,87 +199,96 @@ Returns author information and connections for given author.
 
 ##### Request:
 
-    GET /author/Ben
+    GET /friends/<AUTHOR_ID>
 
 ##### Response:
 
-An author object, containing an array of all connections in alphabetical order by host then username.
+An object, containing an array of all connections in alphabetical order by host then username.
 
     {
+      "id": <AUTHOR_ID>,
       "host": "hostname1",
+      "displayname": "ben"
       "github": "tdubois",
       "connections": [
-      	{ 
-          "host": "hostname1",
-          "username": "konrad"
-        },
-        {
-          "host": "hostname2",
-          "username": "neil"
-        },
+        <AUTHOR OBJECT>,
         ...
       ]
     }
 
-### Get the authors on the host following a speicific author on a specific host
+### Query whether one author is following another.
 
-Returns all authors on host who are following a specific author on a specific host.
-
-##### Request:
-
-    GET /authors/following/?author="ben"&host="hostname1"
-    
-##### Response:
-
-An array of author names in alphabetical order.
-
-    [
-      "username": "Ben",
-      ...
-    ]
-    
-### Get all posts by an author 
-
-Returns all posts by passed author that the requesting author is authorized to view.
+Returns a YES or NO response whether the passed first author is following the second.
 
 ##### Request:
 
-    GET /posts/ben/?author="konrad"&host="hostname1"
-    
+    GET /friends/<AUTHOR_ID1>/<AUTHOR_ID2>
+
 ##### Response:
 
-An array of post objects that the requesting user is authorized to view in chronological order.
+An object, specifying the query and response.
 
-    [
-      {
-        "id": "unique id",
-        "title": "title",
-        "content": "content",
-        "content_type": "plaintext OR markdown",
-        "author": "ben",
-        "published": 12475896,
-        "image": "URL"        
-      },
-      ...
-    ]
+    {
+      "query": "friends",
+      "authors": [
+        <AUTHOR_ID1>,
+        <AUTHOR_ID2>
+      ],
+      # or NO
+      "friends": "YES" 
+    }
 
-### Get all comments on a post
+### Query which members of a list of authors are following a specified author.
 
-Returns all comments on a given post.
+Returns a subset of the passed list of authors that are being followed by the specified author.
 
 ##### Request:
 
-    GET /posts/id/comment
+    POST /friends/<AUTHOR_ID>
+    
+    {
+      "query": "friends",
+      "author": <AUTHOR_ID>,
+      "authors": [
+        <AUTHOR_ID1>,
+        <AUTHOR_ID2>,
+        ...
+      ]
+    }
     
 ##### Response:
 
-An array of comment objects in chronological order.
+An object specifying the members of the passed list which are following the specified author.
+   
+    {
+      "query": "friends",
+      "author": <AUTHOR_ID>,
+      "authors": [
+        <AUTHOR_ID2>,
+        <AUTHOR_ID5>,
+        ...
+      ]
+    }
 
-    [
-      {
-        "content": "content",
-        "author": "ben",
-        "published": 12527889
-      },
-      ...
-    ]
+### Query which authors are following a specified author.
+
+Returns all authors on host who are following a specific author.
+
+##### Request:
+
+    GET /friends/following/<AUTHOR_ID>
+    
+##### Response:
+
+An object specifying the authors which are following the specified author.
+
+    {
+      "query": "friends",
+      "author": <AUTHOR_ID>,
+      "authors": [
+        <AUTHOR_ID2>,
+        <AUTHOR_ID5>,
+        ...
+      ]
+    }
+    
