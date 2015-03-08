@@ -5,26 +5,37 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
+from django.contrib.auth.models import User
 
 from author.models import Author
 from posts.forms import *
-from django.contrib.auth.decorators import login_required
 
 @csrf_protect
 def post(request):
     # Create post
     context = RequestContext(request)
+    author = Author.objects.get(user=request.user)
+    print author
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            post = Post.objects.create(
-                title = form.cleaned_data['title'],
-                content = form.cleaned_data['content'],
-                content_type = form.cleaned_data['content_type'],
-                visibility = form.cleaned_data['visibility'],
-                receive_author = form.cleaned_data['receive_author'],
-                send_author= Author(user=user)
-            )
+            if form.cleaned_data['receive_author']:
+                post = Post.objects.create(
+                    title = form.cleaned_data['title'],
+                    content = form.cleaned_data['content'],
+                    content_type = form.cleaned_data['content_type'],
+                    visibility = form.cleaned_data['visibility'],
+                    receive_author = Author(form.cleaned_data['receive_author']),
+                    send_author = author,
+                )
+            else:
+                post = Post.objects.create(
+                    title = form.cleaned_data['title'],
+                    content = form.cleaned_data['content'],
+                    content_type = form.cleaned_data['content_type'],
+                    visibility = form.cleaned_data['visibility'],
+                    send_author = author,
+                )
             post.save()
             return HttpResponseRedirect('/home')
     else:

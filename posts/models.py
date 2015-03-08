@@ -27,7 +27,7 @@ class Image(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
     image = models.ImageField()
-    visibility = models.IntegerField(choices=VISIBILITY, default=PRIVATE)
+    visibility = models.IntegerField(choices=VISIBILITY, default=PUBLIC)
 
     def __unicode__(self):
         return '%s' % self.uid

@@ -2,7 +2,9 @@ import re
 from django import forms
 from django.contrib.auth.models import User
 from posts.models import Post
+from author.models import Author
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
  
 class PostForm(forms.Form):
 
@@ -27,8 +29,9 @@ class PostForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea, label=_("Content"))
     content_type = forms.ChoiceField(widget=forms.Select, choices=CONTENT_TYPE, label=_("Content Type"))
     visibility = forms.ChoiceField(widget=forms.Select, choices=VISIBILITY)
-    receive_author = forms.CharField(widget=forms.TextInput(), label=_("Recipient"))
-    
+    receive_author = forms.CharField(required=False, widget=forms.TextInput(), label=_("Recipient"))
+    send_author = models.ForeignKey(Author)
+
     def clean_username(self):
         try:
             user = User.objects.get(username__iexact=self.cleaned_data['username'])
@@ -37,9 +40,7 @@ class PostForm(forms.Form):
         raise forms.ValidationError(_("The username already exists. Please try another one."))
  
     def clean(self):
-        if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
-            if self.cleaned_data['password1'] != self.cleaned_data['password2']:
-                raise forms.ValidationError(_("The two password fields did not match."))
+       
         return self.cleaned_data
 
     def clean_recipient(username):
@@ -48,14 +49,4 @@ class PostForm(forms.Form):
 
         return False
 
-    def clean_visibility(self):
-        if VISIBILITY.contains('visibility' in self.cleaned_data):
-            return True
-
-        return False
-
-    def clean_content_type(self):
-        if CONTENT_TYPE.contains('content_type' in self.cleaned_data):
-            return True
-
-        return False
+ 
