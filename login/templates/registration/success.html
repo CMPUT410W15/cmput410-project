@@ -4,7 +4,7 @@
 ### No explicit license -->
 <script type="text/JavaScript">
 	//Redirects people to main page to log in
-	setTimeout("location.href = '/';",3000);
+	setTimeout("location.href = '/';",6000);
 </script>
 {% extends "base.html" %}
 {% block title %}Registration Successful{% endblock %}
@@ -12,8 +12,9 @@
  Registration Completed Successfully
 {% endblock %}
 {% block content %}
-    <p>Thank you for registering.</p>
+    <p>Thank you for registering.
+    <br/>Your account will be active after the Admin approves it.</p>
 	
-	<p>You will be redirected to the login page in in 3 seconds</p>
+	<p>You will be redirected to the login page in in 6 seconds</p>
 	<a href="/">Click here to proceed immediately</a>	
 {% endblock %}
