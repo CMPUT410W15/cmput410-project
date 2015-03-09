@@ -33,15 +33,20 @@ class PostForm(forms.Form):
     send_author = models.ForeignKey(Author)
  
     def clean(self):
-       
+
         return self.cleaned_data
 
-    def clean_recipient(self):
-        try:
-            recipient = Author(User.objects.get(username__iexact=self.cleaned_data['username']))
-        except:
-        	pass
+    def clean_receive_author(self):
+        if self.cleaned_data['receive_author'] != "":
+            try:
+                recipient = Author.objects.get(user=User.objects.get(username=self.cleaned_data['receive_author']))
 
-        return recipient
+            except User.DoesNotExist:
+                raise forms.ValidationError("Recipient username is incorrect or does not exist.")
+
+
+            return recipient
+        else:
+            return
 
  

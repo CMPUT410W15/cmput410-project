@@ -6,12 +6,18 @@
 {% block title %}New Post{% endblock %}
 {% block head %}New Post{% endblock %}
 {% block content %}
-    
+   
     
       <div class="col-sm-offset-2 col-sm-10 form-group">
         <table border="0" class="table">
         <form class="form-inline" method="post" action=".">{% csrf_token %}
             {{ form.as_table }}
+
+             {% if form.errors %}
+                <div class="alert alert-danger" role-"alert">
+                {{ form.receive_author.errors }}
+                </div>
+            {% endif %}
         </table>
             <div class="col-lg-offset-3 col-sm-10">
             <input class="btn btn-default" type="submit" value="Post" />
