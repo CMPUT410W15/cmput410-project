@@ -58,6 +58,8 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = Post.objects.all()
     author = request.user.author
+    friends = [f for f in author.get_friends()]
+    fof_dict = author.get_friends_of_friends()
 
     #Get everyone's public posts and get the posts from friends they received
     public_posts = [p for p in posts if p.visibility == PUBLIC]
@@ -70,7 +72,14 @@ def home(request):
         if post.send_author in author.get_friends() or post.send_author == author:
             friends_posts.append(post)
 
-    all_posts = public_posts + private_posts + to_me_posts + friends_posts
+    foaf_posts = []
+    for p in [p for p in posts if p.visibility == FOAF]:
+        foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
+        if p.send_author in fof_dict.keys() or foaf:
+            foaf_posts.append(p)
+
+    all_posts = set(public_posts + private_posts + to_me_posts +
+                    friends_posts + foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
     return render(request,
