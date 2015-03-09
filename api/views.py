@@ -16,7 +16,6 @@ from posts.models import *
 
 # Get all posts visible to the currently authenticated user.
 def posts(request):
-    
     return HttpResponse(
         json.dumps(
             [
@@ -81,7 +80,7 @@ def comment(request, post_id):
         return HttpResponse('{"message": "Authentication Rejected"}', status=401)
 
     comment = post.add_comment(
-        Author.objects.get(user=User.objects.get(username="konrad")),
+        request.user,
         request.body
     )
 
