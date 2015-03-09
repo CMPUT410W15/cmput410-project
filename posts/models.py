@@ -51,9 +51,9 @@ class Post(models.Model):
     visibility = models.IntegerField(choices=VISIBILITY)
     published = models.DateTimeField(auto_now_add=True)
 
-    send_author = models.ForeignKey(Author, related_name='sending_authors')
-    receive_author = models.ForeignKey(Author, null=True,
-                                       related_name='receiving_authors')
+    send_author = models.ForeignKey(Author, related_name='posts_sent')
+    receive_author = models.ForeignKey(Author, null=True, blank=True,
+                                       related_name='posts_received')
     image = models.ForeignKey(Image, null=True, blank=True)
     categories = models.ManyToManyField(Category, blank=True)
 

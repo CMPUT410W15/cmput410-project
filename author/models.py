@@ -102,16 +102,16 @@ class Author(models.Model):
 
     def get_posts(self, visibility=None):
         if visibility == None:
-            return self.sending_authors.all()
+            return self.posts_sent.all()
         else:
-            return self.sending_authors.filter(visibility=visibility)
+            return self.posts_sent.filter(visibility=visibility)
 
     def get_received_posts(self, visibility=None):
         if visibility == None:
-            return self.receiving_authors.all()
+            return self.posts_received.all()
         else:
-            return self.receiving_authors.filter(visibility=visibility)
-            
+            return self.posts_received.filter(visibility=visibility)
+
     def get_comments(self):
         return self.comment_set.all()
 
