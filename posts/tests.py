@@ -39,6 +39,62 @@ class PostTests(TestCase):
                       'content_type': PLAINTEXT,
                       'visibility': FRIEND}
 
+        self.post5 = {'title': 'Post5',
+                      'content': 'I do not choose you!',
+                      'send_author': self.author1,
+                      'receive_author': self.author2,
+                      'content_type': PLAINTEXT,
+                      'visibility': FRIEND}
+
+
+        self.post6 = {'title': 'Post6',
+                      'content': 'Not markdown',
+                      'send_author': self.author2,
+                      'receive_author': self.author1,
+                      'content_type': PLAINTEXT,
+                      'visibility': FRIEND}
+
+
+        self.post7 = {'title': 'Post7',
+                      'content': 'Still not markdown',
+                      'send_author': self.author3,
+                      'receive_author': self.author1,
+                      'content_type': PLAINTEXT,
+                      'visibility': FRIEND}
+
+        self.post8 = {'title': 'Post8',
+                      'content': 'stuff about things again and again!',
+                      'send_author': self.author1,
+                      'content_type': PLAINTEXT,
+                      'visibility': PUBLIC}
+
+    def test_get_all_friends_author1_posts(self):
+        #Posts 5,6,7 are friend - 8 and 3 are public.
+        # Author 1 should only receive posts 6 and 7
+        post5= Post.objects.create(**self.post5)  
+        post6= Post.objects.create(**self.post6)
+        post7= Post.objects.create(**self.post7)
+        post8= Post.objects.create(**self.post8) 
+        post3= Post.objects.create(**self.post3)
+
+        self.assertEqual(len(self.author1.get_received_posts(visibility=FRIEND)), 2)
+
+    def get_public_posts(self):
+        #Posts 5,6,7 are friend - 8 and 3 are public
+        post5= Post.objects.create(**self.post5)  
+        post6= Post.objects.create(**self.post6)
+        post7= Post.objects.create(**self.post7)
+        post8= Post.objects.create(**self.post8) 
+        post3= Post.objects.create(**self.post3)
+        all_posts = Post.objects.all()
+        public=[]
+        for p in all_posts:
+            if (p.visibility==4):
+                public.append(p)
+            else:
+                continue
+        self.assertEqual(len(public),2)
+
     def test_create_post(self):
         post = Post.objects.create(**self.post1)
         self.assertEqual(post.send_author, self.author1)

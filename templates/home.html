@@ -3,30 +3,62 @@
 ### 	March 2, 2015
 ### No explicit license -->
 
+
+<!-- Still a work in progress -->
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
 
-<p> This is {{user.username}} </p>
- <!-- Can be fixed later, display public posts and posts by friends/to friends (if not private) by only content for now, if any -->
-<div class= 'container'>
-{% if posts %}
-	{% for p in posts %}
- 		{% if p.visibility == 4 %}
-			<p> Public post by {{p.send_author}} to {{p.receive_author}} : {{p.content}} </p>
+<div class="row">
+    <div class="col-md-3">
+    	<div class= "panel panel-default">
+    		<div class= "panel-heading" style="text-align: center;">
+        		<h4 class="panel-title"> {{user.username}} </h4>
+        	</div>
+        	<div class= "panel-body">
+        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
+        		</br>
+        		</br>
+        		<a class="btn btn-primary btn-block" href="/post/">Post</a> </br>
+        		<a class="btn btn-primary btn-block" href="/friends/">Friends</a> </br>
+        		<button type="button" class="btn btn-primary btn-block">Explore</button>
+       		</div>
+       	</div>
+    </div>
+    <div class= "col-md-7 col-md-push-2" >
+		{% if public_posts %}
+			{% for p in public_posts %}
+ 				<div class= "panel panel-default">
+ 					<div class= "panel-heading">
+ 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
+ 							style= "height:40px; width:40px;"/> </span>
+ 						<span style="display:inline-block; padding-left: 5pt;"> {{p.send_author}} </br> {{p.published}} </span>
+ 					</div>
+ 					<div class= "panel-body">
+						 {{p.markdown_to_html}}
+					</div>
+				</div>
+			{% endfor %}
 		{% else %}
-			{% if p.visibility == 1 %}
-				{% if p.send_author == author or p.receive_author == author %}
-					<p> Friend post by {{p.send_author}} to {{p.receive_author}}: {{p.content}} </p>
-				{% else %}
-				{% endif %}	
-			{% else %}
-			{% endif %}
-		{% endif %}	
- 	{% endfor %}
-{% else %}
-	<p> There are no posts to display.</p>
-{% endif %}
+		{% endif %}
+
+		{% if friend_posts %}
+			{% for p in friend_posts %}
+				<div class= "panel panel-default">
+					<div class= "panel-heading">
+ 						<span class= "pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
+ 									style= "height:40px; width:40px;"> </span>
+ 						<span style="display:inline-block; padding-left: 5pt;"> {{p.send_author}} </br> {{p.published}} </span>
+					</div>
+					<div class= "panel-body">
+						{{p.markdown_to_html}} 
+					</div>
+				</div>
+			{% endfor %}
+		{% else %}
+		{% endif %}
+    </div>
 </div>
 
 {% endblock %}

@@ -1,7 +1,8 @@
 """Models for the posts application."""
 from django.db import models
 from author.models import Author, gen_uuid
-
+from django.utils.safestring import mark_safe
+import CommonMark
 
 PRIVATE = 0
 FRIEND = 1
@@ -54,7 +55,7 @@ class Post(models.Model):
     receive_author = models.ForeignKey(Author, null=True,
                                        related_name='receiving_authors')
     image = models.ForeignKey(Image, null=True, blank=True)
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, blank=True)
 
     def to_dict(self):
         content_types = ["text/plain", "text/x-markdown"]
@@ -126,6 +127,18 @@ class Post(models.Model):
             return self.send_author.host == author.host
 
         return True
+
+    def markdown_to_html(self):
+        #If the content is markdown, convert it
+        #Else just return the plaintext content
+        if (self.content_type == 0):
+            return self.content
+        else:
+            parser = CommonMark.DocParser()
+            renderer = CommonMark.HTMLRenderer()
+            ast = parser.parse(self.content)
+            html = renderer.render(ast)
+            return mark_safe(html)
 
 class Comment(models.Model):
     uid = models.CharField(max_length=36, unique=True,

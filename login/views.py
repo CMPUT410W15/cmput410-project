@@ -53,7 +53,18 @@ def logout_page(request):
 def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts= Post.objects.all()
+    author=request.user.author
+
+    #Get everyone's public posts and get the posts from friends they received 
+    public_posts=[]
+    for p in posts:
+        if (p.visibility == 4):
+            public_posts.append(p)
+        else:
+            continue
+
+    friend_posts=author.get_received_posts(visibility=1)
     return render(request,
     'home.html',
-    { 'user': request.user , 'author': request.user.author, 'posts':posts}
+    { 'user': request.user , 'author': request.user.author, 'public_posts':public_posts, 'friend_posts':friend_posts}
     )
