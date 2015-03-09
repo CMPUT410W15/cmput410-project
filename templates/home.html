@@ -27,32 +27,25 @@
        	</div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
-		{% if public_posts %}
-			{% for p in public_posts %}
+		{% if posts %}
+			{% for p in posts %}
  				<div class= "panel panel-default">
  					<div class= "panel-heading">
  						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
  							style= "height:40px; width:40px;"/> </span>
- 						<span style="display:inline-block; padding-left: 5pt;"> {{p.send_author}} </br> {{p.published}} </span>
+ 						<span style="display:inline-block; padding-left: 5pt;"> 
+                            Sent From: {{p.send_author}} 
+                            {% if p.receive_athor %}
+                                Sent To: {{p.receive_athor}} 
+		                    {% endif %}
+                            </br> 
+                            {{p.published}} 
+                            </br> 
+                            {{p.title}} 
+                        </span>
  					</div>
  					<div class= "panel-body">
 						 {{p.markdown_to_html}}
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-		{% endif %}
-
-		{% if friend_posts %}
-			{% for p in friend_posts %}
-				<div class= "panel panel-default">
-					<div class= "panel-heading">
- 						<span class= "pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 									style= "height:40px; width:40px;"> </span>
- 						<span style="display:inline-block; padding-left: 5pt;"> {{p.send_author}} </br> {{p.published}} </span>
-					</div>
-					<div class= "panel-body">
-						{{p.markdown_to_html}} 
 					</div>
 				</div>
 			{% endfor %}
