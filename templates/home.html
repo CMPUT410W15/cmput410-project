@@ -1,7 +1,8 @@
 <!--### Source material taken from:
-###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
-### 	March 2, 2015
+###     https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+###     March 2, 2015
 ### No explicit license -->
+
 
 
 <!-- Still a work in progress -->
@@ -12,45 +13,48 @@
 
 <div class="row">
     <div class="col-md-3">
-    	<div class= "panel panel-default">
-    		<div class= "panel-heading" style="text-align: center;">
-        		<h4 class="panel-title"> {{user.username}} </h4>
-        	</div>
-        	<div class= "panel-body">
-        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-        		</br>
-        		</br>
-        		<a class="btn btn-primary btn-block" href="/post/">Post</a> </br>
-        		<a class="btn btn-primary btn-block" href="/friends/">Friends</a> </br>
-        		<button type="button" class="btn btn-primary btn-block">Explore</button>
-       		</div>
-       	</div>
+        <div class= "panel panel-default">
+            <div class= "panel-heading" style="text-align: center;">
+                <h4 class="panel-title"> {{user.username}} </h4>
+            </div>
+            <div class= "panel-body" style="text-align: center;">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
+                </br>
+                </br>
+                {% if user.email %}
+                    <h4> Email: {{ user.email }}</h4>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
-		{% if posts %}
-			{% for p in posts %}
- 				<div class= "panel panel-default">
- 					<div class= "panel-heading">
- 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 							style= "height:40px; width:40px;"/> </span>
- 						<span style="display:inline-block; padding-left: 5pt;"> 
-                            Sent From: {{p.send_author}} 
-                            {% if p.receive_athor %}
-                                Sent To: {{p.receive_athor}} 
-		                    {% endif %}
+        {% if posts %}
+            {% for p in posts %}
+                <div class= "panel panel-default">
+                    <div class= "panel-heading">
+                        <span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
+                            style= "height:40px; width:40px;"/> </span>
+                        <span style="display:inline-block; padding-left: 5pt;"> 
+                            {{p.send_author}} 
+                            {% if p.receive_author %}
+                                <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}} 
+                            {% endif %}
                             </br> 
                             {{p.published}} 
-                            </br> 
-                            {{p.title}} 
+
+                            {% if p.title %} 
+                                </br>
+                                {{p.title}}
+                            {% endif %}
                         </span>
- 					</div>
- 					<div class= "panel-body">
-						 {{p.markdown_to_html}}
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-		{% endif %}
+                    </div>
+                    <div class= "panel-body">
+                         {{p.markdown_to_html}}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+        {% endif %}
     </div>
 </div>
 

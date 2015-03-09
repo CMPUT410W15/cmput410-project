@@ -23,7 +23,7 @@ def post(request):
                     title = form.cleaned_data['title'],
                     content = form.cleaned_data['content'],
                     content_type = form.cleaned_data['content_type'],
-                    visibility = 0, 
+                    visibility = form.cleaned_data['visibility'],
                     receive_author = Author.objects.get(user=User.objects.get(username=receive_author)),
                     send_author = me,
                 )
