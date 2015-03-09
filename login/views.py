@@ -24,9 +24,12 @@ def register(request):
             user = User.objects.create_user(
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'],
-            email=form.cleaned_data['email']
+            email=form.cleaned_data['email'],
             )
+            user.is_active = False
+            user.save()
             author= Author(user=user)
+            author.vetted = False
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
