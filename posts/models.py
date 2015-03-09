@@ -45,6 +45,7 @@ class Post(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
     title = models.CharField(max_length=36)
+    description = models.CharField(max_length=200, blank=True)
     content = models.CharField(max_length=500)
     content_type = models.IntegerField(choices=CONTENT_TYPE,
                                        default=PLAINTEXT)
@@ -70,7 +71,7 @@ class Post(models.Model):
 
         return {
             "title": self.title,
-            "description": "", #Missing. See #77
+            "description": self.description,
             "image": "", #Missing see #78
             "content-type": content_types[self.content_type],
             "content": self.content,
