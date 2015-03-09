@@ -18,3 +18,11 @@ The web is fundamentally interconnected and peer to peer. There’s no really gr
 Thus in the spirit of diaspora https://diasporafoundation.org/ we want to build something like diaspora but far far simpler.
 
 This blogging/social network platform will allow the importing of other sources of posts (github, twitter, etc.) as well allow the distributing sharing of posts and content.
+
+
+
+REST API:
+Our REST API service address is located at: 
+	user@cs410.cs.ualberta.ca - at port 41080
+Hostnames will be specified per group, with usernames and passwords distributed directly to the connecting groups. 
+The full documentation can be found here: <Link to api doc>
