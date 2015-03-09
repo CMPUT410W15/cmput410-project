@@ -123,6 +123,25 @@ class AuthorTests(TestCase):
         self.assertTrue(author2 in author1.get_friends())
         self.assertTrue(author3 in author1.get_friends())
 
+    def test_fofs(self):
+        user1 = User.objects.get(username='John')
+        user2 = User.objects.get(username='Jack')
+        user3 = User.objects.get(username='Josh')
+
+        author1 = Author.objects.get(user=user1)
+        author2 = Author.objects.get(user=user2)
+        author3 = Author.objects.get(user=user3)
+        author1.follow(author2)
+        author2.follow(author1)
+
+        author2.follow(author3)
+        author3.follow(author2)
+        fof_dict = author1.get_friends_of_friends()
+        self.assertEqual(len(fof_dict.keys()), 1)
+        self.assertEqual(fof_dict.keys()[0], author2)
+        self.assertEqual(len(fof_dict.values()), 1)
+        self.assertEqual(author3 in fof_dict.values()[0], True)
+
     def test_no_friend_request(self):
         user1 = User.objects.get(username='John')
         user2 = User.objects.get(username='Jack')

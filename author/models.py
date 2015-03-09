@@ -100,6 +100,9 @@ class Author(models.Model):
             from_authors__to_author=self,
             )
 
+    def get_friends_of_friends(self):
+        return {f: f.get_friends() for f in self.get_friends()}
+
     def get_posts(self, visibility=None):
         if visibility == None:
             return self.posts_sent.all()
