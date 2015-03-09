@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
@@ -15,19 +13,21 @@ def post(request):
     # Create post
     context = RequestContext(request)
     me = Author.objects.get(user=request.user)
-    friends = me.get_friends()
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data['receive_author']:
+            visibility = form.cleaned_data['visibility']
+            receive_author = form.cleaned_data['receive_author']
+            if receive_author:
                 post = Post.objects.create(
                     title = form.cleaned_data['title'],
                     content = form.cleaned_data['content'],
                     content_type = form.cleaned_data['content_type'],
-                    visibility = form.cleaned_data['visibility'],
-                    receive_author = Author(form.cleaned_data['receive_author']),
+                    visibility = 0, 
+                    receive_author = Author.objects.get(user=User.objects.get(username=receive_author)),
                     send_author = me,
                 )
+                post.save()
             else:
                 post = Post.objects.create(
                     title = form.cleaned_data['title'],
@@ -36,7 +36,7 @@ def post(request):
                     visibility = form.cleaned_data['visibility'],
                     send_author = me,
                 )
-            post.save()
+                post.save()
             return HttpResponseRedirect('/home')
     else:
         form = PostForm()
