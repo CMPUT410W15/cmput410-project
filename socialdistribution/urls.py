@@ -13,6 +13,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^friends/', include('author.urls')),
+    url(r'^api/', include('api.urls')),
+
 	url(r'^$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'), # If user is not login it will redirect to login page

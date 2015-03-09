@@ -28,7 +28,7 @@ django.contrib.auth.LOGIN_URL = '/'
 LOGIN_EXEMPT_URLS = (
  r'^register/',
  r'^admin/',
-
+ r'^api/',
 ) 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -69,7 +69,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'management.middleware_custom.LoginRequiredMiddleware',
-
+    'api.middleware_custom.APIMiddleware',
 )
 
 ROOT_URLCONF = 'socialdistribution.urls'

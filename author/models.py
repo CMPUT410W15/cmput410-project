@@ -30,6 +30,13 @@ class Author(models.Model):
         #return '%s (%s)' % (self.user, self.uid)
         return self.user.username
 
+    def to_dict(self):
+        return {
+            "id": self.uid,
+            "host": self.host,
+            "displayname": self.user.username,
+        }
+
     def befriend(self, author):
         if author == self:
             raise FollowYourselfError
@@ -53,6 +60,13 @@ class Author(models.Model):
             from_author=self,
             to_author=author).delete()
 
+    def is_followee(self, author):
+        return self.connection.filter(
+            to_authors__follows=True,
+            to_authors__from_author=self,
+            to_authors__to_author=author,
+            ).exists()
+
     def get_followees(self):
         return self.connection.filter(
             to_authors__follows=True,
@@ -64,6 +78,14 @@ class Author(models.Model):
             from_authors__follows=True,
             from_authors__to_author=self,
             )
+
+    def is_friend(self, author):
+        return self.connection.filter(
+            to_authors__follows=True,
+            to_authors__from_author=self,
+            to_authors__to_author=author,
+            from_authors__follows=True,
+            from_authors__to_author=self).exists()
 
     def get_friends(self):
         return self.connection.filter(
