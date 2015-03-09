@@ -56,6 +56,32 @@ class Post(models.Model):
     image = models.ForeignKey(Image, null=True, blank=True)
     categories = models.ManyToManyField(Category)
 
+    def to_dict(self):
+        content_types = ["text/plain", "text/x-markdown"]
+        visibilities = [
+            "PRIVATE",
+            "PRIVATE",
+            "FRIENDS",
+            "FOAF",
+            "PUBLIC",
+            "SERVERONLY"
+        ]
+
+        return {
+            "title": self.title,
+            "description": "", #Missing. See #77
+            "image": "", #Missing see #78
+            "content-type": content_types[self.content_type],
+            "content": self.content,
+            "author": self.send_author.to_dict(),
+            "categories": [], #Missing, see #79
+            "comments": [ x.to_dict() for x in self.get_comments() ],
+            "pubDate": str(self.published),
+            "guid": self.uid,
+            "visibility": visibilities[self.visibility],
+        }
+
+
     def __unicode__(self):
         return '%s' % self.title
 
@@ -79,6 +105,27 @@ class Post(models.Model):
     def get_categories(self):
         return self.categories.all()
 
+    def visible_to(self, author):
+        # VISIBILITY = ((PRIVATE, 'Private'),
+        #               (FRIEND, 'Friend'),
+        #               (FRIENDS, 'Friends'),
+        #               (FOAF, 'FriendOfAFriend'),
+        #               (PUBLIC, 'Public'),
+        #               (SERVERONLY, 'ServerOnly'))
+        if self.visibility == PUBLIC:
+            return True
+        elif self.visibility == FRIEND:
+            return author == self.receive_author
+        elif self.visibility == FRIENDS:
+            return self.send_author.is_friend(author)
+        elif self.visibility == FOAF:
+            return True # TODO: Implement FOAF
+        elif self.visibility == PRIVATE:
+            return self.send_author == author
+        elif self.visibility == SERVERONLY:
+            return self.send_author.host == author.host
+
+        return True
 
 class Comment(models.Model):
     uid = models.CharField(max_length=36, unique=True,
@@ -91,3 +138,11 @@ class Comment(models.Model):
 
     def __unicode__(self):
         return 'Author: %s Post: %s' % (self.author, self.post)
+
+    def to_dict(self):
+        return {
+            "author": self.author.to_dict(),
+            "comment": self.content,
+            "pubDate": str(self.published),
+            "guid": self.uid,
+        }
