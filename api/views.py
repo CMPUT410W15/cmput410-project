@@ -20,7 +20,7 @@ def posts(request):
         json.dumps(
             [
                 x.to_dict() 
-                for x in Post.objects.all() 
+                for x in Post.objects.all().order_by('-published')
                 if x.visible_to(request.user)
             ]
         )
@@ -30,7 +30,11 @@ def posts(request):
 def public_posts(request):
     return HttpResponse(
         json.dumps(
-            [x.to_dict() for x in Post.objects.filter(visibility=PUBLIC)]
+            [
+                x.to_dict()
+                for x in 
+                Post.objects.filter(visibility=PUBLIC).order_by('-published')
+            ]
         )
     )
 
@@ -46,7 +50,8 @@ def author_posts(request, author_id):
         json.dumps(
             [ 
                 x.to_dict()
-                for x in Post.objects.filter(send_author=author)
+                for x in 
+                Post.objects.filter(send_author=author).order_by('-published')
                 if x.visible_to(request.user)
             ]
         )
