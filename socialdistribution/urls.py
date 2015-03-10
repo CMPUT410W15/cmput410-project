@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^friends/', include('author.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^post/', include('posts.urls')),
 
 	url(r'^$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page),
@@ -21,7 +22,6 @@ urlpatterns = patterns('',
     url(r'^register/$', register),
     url(r'^register/success/$', register_success),
     url(r'^home/$', home),
-    url(r'^post/$', include('posts.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

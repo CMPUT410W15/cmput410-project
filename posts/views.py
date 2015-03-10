@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
 
 from author.models import Author
+from posts.models import Post
 from posts.forms import *
 
 @csrf_protect
@@ -20,31 +21,34 @@ def post(request):
             receive_author = form.cleaned_data['receive_author']
             if receive_author:
                 post = Post.objects.create(
-                    title = form.cleaned_data['title'],
-                    content = form.cleaned_data['content'],
-                    content_type = form.cleaned_data['content_type'],
-                    visibility = 0, 
-                    receive_author = Author.objects.get(user=User.objects.get(username=receive_author)),
-                    send_author = me,
+                    title=form.cleaned_data['title'],
+                    content=form.cleaned_data['content'],
+                    content_type=form.cleaned_data['content_type'],
+                    visibility=0,
+                    receive_author=Author.objects.get(user=User.objects.get(username=receive_author)),
+                    send_author=me,
                 )
                 post.save()
             else:
                 post = Post.objects.create(
-                    title = form.cleaned_data['title'],
-                    content = form.cleaned_data['content'],
-                    content_type = form.cleaned_data['content_type'],
-                    visibility = form.cleaned_data['visibility'],
-                    send_author = me,
+                    title=form.cleaned_data['title'],
+                    content=form.cleaned_data['content'],
+                    content_type=form.cleaned_data['content_type'],
+                    visibility=form.cleaned_data['visibility'],
+                    send_author=me,
                 )
                 post.save()
             return HttpResponseRedirect('/home')
     else:
         form = PostForm()
-    variables = RequestContext(request, {
-    'form': form
-    })
- 
+    variables = RequestContext(request, {'form': form})
+
     return render_to_response(
-    'posting.html',
-    variables,
+        'posting.html',
+        variables,
     )
+
+def delete_post(request, uid):
+    context = RequestContext(request)
+    Post.objects.filter(uid=uid).delete()
+    return HttpResponseRedirect('/home')
