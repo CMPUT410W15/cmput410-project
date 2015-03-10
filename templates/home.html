@@ -45,9 +45,9 @@
                         </span>
                         {% if author == p.send_author %}
                             <span class="pull-right">
-                                <form id="delete" method="POST" action="/post/delete/{{p.uid}}">
+                                <form id="{{p.uid}}" method="POST" action="/post/delete/{{p.uid}}">
                                     {% csrf_token %}
-                                    <a href="javascript:document.forms['delete'].submit();">
+                                    <a href="javascript:document.forms['{{p.uid}}'].submit();">
                                         <img src= "{% static 'icons/0173-bin.svg' %}"
                                         alt="delete icon" style= "height:30px; width:30px;"/>
                                     </a>
