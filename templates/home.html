@@ -16,13 +16,13 @@
     		<div class= "panel-heading" style="text-align: center;">
         		<h4 class="panel-title"> {{user.username}} </h4>
         	</div>
-        	<div class= "panel-body">
+        	<div class= "panel-body" style="text-align: center;">
         		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
         		</br>
         		</br>
-        		<a class="btn btn-primary btn-block" href="/post/">Post</a> </br>
-        		<a class="btn btn-primary btn-block" href="/friends/">Friends</a> </br>
-        		<button type="button" class="btn btn-primary btn-block">Explore</button>
+                {% if user.email %}
+                    <h4> Email: {{ user.email }}</h4>
+                {% endif %}
        		</div>
        	</div>
     </div>
@@ -34,9 +34,9 @@
  						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
  							style= "height:40px; width:40px;"/> </span>
  						<span style="display:inline-block; padding-left: 5pt;"> 
-                            Sent From: {{p.send_author}} 
-                            {% if p.receive_athor %}
-                                Sent To: {{p.receive_athor}} 
+                            {{p.send_author}} 
+                            {% if p.receive_author %}
+                                <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
 		                    {% endif %}
                             </br> 
                             {{p.published}} 
@@ -56,7 +56,10 @@
                         {% endif %}
  					</div>
  					<div class= "panel-body">
-						 {{p.markdown_to_html}}
+						{{p.markdown_to_html}}
+                        <span class= 'pull-right'>
+                            <a class= 'btn btn-primary btn-block' href= {% url 'add_comment' p.uid %}> Comment </a> 
+                        </span>
 					</div>
 				</div>
 			{% endfor %}
