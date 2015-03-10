@@ -1,0 +1,26 @@
+<!--### Source material taken from:
+###     https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+###     March 2, 2015
+### No explicit license -->
+{% extends "base.html" %}
+{% block title %}New comment{% endblock %}
+{% block head %}New comment{% endblock %}
+{% block content %}
+      <div class="col-sm-offset-2 col-sm-10 form-group">
+        <table border="0" class="table">
+        <form class="form-inline" method="post" action=".">{% csrf_token %}
+            {{ form.as_table }}
+
+             {% if form.errors %}
+                <div class="alert alert-danger" role-"alert">
+                {{ form.content.errors }}
+                </div>
+            {% endif %}
+        </table>
+            <div class="col-lg-offset-3 col-sm-10">
+            <input class="btn btn-default" type="submit" value="Comment" />
+            </div>
+        </div>
+    </form>
+    
+{% endblock %}

@@ -50,6 +50,8 @@
                     </div>
                     <div class= "panel-body">
                          {{p.markdown_to_html}}
+                         <span class= "pull-right"> 
+                             <a class="btn btn-primary btn-block" href={% url 'testing_comment' p.uid %} >Comment</a> </br>
                     </div>
                 </div>
             {% endfor %}

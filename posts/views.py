@@ -48,3 +48,27 @@ def post(request):
     'posting.html',
     variables,
     )
+
+def comment(request,post_id):
+    #Create a comment on a post
+    context= RequestContext(request)
+    me = Author.objects.get(user=request.user)
+
+    #Get the post to comment on
+    post= Post.objects.get(uid=post_id)
+
+    if request.method == "POST":
+        form= CommentForm(request.POST)
+        if form.is_valid():
+            content= form.cleaned_data["content"]
+
+            post.add_comment(me,content)
+            post.save()
+
+            return HttpResponseRedirect('/home')
+    else:
+        form= CommentForm()
+
+    return render(request, 'commenting.html', {'form':form})
+
+
