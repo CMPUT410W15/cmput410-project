@@ -151,7 +151,8 @@ class Comment(models.Model):
     post = models.ForeignKey(Post)
 
     def __unicode__(self):
-        return 'Author: %s Post: %s' % (self.author, self.post)
+        #return 'Author: %s Post: %s' % (self.author, self.post)
+        return self.content
 
     def to_dict(self):
         return {

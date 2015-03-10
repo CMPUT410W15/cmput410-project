@@ -24,7 +24,7 @@ def post(request):
                     title=form.cleaned_data['title'],
                     content=form.cleaned_data['content'],
                     content_type=form.cleaned_data['content_type'],
-                    visibility=0,
+                    visibility=form.cleaned_data['visibility'],
                     receive_author=Author.objects.get(user=User.objects.get(username=receive_author)),
                     send_author=me,
                 )
@@ -52,3 +52,22 @@ def delete_post(request, uid):
     context = RequestContext(request)
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
+
+def comment(request,post_id):
+    #Create a comment on a post
+    context= RequestContext(request)
+    me = Author.objects.get(user=request.user)
+
+    #Get the post to comment on
+    post= Post.objects.get(uid=post_id)
+    if request.method == "POST":
+        form= CommentForm(request.POST)
+        if form.is_valid():
+            content= form.cleaned_data["content"]
+            post.add_comment(me,content)
+            post.save()
+            return HttpResponseRedirect('/home')
+    else:
+        form= CommentForm()
+
+    return render(request, 'commenting.html', {'form':form})

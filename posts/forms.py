@@ -49,4 +49,13 @@ class PostForm(forms.Form):
         else:
             return
 
+class CommentForm(forms.Form):
+    content= forms.CharField(widget= forms.Textarea, label =_("Content"))
+
+    def clean(self):
+        if 'content' not in self.cleaned_data:
+            raise forms.ValidationError("Can't post an empty comment!")
+        else:
+            return self.cleaned_data
+
  
