@@ -57,6 +57,13 @@
  					</div>
  					<div class= "panel-body">
 						{{p.markdown_to_html}}
+                        {% if p.get_comments %}
+                            <h5 style= "text-decoration: underline;"> Comments </h5>
+                            <ul>
+                            {% for comments in p.get_comments %}
+                                <li> {{comments}} </li>
+                            {% endfor %}
+                        {% endif %}
                         <span class= 'pull-right'>
                             <a class= 'btn btn-primary btn-block' href= {% url 'add_comment' p.uid %}> Comment </a> 
                         </span>
