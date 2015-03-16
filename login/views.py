@@ -55,7 +55,7 @@ def logout_page(request):
     return HttpResponseRedirect('/')
 
 @login_required
-def home(request):
+def home(request, vars=None):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = Post.objects.all()
     author = request.user.author
@@ -83,7 +83,12 @@ def home(request):
                     friends_posts + foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
-    form= CommentForm()
+    #If there were no errors in commenting
+    if vars == None:
+        form= CommentForm()
+    else:
+        form= vars['form']
+    #form= CommentForm()
     return render(request,
                   'home.html',
                   {

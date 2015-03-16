@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from author.models import Author
 from posts.models import Post
 from posts.forms import *
+from login.views import *
 
 @csrf_protect
 def post(request):
@@ -58,6 +59,7 @@ def comment(request,post_id):
     context= RequestContext(request)
     me = Author.objects.get(user=request.user)
 
+    args={}
     #Get the post to comment on
     post= Post.objects.get(uid=post_id)
     # content= request.POST.get('content')
@@ -75,6 +77,9 @@ def comment(request,post_id):
             return HttpResponseRedirect('/home')
     else:
         form= CommentForm()
+    args['form']=form
 
-    return HttpResponseRedirect('/home')
+    #Return to home page with the args dict to render errors.
+    return home(request,args)
+    #return HttpResponseRedirect('/home')
     # return render(request, 'commenting.html', {'form':form})

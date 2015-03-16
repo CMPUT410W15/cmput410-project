@@ -64,36 +64,21 @@
                                 <li> {{comments}} </li>
                             {% endfor %}
                         {% endif %}
-                        <span class= 'pull-right'>
-                            <a class= 'btn btn-primary btn-block' href= '#{{p.uid}}1' data-toggle="modal"> Comment </a> 
-
-                            <div class="modal fade" id="{{p.uid}}1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                              <div class="modal-dialog">
-                                <div class="modal-content">
-                                <form class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
-                                  <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="myModalLabel">Add a comment</h4>
-                                  </div>
-                                  <div class="modal-body">
-                                        {% if form.errors %}
-                                            <div class="alert alert-danger" role="alert">
-                                                {{ form.content.errors }}
-                                            </div>
-                                        {% endif %} 
-                                        {{ form}}                                           
-                                  </div>
-                                  <div class="modal-footer">
-                                    <input class="btn btn-primary" type="submit" value="Comment" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                  </div>
-                              </form>
-                                </div>
-                              </div>
-                            </div>
-
-                        </span>
                     </div>
+                    <div class= "panel-footer clearfix">
+                        <form class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
+                       {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.content.errors }}
+                        </div>
+                    {% endif %} 
+                    <div class= "col-sm-10">
+                        <input class="form-control" id="content" name="content" type="text">
+                    </div>
+                    <span class="pull-right">
+                        <input class="btn btn-primary" type="submit" value="Comment" />
+                    </span>
+                </form>
                 </div>
             {% endfor %}
         {% else %}
