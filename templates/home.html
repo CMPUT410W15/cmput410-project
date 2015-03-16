@@ -1,6 +1,6 @@
 <!--### Source material taken from:
-###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
-### 	March 2, 2015
+###     https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+###     March 2, 2015
 ### No explicit license -->
 
 
@@ -12,32 +12,32 @@
 
 <div class="row">
     <div class="col-md-3">
-    	<div class= "panel panel-default">
-    		<div class= "panel-heading" style="text-align: center;">
-        		<h4 class="panel-title"> {{user.username}} </h4>
-        	</div>
-        	<div class= "panel-body" style="text-align: center;">
-        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-        		</br>
-        		</br>
+        <div class= "panel panel-default">
+            <div class= "panel-heading" style="text-align: center;">
+                <h4 class="panel-title"> {{user.username}} </h4>
+            </div>
+            <div class= "panel-body" style="text-align: center;">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
+                </br>
+                </br>
                 {% if user.email %}
                     <h4> Email: {{ user.email }}</h4>
                 {% endif %}
-       		</div>
-       	</div>
+            </div>
+        </div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
-		{% if posts %}
-			{% for p in posts %}
- 				<div class= "panel panel-default">
- 					<div class= "panel-heading">
- 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 							style= "height:40px; width:40px;"/> </span>
- 						<span style="display:inline-block; padding-left: 5pt;"> 
+        {% if posts %}
+            {% for p in posts %}
+                <div class= "panel panel-default">
+                    <div class= "panel-heading">
+                        <span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
+                            style= "height:40px; width:40px;"/> </span>
+                        <span style="display:inline-block; padding-left: 5pt;"> 
                             {{p.send_author}} 
                             {% if p.receive_author %}
                                 <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
-		                    {% endif %}
+                            {% endif %}
                             </br> 
                             {{p.published}} 
                             </br> 
@@ -54,9 +54,9 @@
                                 </form>
                             </span>
                         {% endif %}
- 					</div>
- 					<div class= "panel-body">
-						{{p.markdown_to_html}}
+                    </div>
+                    <div class= "panel-body">
+                        {{p.markdown_to_html}}
                         {% if p.get_comments %}
                             <h5 style= "text-decoration: underline;"> Comments </h5>
                             <ul>
@@ -65,13 +65,39 @@
                             {% endfor %}
                         {% endif %}
                         <span class= 'pull-right'>
-                            <a class= 'btn btn-primary btn-block' href= {% url 'add_comment' p.uid %}> Comment </a> 
+                            <a class= 'btn btn-primary btn-block' href= '#{{p.uid}}1' data-toggle="modal"> Comment </a> 
+
+                            <div class="modal fade" id="{{p.uid}}1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                <form class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">Add a comment</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                        {% if form.errors %}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ form.content.errors }}
+                                            </div>
+                                        {% endif %} 
+                                        {{ form}}                                           
+                                  </div>
+                                  <div class="modal-footer">
+                                    <input class="btn btn-primary" type="submit" value="Comment" />
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                  </div>
+                              </form>
+                                </div>
+                              </div>
+                            </div>
+
                         </span>
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-		{% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+        {% endif %}
     </div>
 </div>
 

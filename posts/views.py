@@ -60,6 +60,12 @@ def comment(request,post_id):
 
     #Get the post to comment on
     post= Post.objects.get(uid=post_id)
+    # content= request.POST.get('content')
+    # post.add_comment(me,content)
+    # post.save()
+
+    # return HttpResponseRedirect('/home')
+#http://stackoverflow.com/questions/22470637/django-show-validationerror-in-template
     if request.method == "POST":
         form= CommentForm(request.POST)
         if form.is_valid():
@@ -70,4 +76,5 @@ def comment(request,post_id):
     else:
         form= CommentForm()
 
-    return render(request, 'commenting.html', {'form':form})
+    return HttpResponseRedirect('/home')
+    # return render(request, 'commenting.html', {'form':form})
