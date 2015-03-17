@@ -10,7 +10,6 @@ from posts.models import Post
 from posts.forms import *
 from login.views import *
 import json
-
 @csrf_protect
 def post(request):
     # Create post

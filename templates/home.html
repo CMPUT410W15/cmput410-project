@@ -105,7 +105,7 @@
                             },
 
                             error: function(xhr, errmsg, err) {
-                                $('#error{{p.uid}}').html("<div class= 'alert-alert danger' data-alert> Can't post an empty comment." +" <a href= '#' class='close'>&times;</a></div>");
+                                $('#error{{p.uid}}').html("<div class= 'alert-alert danger' data-alert> <p class='text-danger'> Can't post an empty comment. </p>" +" <a href= '#' class='close'>&times;</a></div>");
                                 console.log(xhr.status + ": " + xhr.responseText);
                                 console.log(errmsg);
 
@@ -116,8 +116,6 @@
 
                         });
                     };
-
-
 
                      /*
                     The functions below are required else there will be a 403 error on each
