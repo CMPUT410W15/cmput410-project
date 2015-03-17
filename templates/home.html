@@ -69,11 +69,9 @@
                     <div class= "panel-footer clearfix">
                         <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post'>
                             {% csrf_token %}
-                       {% if form.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ form.content.errors }}
+                        <div id= "error{{p.uid}}">
+                            
                         </div>
-                    {% endif %} 
                     <div class= "col-sm-10">
                         <input class="form-control" id="content{{p.uid}}" name="content" type="text">
                     </div>
@@ -108,7 +106,7 @@
                             },
 
                             error: function(xhr, errmsg, err) {
-                                $('#results').html("<div class= 'alert-box alert radius' data-alert> Oops, error is: "+errmsg +" <a href= '#' class= 'close'>&times; </a> </div>");
+                                $('#error{{p.uid}}').html("<div class= 'alert-alert danger' data-alert> Oops, error is: "+errmsg +" <a href= '#' class= 'close'>&times; </a> </div>");
                                 console.log(xhr.status + ": " + xhr.responseText);
                             }
 

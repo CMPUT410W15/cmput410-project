@@ -101,8 +101,9 @@ def comment(request,post_id):
 
         if comment_text== "":
             print("This is an empty comment")
-            return HttpResponse(json.dumps({"error happened": "error happened"}),
-                content_type="application/json")
+            # return HttpResponse(json.dumps({"error happened": "error happened"}),
+            #     content_type="application/json")
+            return HttpResponse(status=404)
         else:
             post.add_comment(me,comment_text)
             post.save()
