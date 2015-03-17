@@ -105,7 +105,7 @@
                             },
 
                             error: function(xhr, errmsg, err) {
-                                $('#error{{p.uid}}').html("<div class= 'alert-alert danger' data-alert> <p class='text-danger'> Can't post an empty comment. </p>" +" <a href= '#' class='close'>&times;</a></div>");
+                                $('#error{{p.uid}}').html("<div> <p class='text-danger'> Can't post an empty comment. </p>" +"</div>");
                                 console.log(xhr.status + ": " + xhr.responseText);
                                 console.log(errmsg);
 
