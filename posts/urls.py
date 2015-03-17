@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^$', views.post, name='post'),
     url(r'^delete/(?P<uid>\w+)$', views.delete_post, name='delete_post'),
     url(r'^comment/(?P<post_id>\w+)/$', views.comment, name='add_comment'),
+    #url(r'^comment/$', 'comment')
 )

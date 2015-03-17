@@ -59,14 +59,14 @@
                         {{p.markdown_to_html}}
                         {% if p.get_comments %}
                             <h5 style= "text-decoration: underline;"> Comments </h5>
-                            <ul>
+                            <ul id='{{p.uid}}-2'>
                             {% for comments in p.get_comments %}
-                                <li> {{comments}} </li>
+                                <li id='{{p.uid}}-3'> {{comments}} </li>
                             {% endfor %}
                         {% endif %}
                     </div>
                     <div class= "panel-footer clearfix">
-                        <form class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
+                        <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
                        {% if form.errors %}
                         <div class="alert alert-danger" role="alert">
                             {{ form.content.errors }}
@@ -80,6 +80,34 @@
                     </span>
                 </form>
                 </div>
+                <script>
+                    $('#{p.uid}}-1').on('submit', function(event) {
+                        event.preventDefault();
+                        console.log('form submitted')
+                        create_comment();
+                    });
+
+                    function create_comment() {
+                        console.log('create comment is working')
+                        $.ajax({
+                            url="/post/comment/{{p.uid}}",
+                            type="POST",
+                            data: {the_comment: $('#content').val()},
+
+                            success: function(json) {
+                                $('#content').prepend("<li id= '{{p.uid}}-2>"+json.content+"</li>");
+                                console.log('success');
+                            },
+
+                            error: function(xhr, errmsg, err) {
+                                $('#results').html("<div class= 'alert-box alert radius' data-alert> Oops, error is: "+errmsg +" <a href= '#' class= 'close'>&times; </a> </div>");
+                                console.log(xhr.status + ": " + xhr.responseText);
+                            }
+
+                        });
+                    };
+                </script>
+
             {% endfor %}
         {% else %}
         {% endif %}

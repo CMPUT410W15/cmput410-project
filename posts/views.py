@@ -4,12 +4,12 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
-
+from django.http import HttpResponse
 from author.models import Author
 from posts.models import Post
 from posts.forms import *
 from login.views import *
-
+import json
 @csrf_protect
 def post(request):
     # Create post
@@ -54,6 +54,7 @@ def delete_post(request, uid):
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
 
+'''
 def comment(request,post_id):
     #Create a comment on a post
     context= RequestContext(request)
@@ -81,5 +82,38 @@ def comment(request,post_id):
 
     #Return to home page with the args dict to render errors.
     return home(request,args)
+    #return HttpResponseRedirect('/home')
+    # return render(request, 'commenting.html', {'form':form})
+'''
+
+def comment(request,post_id):
+    #Create a comment on a post
+    context= RequestContext(request)
+    me = Author.objects.get(user=request.user)
+
+    args={}
+    #Get the post to comment on
+    post= Post.objects.get(uid=post_id)
+
+    if request.method == "POST":
+        form= CommentForm(request.POST)
+        if form.is_valid():
+            content= form.cleaned_data["content"]
+            post.add_comment(me,content)
+            post.save()
+
+            return HttpResponse(json.dumps({'content':content}), content_type="application/json")
+            #return HttpResponseRedirect('/home')
+        else:
+            return HttpResponse(json.dumps({'problem':"Error"}), content_type="application/json")
+
+    else:
+        #form= CommentForm()
+
+    #args['form']=form
+
+        return HttpResponse(json.dumps({'nothing here': "this won't happen"}), content_type="application/json")
+    #Return to home page with the args dict to render errors.
+    #return home(request,args)
     #return HttpResponseRedirect('/home')
     # return render(request, 'commenting.html', {'form':form})
