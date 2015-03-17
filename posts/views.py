@@ -85,7 +85,7 @@ def comment(request,post_id):
     #return HttpResponseRedirect('/home')
     # return render(request, 'commenting.html', {'form':form})
 '''
-
+@csrf_protect
 def comment(request,post_id):
     #Create a comment on a post
     context= RequestContext(request)

@@ -3,8 +3,8 @@
 ###     March 2, 2015
 ### No explicit license -->
 
-
-<!-- Still a work in progress -->
+<!-- Still a work in progress , https://realpython.com/blog/python/django-and-ajax-form-submissions/
+,https://github.com/realpython/django-form-fun -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}Home Page{% endblock %}
@@ -46,7 +46,7 @@
                         {% if author == p.send_author %}
                             <span class="pull-right">
                                 <form id="{{p.uid}}" method="POST" action="/post/delete/{{p.uid}}">
-                                    {% csrf_token %}
+                                {% csrf_token %}
                                     <a href="javascript:document.forms['{{p.uid}}'].submit();">
                                         <img src= "{% static 'icons/0173-bin.svg' %}"
                                         alt="delete icon" style= "height:30px; width:30px;"/>
@@ -66,7 +66,8 @@
                         {% endif %}
                     </div>
                     <div class= "panel-footer clearfix">
-                        <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post' action='/post/comment/{{p.uid}}/'> {% csrf_token %}
+                        <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post'>
+                            {% csrf_token %}
                        {% if form.errors %}
                         <div class="alert alert-danger" role="alert">
                             {{ form.content.errors }}
@@ -81,17 +82,17 @@
                 </form>
                 </div>
                 <script>
-                    $('#{p.uid}}-1').on('submit', function(event) {
+                    $('#{{p.uid}}-1').on('submit', function(event) {
                         event.preventDefault();
-                        console.log('form submitted')
+                        console.log('form submitted for {{p.uid}}-1')
                         create_comment();
                     });
 
                     function create_comment() {
                         console.log('create comment is working')
                         $.ajax({
-                            url="/post/comment/{{p.uid}}",
-                            type="POST",
+                            url:"/post/comment/{{p.uid}}/",
+                            type:"POST",
                             data: {the_comment: $('#content').val()},
 
                             success: function(json) {
