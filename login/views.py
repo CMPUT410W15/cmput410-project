@@ -32,7 +32,6 @@ def register(request):
             user.is_active = False
             user.save()
             author= Author(user=user)
-            author.vetted = False
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
