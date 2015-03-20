@@ -54,37 +54,6 @@ def delete_post(request, uid):
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
 
-'''
-def comment(request,post_id):
-    #Create a comment on a post
-    context= RequestContext(request)
-    me = Author.objects.get(user=request.user)
-
-    args={}
-    #Get the post to comment on
-    post= Post.objects.get(uid=post_id)
-    # content= request.POST.get('content')
-    # post.add_comment(me,content)
-    # post.save()
-
-    # return HttpResponseRedirect('/home')
-#http://stackoverflow.com/questions/22470637/django-show-validationerror-in-template
-    if request.method == "POST":
-        form= CommentForm(request.POST)
-        if form.is_valid():
-            content= form.cleaned_data["content"]
-            post.add_comment(me,content)
-            post.save()
-            return HttpResponseRedirect('/home')
-    else:
-        form= CommentForm()
-    args['form']=form
-
-    #Return to home page with the args dict to render errors.
-    return home(request,args)
-    #return HttpResponseRedirect('/home')
-    # return render(request, 'commenting.html', {'form':form})
-'''
 @csrf_protect
 def comment(request,post_id):
 
@@ -99,56 +68,15 @@ def comment(request,post_id):
         comment_text= request.POST.get('the_comment')
         response_data={}
 
+        #If the comment is blank, return an error
         if comment_text== "":
-            print("This is an empty comment")
-            # return HttpResponse(json.dumps({"error happened": "error happened"}),
-            #     content_type="application/json")
+            #Return status code 404 to indicate error
             return HttpResponse(status=404)
         else:
             post.add_comment(me,comment_text)
             post.save()
-            print(comment_text)
-
             response_data['content']= comment_text
-
             return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
         return HttpResponse(json.dumps({"nothing here": "this won't happen"}), content_type="application/json")
 
-
-
-
-
-
-# @csrf_protect
-# def comment(request,post_id):
-#     #Create a comment on a post
-#     context= RequestContext(request)
-#     me = Author.objects.get(user=request.user)
-
-#     args={}
-#     #Get the post to comment on
-#     post= Post.objects.get(uid=post_id)
-
-#     if request.method == "POST":
-#         form= CommentForm(request.POST)
-#         if form.is_valid():
-#             content= form.cleaned_data["content"]
-#             post.add_comment(me,content)
-#             post.save()
-
-#             return HttpResponse(json.dumps({'content':content}), content_type="application/json")
-#             #return HttpResponseRedirect('/home')
-#         else:
-#             return HttpResponse(json.dumps({'problem':"Error"}), content_type="application/json")
-
-#     else:
-#         #form= CommentForm()
-
-#     #args['form']=form
-
-#         return HttpResponse(json.dumps({'nothing here': "this won't happen"}), content_type="application/json")
-    #Return to home page with the args dict to render errors.
-    #return home(request,args)
-    #return HttpResponseRedirect('/home')
-    # return render(request, 'commenting.html', {'form':form})
