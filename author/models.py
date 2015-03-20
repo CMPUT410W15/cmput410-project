@@ -1,12 +1,8 @@
 """Models for the author application."""
-import uuid
-
 from django.db import models
 from django.contrib.auth.models import User
-
-
-def gen_uuid():
-    return str(uuid.uuid1().hex)
+from images.models import Image
+from common.util import gen_uuid
 
 
 class FollowYourselfError(Exception): pass
@@ -22,6 +18,7 @@ class Author(models.Model):
     github = models.CharField(max_length=100, blank=True)
 
     user = models.OneToOneField(User)
+    picture = models.ForeignKey(Image, null=True, blank=True)
     connection = models.ManyToManyField("self", through='Connection',
                                         symmetrical=False,
                                         related_name='connected_to')
