@@ -71,20 +71,20 @@ class PostTests(TestCase):
     def test_get_all_friends_author1_posts(self):
         #Posts 5,6,7 are friend - 8 and 3 are public.
         # Author 1 should only receive posts 6 and 7
-        post5= Post.objects.create(**self.post5)  
+        post5= Post.objects.create(**self.post5)
         post6= Post.objects.create(**self.post6)
         post7= Post.objects.create(**self.post7)
-        post8= Post.objects.create(**self.post8) 
+        post8= Post.objects.create(**self.post8)
         post3= Post.objects.create(**self.post3)
 
         self.assertEqual(len(self.author1.get_received_posts(visibility=FRIEND)), 2)
 
     def get_public_posts(self):
         #Posts 5,6,7 are friend - 8 and 3 are public
-        post5= Post.objects.create(**self.post5)  
+        post5= Post.objects.create(**self.post5)
         post6= Post.objects.create(**self.post6)
         post7= Post.objects.create(**self.post7)
-        post8= Post.objects.create(**self.post8) 
+        post8= Post.objects.create(**self.post8)
         post3= Post.objects.create(**self.post3)
         all_posts = Post.objects.all()
         public=[]
@@ -96,6 +96,12 @@ class PostTests(TestCase):
         self.assertEqual(len(public),2)
 
     def test_create_post(self):
+        """Test Post creation.
+
+        Make sure that any post created will have the same general content
+        that a user provided.
+
+        """
         post = Post.objects.create(**self.post1)
         self.assertEqual(post.send_author, self.author1)
         self.assertEqual(post.title, self.post1['title'])
@@ -104,24 +110,19 @@ class PostTests(TestCase):
         self.assertEqual(post.content_type, self.post1['content_type'])
 
     def test_create_post_to_specific_author(self):
+        """Test that a post can be sent to a specific author."""
         post = Post.objects.create(**self.post4)
         self.assertEqual(post.send_author, self.author3)
         self.assertEqual(post.receive_author, self.author1)
         self.assertEqual(post.visibility, FRIEND)
 
     def test_get_posts(self):
+        """Test that the get_posts method works on an author."""
         post = Post.objects.create(**self.post1)
         self.assertEqual(self.author1.get_posts()[0], post)
 
     def test_get_specific_authors_posts(self):
-        post1 = Post.objects.create(**self.post1)
-        post2 = Post.objects.create(**self.post2)
-        post3 = Post.objects.create(**self.post3)
-        self.assertEqual(len(self.author1.get_posts()), 2)
-        self.assertEqual(len(self.author2.get_posts()), 1)
-        self.assertEqual(len(self.author3.get_posts()), 0)
-
-    def test_get_specific_authors_posts(self):
+        """Test that get_posts returns accurate values."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -130,6 +131,11 @@ class PostTests(TestCase):
         self.assertEqual(len(self.author3.get_posts()), 0)
 
     def test_get_specific_posts_visibility(self):
+        """Test get_posts with given visibilities.
+
+        Make sure that the selector functions properly.
+
+        """
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -138,6 +144,11 @@ class PostTests(TestCase):
         self.assertEqual(len(self.author2.get_posts(visibility=FRIENDS)), 1)
 
     def test_get_friends_posts(self):
+        """Test that you can get all your friends posts.
+
+        Using the get_friends and get_posts methods.
+
+        """
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -151,6 +162,7 @@ class PostTests(TestCase):
         self.assertEqual(len([p for f in friends for p in f.get_posts()]), 3)
 
     def test_comment(self):
+        """Test comments created are consistent."""
         post1 = Post.objects.create(**self.post1)
         c = post1.add_comment(self.author2, 'hello!')
         self.assertEqual(c.author, self.author2)
@@ -158,12 +170,14 @@ class PostTests(TestCase):
         self.assertEqual(c.content, 'hello!')
 
     def test_get_no_comments(self):
+        """Test that no comments are returned for posts without comments."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         self.assertEqual(len(post1.get_comments()), 0)
         self.assertEqual(len(post2.get_comments()), 0)
 
     def test_get_comments(self):
+        """Test that get_comments returns correct numbers."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -177,6 +191,7 @@ class PostTests(TestCase):
         self.assertEqual(num, 6)
 
     def test_get_author_comments(self):
+        """Test that you can get comments given an author model."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -192,6 +207,7 @@ class PostTests(TestCase):
         self.assertEqual(post2.get_comments()[0].content, '!')
 
     def test_get_specific_comments(self):
+        """Test the accuracy of post.get_comments."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         post3 = Post.objects.create(**self.post3)
@@ -207,6 +223,7 @@ class PostTests(TestCase):
         self.assertEqual(post2.get_comments()[0].content, '!')
 
     def test_remove_comment(self):
+        """Test that you can remove comments from posts."""
         post1 = Post.objects.create(**self.post1)
         post1.add_comment(self.author2, 'hello!')
         post1.add_comment(self.author3, 'ello!')
@@ -215,6 +232,7 @@ class PostTests(TestCase):
         self.assertEqual(len(post1.get_comments()), 2)
 
     def test_adding_categories(self):
+        """Test that you can add categories to posts."""
         post1 = Post.objects.create(**self.post1)
         post2 = Post.objects.create(**self.post2)
         cat1 = Category.objects.create(category="Turtles")
