@@ -81,7 +81,8 @@
                     </div>
                 <script>
 
-                //Setup javascript global variables created to reference template variables 
+                //Setup javascript variables created to reference template variables for stream.js to use.
+
                 var comment_button_id='#{{p.uid}}-1';
                 //var post_id= "#{{p.uid}}";
                 var comment_list_id= "#{{p.uid}}-2";
@@ -91,6 +92,7 @@
                 var content_id= "#content{{p.uid}}";
                 var comment_url= "/post/comment/{{p.uid}}/";
                 </script>
+                
                 <script src= "{% static "scripts/stream.js" %}"> </script>
             </div>
             {% endfor %}
