@@ -56,6 +56,8 @@ def logout_page(request):
 @login_required
 def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
+    if request.user.is_superuser:
+        return HttpResponseRedirect("/accounts/login/")
     posts = Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]

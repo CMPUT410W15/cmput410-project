@@ -13,6 +13,9 @@
         Your username and password didn't match. Please try again.
         </div>
     {% endif %}
+    {% if user.is_superuser %}
+    <h1 style="text-align: center">Please log out of administrator account before logging in</h1>
+    {% else %}
     <form class="form-horizontal" method="post" action=".">{% csrf_token %}
         <div class="form-group">
             <label for="id_username" class="col-sm-2 control-label">Username:</label>{{ form.username }}
@@ -29,5 +32,6 @@
         <div class="col-sm-offset-2 col-sm-10">
         </div>  
     </form>
+    {% endif %}
     
 {% endblock %}
