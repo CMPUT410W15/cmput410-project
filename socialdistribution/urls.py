@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^register/$', register),
     url(r'^register/success/$', register_success),
     url(r'^home/$', home),
+    url(r'^home/([^/]+)/$', authorhome),
     url(r'^post/(?P<post_id>\w+)/$', comment, name="add_comment")
 )
 
