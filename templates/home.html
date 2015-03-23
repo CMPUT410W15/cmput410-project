@@ -1,10 +1,10 @@
 <!--### Source material taken from:
-###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
-### 	March 2, 2015
+###     https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+###     March 2, 2015
 ### No explicit license -->
 
-
-<!-- Still a work in progress -->
+<!-- Still a work in progress , https://realpython.com/blog/python/django-and-ajax-form-submissions/
+,https://github.com/realpython/django-form-fun -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}Home Page{% endblock %}
@@ -12,32 +12,32 @@
 
 <div class="row">
     <div class="col-md-3">
-    	<div class= "panel panel-default">
-    		<div class= "panel-heading" style="text-align: center;">
-        		<h4 class="panel-title"> {{user.username}} </h4>
-        	</div>
-        	<div class= "panel-body" style="text-align: center;">
-        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-        		</br>
-        		</br>
+        <div class= "panel panel-default">
+            <div class= "panel-heading" style="text-align: center;">
+                <h4 class="panel-title"> {{user.username}} </h4>
+            </div>
+            <div class= "panel-body" style="text-align: center;">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
+                </br>
+                </br>
                 {% if user.email %}
                     <h4> Email: {{ user.email }}</h4>
                 {% endif %}
-       		</div>
-       	</div>
+            </div>
+        </div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
-		{% if posts %}
-			{% for p in posts %}
- 				<div class= "panel panel-default">
- 					<div class= "panel-heading">
- 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 							style= "height:40px; width:40px;"/> </span>
- 						<span style="display:inline-block; padding-left: 5pt;"> 
+        {% if posts %}
+            {% for p in posts %}
+                <div class= "panel panel-default">
+                    <div class= "panel-heading">
+                        <span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
+                            style= "height:40px; width:40px;"/> </span>
+                        <span style="display:inline-block; padding-left: 5pt;"> 
                             {{p.send_author}} 
                             {% if p.receive_author %}
                                 <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
-		                    {% endif %}
+                            {% endif %}
                             </br> 
                             {{p.published}} 
                             </br> 
@@ -46,7 +46,7 @@
                         {% if author == p.send_author %}
                             <span class="pull-right">
                                 <form id="{{p.uid}}" method="POST" action="/post/delete/{{p.uid}}">
-                                    {% csrf_token %}
+                                {% csrf_token %}
                                     <a href="javascript:document.forms['{{p.uid}}'].submit();">
                                         <img src= "{% static 'icons/0173-bin.svg' %}"
                                         alt="delete icon" style= "height:30px; width:30px;"/>
@@ -54,24 +54,125 @@
                                 </form>
                             </span>
                         {% endif %}
- 					</div>
- 					<div class= "panel-body">
-						{{p.markdown_to_html}}
-                        {% if p.get_comments %}
+                    </div>
+                    <div class= "panel-body">
+                        {{p.markdown_to_html}}
                             <h5 style= "text-decoration: underline;"> Comments </h5>
-                            <ul>
+                            <ul id='{{p.uid}}-2'>
+                        {% if p.get_comments %}
                             {% for comments in p.get_comments %}
-                                <li> {{comments}} </li>
+                                <li id='{{comments.uid}}'> {{comments}} </li>
                             {% endfor %}
                         {% endif %}
-                        <span class= 'pull-right'>
-                            <a class= 'btn btn-primary btn-block' href= {% url 'add_comment' p.uid %}> Comment </a> 
-                        </span>
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-		{% endif %}
+                        </ul>
+                    </div>
+                    <div class= "panel-footer clearfix">
+                        <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post'>
+                            {% csrf_token %}
+                        <div id= "error{{p.uid}}"> 
+                        </div>
+                    <div class= "col-sm-10">
+                        <input class="form-control" id="content{{p.uid}}" name="content" type="text">
+                    </div>
+                    <span class="pull-right">
+                        <input class="btn btn-primary" type="submit" value="Comment" />
+                    </span>
+                        </form>
+                    </div>
+
+                <script>
+                $(function() {
+                    $('#{{p.uid}}-1').on('submit', function(event) {
+                        event.preventDefault();
+                        console.log('form submitted for {{p.uid}}-1')
+                        create_comment();
+                    });
+
+                    function create_comment() {
+                        console.log('create comment is working')
+                        $.ajax({
+                            url:"/post/comment/{{p.uid}}/",
+                            type:"POST",
+                            data: {the_comment: $('#content{{p.uid}}').val() },
+
+                            success: function(json) {
+                                $('#content{{p.uid}}').val('');
+                                console.log(json)
+                                console.log(json.content)
+                                $('#{{p.uid}}-2').append("<li id='{{comments.uid}}'>"+json.content+"</li>");
+                                console.log('Comment was posted');
+                            },
+                            error: function(xhr, errmsg, err) {
+                                $('#error{{p.uid}}').html("<div> <p class='text-danger'> Can't post an empty comment. </p>" +"</div>");
+                                console.log(xhr.status + ": " + xhr.responseText);
+                                console.log(errmsg);
+
+                                //Get rid of error message in 2 seconds
+                                setTimeout(function() {
+                                    $("#error{{p.uid}}").html("<div> </div>");
+                                }, 2000);
+                            }
+
+                        });
+                    };
+                     /*
+                    The functions below are required else there will be a 403 error on each
+                    attempt for a comment.
+                    */
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    var csrftoken = getCookie('csrftoken');
+                    /*
+                    The functions below will create a header with csrftoken
+                    */
+
+                    function csrfSafeMethod(method) {
+                        // these HTTP methods do not require CSRF protection
+                        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+                    function sameOrigin(url) {
+                        // test that a given url is a same-origin URL
+                        // url could be relative or scheme relative or absolute
+                        var host = document.location.host; // host + port
+                        var protocol = document.location.protocol;
+                        var sr_origin = '//' + host;
+                        var origin = protocol + sr_origin;
+                        // Allow absolute or scheme relative URLs to same origin
+                        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                            // or any other URL that isn't scheme relative or absolute i.e relative.
+                            !(/^(\/\/|http:|https:).*/.test(url));
+                    }
+
+                    $.ajaxSetup({
+                        beforeSend: function(xhr, settings) {
+                            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                                // Send the token to same-origin, relative URLs only.
+                                // Send the token only if the method warrants CSRF protection
+                                // Using the CSRFToken value acquired earlier
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                            }
+                        }
+                    });
+                });
+                </script>
+            </div>
+            {% endfor %}
+        {% else %}
+        {% endif %}
     </div>
 </div>
 

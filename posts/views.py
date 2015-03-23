@@ -4,11 +4,12 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
-
+from django.http import HttpResponse
 from author.models import Author
 from posts.models import Post
 from posts.forms import *
-
+from login.views import *
+import json
 @csrf_protect
 def post(request):
     # Create post
@@ -53,21 +54,29 @@ def delete_post(request, uid):
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
 
+@csrf_protect
 def comment(request,post_id):
+
     #Create a comment on a post
     context= RequestContext(request)
     me = Author.objects.get(user=request.user)
-
+    args={}
     #Get the post to comment on
     post= Post.objects.get(uid=post_id)
-    if request.method == "POST":
-        form= CommentForm(request.POST)
-        if form.is_valid():
-            content= form.cleaned_data["content"]
-            post.add_comment(me,content)
-            post.save()
-            return HttpResponseRedirect('/home')
-    else:
-        form= CommentForm()
 
-    return render(request, 'commenting.html', {'form':form})
+    if request.method == "POST":
+        comment_text= request.POST.get('the_comment')
+        response_data={}
+
+        #If the comment is blank, return an error
+        if comment_text== "":
+            #Return status code 404 to indicate error
+            return HttpResponse(status=404)
+        else:
+            post.add_comment(me,comment_text)
+            post.save()
+            response_data['content']= comment_text
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({"nothing here": "this won't happen"}), content_type="application/json")
+
