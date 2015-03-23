@@ -17,6 +17,7 @@ from django.template import RequestContext
 from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
+from posts.forms import *
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -85,12 +86,14 @@ def home(request):
                     friends_posts + foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
+    form= CommentForm()
     return render(request,
                   'home.html',
                   {
                       'user': request.user,
                       'author': request.user.author,
-                      'posts': all_posts
+                      'posts': all_posts,
+                      'form': form,
                   })
 
 def authorhome(request, authorpage):
