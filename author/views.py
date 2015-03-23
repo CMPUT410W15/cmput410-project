@@ -1,7 +1,16 @@
 from django.shortcuts import render, render_to_response, redirect
 from models import *
+from common.util import get_request_to_json, get_nodes
 
 def friends(request):
+
+    for node in get_nodes():
+        for author in get_request_to_json(node.url + 'authors'):
+            a = {'uid': author['id'],
+                 'displayname': author['displayname'],
+                 'host': author['host']}
+            Author.objects.get_or_create(**a)
+
     me = Author.objects.get(user=request.user)
     authors = Author.objects.all()
     friends = me.get_friends()
@@ -14,7 +23,7 @@ def friends(request):
 
     return render(
         request,
-        'friends.html', 
+        'friends.html',
         {
             "friends": friends,
             "following": following,
@@ -23,22 +32,22 @@ def friends(request):
         }
     )
 
-def befriend(request, user):
+def befriend(request, uid):
     me = Author.objects.get(user=request.user)
-    me.befriend(Author.objects.get(user=User.objects.get(username=user)))
+    me.befriend(Author.objects.get(uid=uid))
     return redirect('/friends/')
 
-def unbefriend(request, user):
+def unbefriend(request, uid):
     me = Author.objects.get(user=request.user)
-    me.unfollow(Author.objects.get(user=User.objects.get(username=user)))
+    me.unfollow(Author.objects.get(uid=uid))
     return redirect('/friends/')
 
-def follow(request, user):
+def follow(request, uid):
     me = Author.objects.get(user=request.user)
-    me.follow(Author.objects.get(user=User.objects.get(username=user)))
+    me.follow(Author.objects.get(uid=uid))
     return redirect('/friends/')
 
-def unfollow(request, user):
+def unfollow(request, uid):
     me = Author.objects.get(user=request.user)
-    me.unfollow(Author.objects.get(user=User.objects.get(username=user)))
+    me.unfollow(Author.objects.get(uid=uid))
     return redirect('/friends/')

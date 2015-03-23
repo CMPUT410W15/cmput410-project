@@ -16,6 +16,7 @@ class Author(models.Model):
     url = models.CharField(max_length=100 , blank=True)
     github = models.CharField(max_length=100, blank=True)
 
+    displayname = models.CharField(max_length=100, blank=True)
     user = models.OneToOneField(User, null=True)
     picture = models.ForeignKey(Image, null=True, blank=True)
     connection = models.ManyToManyField("self", through='Connection',
@@ -24,13 +25,14 @@ class Author(models.Model):
 
     def __unicode__(self):
         #return '%s (%s)' % (self.user, self.uid)
-        return self.user.username
+        return self.user.username if self.user else self.displayname
 
     def to_dict(self):
+        name = self.user.username if self.user else self.displayname
         return {
             "id": self.uid,
             "host": self.host,
-            "displayname": self.user.username,
+            "displayname": name,
         }
 
     def befriend(self, author):
