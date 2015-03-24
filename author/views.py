@@ -1,16 +1,7 @@
 from django.shortcuts import render, render_to_response, redirect
 from models import *
-from common.util import get_request_to_json, get_nodes
 
 def friends(request):
-
-    for node in get_nodes():
-        for author in get_request_to_json(node.url + 'authors'):
-            a = {'uid': author['id'],
-                 'displayname': author['displayname'],
-                 'host': author['host']}
-            Author.objects.get_or_create(**a)
-
     me = Author.objects.get(user=request.user)
     authors = Author.objects.all()
     friends = me.get_friends()

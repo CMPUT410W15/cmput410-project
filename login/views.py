@@ -14,7 +14,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
-from author.models import Author
+from author.models import Author, reset_foreign_authors
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
@@ -56,6 +56,9 @@ def logout_page(request):
 
 @login_required
 def home(request):
+    if '/accounts/login' in request.META['HTTP_REFERER']:
+        reset_foreign_authors()
+
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
@@ -105,7 +108,7 @@ def authorhome(request, authorpage):
     for post in Post.objects.all():
         if (post.send_author == author):
             posts.add(post)
-    
+
     #friends = [f for f in author.get_friends()]
     friends = 0
     for f in author.get_friends():
@@ -140,4 +143,4 @@ def authorhome(request, authorpage):
                       'email': whose.email,
                       'author': request.user.author,
                       'posts': all_posts
-                  })    
+                  })

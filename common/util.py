@@ -11,7 +11,10 @@ def gen_uuid():
 
 def get_request_to_json(url):
     req = requests.get(url)
-    return req.json()
+    if req.status_code == 200:
+        return req.json()
+    else:
+        return req.status_code
 
 def get_nodes():
     ignore = ['host', '127.0.0.1:8000', '127.0.0.1', 'localhost']
