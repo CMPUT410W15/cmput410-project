@@ -1,8 +1,10 @@
 """Models for the posts application."""
-from django.db import models
-from author.models import Author, gen_uuid
-from django.utils.safestring import mark_safe
 import CommonMark
+from django.db import models
+from author.models import Author
+from images.models import Image
+from django.utils.safestring import mark_safe
+from common.util import gen_uuid
 
 PRIVATE = 0
 FRIEND = 1
@@ -24,16 +26,6 @@ CONTENT_TYPE = ((PLAINTEXT, 'PlainText'),
 
 
 # Create your models here.
-class Image(models.Model):
-    uid = models.CharField(max_length=36, unique=True,
-                           editable=False, default=gen_uuid)
-    image = models.ImageField()
-    visibility = models.IntegerField(choices=VISIBILITY, default=PUBLIC)
-
-    def __unicode__(self):
-        return '%s' % self.uid
-
-
 class Category(models.Model):
     category = models.CharField(max_length=100, unique=True)
 

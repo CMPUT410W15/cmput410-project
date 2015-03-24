@@ -50,12 +50,22 @@ class PostForm(forms.Form):
             return
 
 class CommentForm(forms.Form):
-    content= forms.CharField(widget= forms.Textarea, label =_("Content"))
+    content= forms.CharField(max_length=150, label =_("Content"), required=True)
 
     def clean(self):
         if 'content' not in self.cleaned_data:
             raise forms.ValidationError("Can't post an empty comment!")
         else:
             return self.cleaned_data
+
+
+    #  @property
+    # def helper(self):
+    #     helper = FormHelper()
+    #     helper.form_tag = False # don't render form DOM element
+    #     helper.render_unmentioned_fields = True # render all fields
+    #     helper.label_class = 'col-md-2'
+    #     helper.field_class = 'col-md-10'
+    #     return helper
 
  

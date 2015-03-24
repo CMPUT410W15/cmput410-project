@@ -26,10 +26,10 @@ django.contrib.auth.LOGIN_URL = '/'
 
 #Allow access to these urls without logging in
 LOGIN_EXEMPT_URLS = (
- r'^register/',
- r'^admin/',
- r'^api/',
-) 
+    r'^register/',
+    r'^admin/',
+    r'^api/',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,8 +56,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'author',
     'posts',
+    'images',
     'management',
-	'login',
+    'login'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -117,7 +118,7 @@ TEMPLATE_DIRS = (
 '''
 
 #http://stackoverflow.com/questions/15411164/django-templates-folders
-#Now, if you want to use a template from the root template folder, give the name of the template "template_name.html" 
+#Now, if you want to use a template from the root template folder, give the name of the template "template_name.html"
 #If you want to use an app template, you use 'appname/template_name.html'
 
 TEMPLATE_DIRS = (

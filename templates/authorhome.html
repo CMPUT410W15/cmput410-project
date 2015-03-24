@@ -1,30 +1,30 @@
 <!--### Source material taken from:
-###     https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
-###     March 2, 2015
+###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
+### 	March 2, 2015
 ### No explicit license -->
 
-<!-- Still a work in progress , https://realpython.com/blog/python/django-and-ajax-form-submissions/
-,https://github.com/realpython/django-form-fun -->
+
+<!-- Still a work in progress -->
 {% extends "base.html" %}
 {% load staticfiles %}
-{% block title %}Home Page{% endblock %}
+{% block title %}{{user}}'s Home Page{% endblock %}
 {% block content %}
 
 <div class="row">
     <div class="col-md-3">
-        <div class= "panel panel-default">
-            <div class= "panel-heading" style="text-align: center;">
-                <h4 class="panel-title"> {{user.username}} </h4>
-            </div>
-            <div class= "panel-body" style="text-align: center;">
-                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-                </br>
-                </br>
-                {% if user.email %}
-                    <h4> Email: {{ user.email }}</h4>
+    	<div class= "panel panel-default">
+    		<div class= "panel-heading" style="text-align: center;">
+        		<h4 class="panel-title"> {{user}} </h4>
+        	</div>
+        	<div class= "panel-body" style="text-align: center;">
+        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
+        		</br>
+        		</br>
+                {% if email %}
+                    <h4> Email: {{ email }}</h4>
                 {% endif %}
-            </div>
-        </div>
+       		</div>
+       	</div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
 		{% if posts %}
