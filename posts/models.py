@@ -6,6 +6,10 @@ from images.models import Image
 from django.utils.safestring import mark_safe
 from common.util import gen_uuid
 
+from datetime import datetime
+import datetime
+import time
+
 PRIVATE = 0
 FRIEND = 1
 FRIENDS = 2
@@ -91,7 +95,11 @@ class Post(models.Model):
             post=self).delete()
 
     def get_comments(self):
-        return Comment.objects.filter(post=self)
+        #Return comments sorted from newest to oldest
+        comments= Comment.objects.filter(post=self)
+        comments = sorted(comments, key=lambda x: x.published, reverse=True)
+        return comments
+
 
     def add_category(self, category):
         return self.categories.add(category)
@@ -133,6 +141,12 @@ class Post(models.Model):
             html = renderer.render(ast)
             return mark_safe(html)
 
+    # def created_on(self):
+    #     time=self.published
+    #     time= time-datetime.timedelta(minutes=360)
+    #     formatted_time= time.strftime("%B %d, %Y, %I:%M%p")
+    #     return formatted_time
+
 class Comment(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
@@ -144,7 +158,11 @@ class Comment(models.Model):
 
     def __unicode__(self):
         #return 'Author: %s Post: %s' % (self.author, self.post)
-        return self.content
+        # time= self.published
+        #To fix the time being ahead by 6 hours, subtract 6 hours
+        # time= time-datetime.timedelta(minutes=360)
+        # formatted_time= time.strftime("%B %d, %Y, %I:%M%p")
+        return '%s: %s' %(self.author,self.content)
 
     def to_dict(self):
         return {

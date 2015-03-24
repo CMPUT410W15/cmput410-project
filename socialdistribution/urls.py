@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from posts.views import *
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'socialdistribution.views.home', name='home'),
@@ -24,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^register/success/$', register_success),
     url(r'^home/$', home),
     url(r'^home/([^/]+)/$', authorhome),
-    url(r'^post/(?P<post_id>\w+)/$', comment, name="add_comment")
+    url(r'^post/(?P<post_id>\w+)/$', comment, name="add_comment"),
 )
 
 urlpatterns += staticfiles_urlpatterns()

@@ -99,7 +99,8 @@
                                 $('#content{{p.uid}}').val('');
                                 console.log(json)
                                 console.log(json.content)
-                                $('#{{p.uid}}-2').append("<li id='{{comments.uid}}'>"+json.content+"</li>");
+                                //Add the comment to the top of the list
+                                $('#{{p.uid}}-2').prepend("<li id='{{comments.uid}}'>"+json.content+"</li>");
                                 console.log('Comment was posted');
                             },
                             error: function(xhr, errmsg, err) {
