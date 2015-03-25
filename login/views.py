@@ -15,9 +15,11 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
 from author.models import Author, reset_foreign_authors
-from posts.models import Post
+from posts.models import Post, reset_foreign_posts
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+
+
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -56,12 +58,13 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    if '/accounts/login' in request.META['HTTP_REFERER']:
-        reset_foreign_authors()
-
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
+    elif '/accounts/login' in request.META['HTTP_REFERER']:
+        reset_foreign_authors()
+        reset_foreign_posts()
+
     posts = Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]

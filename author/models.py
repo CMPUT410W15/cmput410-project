@@ -26,14 +26,14 @@ def reset_foreign_authors():
             for a2 in remote_authors:
                 friends_url = 'friends/%s/%s' % (a1.uid, a2.uid)
                 result = get_request_to_json(node.url + friends_url)
-                if result != 404 and result['friends'] == 'YES':
+                if result not in [401, 404] and result['friends'] == 'YES':
                     a1.follow(a2)
                     a2.follow(a1)
 
             for a2 in Author.objects.all():
                 friends_url = 'friends/%s/%s' % (a1.uid, a2.uid)
                 result = get_request_to_json(node.url + friends_url)
-                if result != 404 and result['friends'] == 'YES':
+                if result not in [401, 404] and result['friends'] == 'YES':
                     a1.follow(a2)
                     a2.follow(a1)
 

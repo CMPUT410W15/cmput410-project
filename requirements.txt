@@ -5,3 +5,4 @@ django
 pillow
 commonmark
 requests
+python-dateutil
