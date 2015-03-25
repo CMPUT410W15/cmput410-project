@@ -18,6 +18,7 @@ from author.models import Author, reset_foreign_authors
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -91,12 +92,23 @@ def home(request):
 
     form= CommentForm()
     personal_stream_toggle=True
+
+    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    page= request.GET.get('page')
+    try:
+        posts=paginator.page(page)
+    except PageNotAnInteger:
+        #If page isn't an integer deliver the first page
+        posts=paginator.page(1)
+    except EmptyPage:
+        posts=paginator.page(paginator.num_pages)
+
     return render(request,
                   'home.html',
                   {
                       'user': request.user,
                       'author': request.user.author,
-                      'posts': all_posts,
+                      'posts': posts,
                       'form': form,
                       'personal_stream':personal_stream_toggle,
                   })
@@ -139,13 +151,25 @@ def authorhome(request, authorpage):
     all_posts = set(public_posts + friends_posts + private_posts + to_me_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
+    #Added pagination to the author page as well
+    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    page= request.GET.get('page')
+    try:
+        posts=paginator.page(page)
+    except PageNotAnInteger:
+        #If page isn't an integer deliver the first page
+        posts=paginator.page(1)
+    except EmptyPage:
+        posts=paginator.page(paginator.num_pages)
+
+
     return render(request,
                   'authorhome.html',
                   {
                       'user': authorpage,
                       'email': whose.email,
                       'author': request.user.author,
-                      'posts': all_posts
+                      'posts': posts,
                   })
 
 def personal_stream(request):
@@ -179,15 +203,26 @@ def personal_stream(request):
 
     all_posts = set(private_posts + to_me_posts +by_me_posts + friends_posts + foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
-    print(all_posts)
+    #print(all_posts)
     global_stream_toggle=True
+
+    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    page= request.GET.get('page')
+    try:
+        posts=paginator.page(page)
+    except PageNotAnInteger:
+        #If page isn't an integer deliver the first page
+        posts=paginator.page(1)
+    except EmptyPage:
+        posts=paginator.page(paginator.num_pages)
+
     form= CommentForm()
     return render(request,
                   'home.html',
                   {
                       'user': request.user,
                       'author': request.user.author,
-                      'posts': all_posts,
+                      'posts': posts,
                       'form': form,
                       'global_stream':global_stream_toggle,
                   })
