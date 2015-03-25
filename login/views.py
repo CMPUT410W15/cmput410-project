@@ -14,11 +14,12 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
-from author.models import Author, reset_foreign_authors
+from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
 from posts.remote import reset_remote_posts
+from author.remote import reset_remote_authors
 
 
 @csrf_protect
@@ -63,7 +64,7 @@ def home(request):
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
     elif '/accounts/login' in request.META['HTTP_REFERER']:
-        reset_foreign_authors()
+        reset_remote_authors()
         reset_remote_posts()
 
     posts = Post.objects.all()

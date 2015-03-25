@@ -2,40 +2,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from images.models import Image
-from common.util import gen_uuid, get_request_to_json, get_nodes
+from common.util import gen_uuid
 
 
 class FollowYourselfError(Exception): pass
-
-
-def reset_foreign_authors():
-    #Author.objects.filter(user=None).delete()
-
-    for node in get_nodes():
-        remote_authors = []
-        for author in get_request_to_json(node.url + 'authors'):
-            a = {'uid': author['id'],
-                 'displayname': author['displayname'],
-                 'host': author['host']}
-            author_obj, created = Author.objects.get_or_create(**a)
-            remote_authors.append(author_obj)
-
-        for a1 in remote_authors[:]:
-
-            remote_authors.remove(a1)
-            for a2 in remote_authors:
-                friends_url = 'friends/%s/%s' % (a1.uid, a2.uid)
-                result = get_request_to_json(node.url + friends_url)
-                if result not in [401, 404] and result['friends'] == 'YES':
-                    a1.follow(a2)
-                    a2.follow(a1)
-
-            for a2 in Author.objects.all():
-                friends_url = 'friends/%s/%s' % (a1.uid, a2.uid)
-                result = get_request_to_json(node.url + friends_url)
-                if result not in [401, 404] and result['friends'] == 'YES':
-                    a1.follow(a2)
-                    a2.follow(a1)
 
 
 # Create your models here.
