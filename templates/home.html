@@ -36,6 +36,14 @@
     </div>
     <div class= "col-md-7 col-md-push-2" >
 		{% if posts %}
+            {% if global_stream %}
+            <ul class="nav nav-tabs">
+              <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
+              <li role="presentation"><a href="/home/author/posts/friends/">Friends only</a></li>
+              <li role="presentation"><a href="/home/author/posts/foaf/">Friends of friends only</a></li>
+            </ul>
+            <br>
+            {% endif %}
 			{% for p in posts %}
  				<div class= "panel panel-default">
  					<div class= "panel-heading">
@@ -180,7 +188,7 @@
                 </script>
             </div>
             {% endfor %}
-            
+
             <div class="pagination">
                 <span class="step-links">
                     {% if posts.has_previous %}

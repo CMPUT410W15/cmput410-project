@@ -57,8 +57,8 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    if '/accounts/login' in request.META['HTTP_REFERER']:
-        reset_foreign_authors()
+    # if '/accounts/login' in request.META['HTTP_REFERER']:
+    #     reset_foreign_authors()
 
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
@@ -202,6 +202,84 @@ def personal_stream(request):
 
 
     all_posts = set(private_posts + to_me_posts +by_me_posts + friends_posts + foaf_posts)
+    all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+    #print(all_posts)
+    global_stream_toggle=True
+
+    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    page= request.GET.get('page')
+    try:
+        posts=paginator.page(page)
+    except PageNotAnInteger:
+        #If page isn't an integer deliver the first page
+        posts=paginator.page(1)
+    except EmptyPage:
+        posts=paginator.page(paginator.num_pages)
+
+    form= CommentForm()
+    return render(request,
+                  'home.html',
+                  {
+                      'user': request.user,
+                      'author': request.user.author,
+                      'posts': posts,
+                      'form': form,
+                      'global_stream':global_stream_toggle,
+                  })
+
+#Only display friends posts 
+def personal_stream_friends(request):
+    posts= Post.objects.all()
+    author = request.user.author
+
+    friends = [f for f in author.get_friends()]
+
+    friends_posts = []
+    posts_to_friends = [p for p in posts if p.visibility == FRIENDS]
+    for post in posts_to_friends:
+        if post.send_author in author.get_friends() or post.send_author == author:
+            friends_posts.append(post)
+
+    all_posts = set(friends_posts)
+    all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+
+    global_stream_toggle=True
+
+    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    page= request.GET.get('page')
+    try:
+        posts=paginator.page(page)
+    except PageNotAnInteger:
+        #If page isn't an integer deliver the first page
+        posts=paginator.page(1)
+    except EmptyPage:
+        posts=paginator.page(paginator.num_pages)
+
+    form= CommentForm()
+    return render(request,
+                  'home.html',
+                  {
+                      'user': request.user,
+                      'author': request.user.author,
+                      'posts': posts,
+                      'form': form,
+                      'global_stream':global_stream_toggle,
+                  })
+
+def personal_stream_foaf(request):
+    posts= Post.objects.all()
+    author = request.user.author
+
+    fof_dict = author.get_friends_of_friends()
+
+    foaf_posts = []
+    for p in [p for p in posts if p.visibility == FOAF]:
+        foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
+        if p.send_author in fof_dict.keys() or foaf:
+            foaf_posts.append(p)
+
+
+    all_posts = set(foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
     #print(all_posts)
     global_stream_toggle=True
