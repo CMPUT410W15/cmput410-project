@@ -13,6 +13,35 @@ class AuthorTests(TestCase):
         Author.objects.create(user=user2)
         Author.objects.create(user=user3)
 
+
+    def test_followees(self):
+        """Test get_followees navigation.
+
+        Here A -> B, B -> C and C -> A. Check that you can navigate around
+        this cycle using the methods mentioned.
+
+        """
+        user1 = User.objects.get(username='John')
+        user2 = User.objects.get(username='Jack')
+        user3 = User.objects.get(username='Josh')
+
+        author1 = Author.objects.get(user=user1)
+        author2 = Author.objects.get(user=user2)
+        author3 = Author.objects.get(user=user3)
+
+        author1.follow(author2)
+        author1.follow(author3)
+        author2.follow(author3)
+        #follower = author1.get_followers()[0]
+        #followee = author1.get_followees()[0]
+        followees= author1.get_followees()
+        self.assertEqual(len(followees),2)
+        
+        # self.assertEqual(follower.get_followees()[0], author1)
+        # self.assertEqual(followee.get_followers()[0], author1)
+        # self.assertEqual(follower.get_followers()[0], followee)
+        # self.assertEqual(followee.get_followees()[0], follower)
+
     def test_befriend_yourself(self):
         """Test that you cannot befriend yourself."""
         user1 = User.objects.get(username='John')

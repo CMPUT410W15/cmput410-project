@@ -23,27 +23,28 @@
                 {% if user.email %}
                     <h4> Email: {{ user.email }}</h4>
                 {% endif %}
-
                 {% if global_stream %}
-                    <a class= "btn btn-primary" href='/home'>Global newsfeed</a>
+                    <a class= "btn btn-primary btn-block" href='/home'>Global newsfeed</a>
                 {% endif %}
                 {% if personal_stream %}
-                    <a class="btn btn-primary" href="/home/author/posts">My newsfeed</a>
+                    <a class="btn btn-primary btn-block" href="/home/author/posts">My newsfeed</a>
                 {% endif %}
 
             </div>
         </div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
+        {% if global_stream %}
+        <ul class="nav nav-tabs">
+          <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
+          <li role="presentation"><a href="/home/author/posts/friends/">Friends only</a></li>
+          <li role="presentation"><a href="/home/author/posts/foaf/">Friends of friends only</a></li>
+          <li role="presentation"><a href="/home/author/posts/following/">People I'm following</a></li>
+          <li role="presentation"><a href="/home/author/posts/me/">Posts I made</a></li>
+        </ul>
+        <br>
+        {% endif %}
 		{% if posts %}
-            {% if global_stream %}
-            <ul class="nav nav-tabs">
-              <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
-              <li role="presentation"><a href="/home/author/posts/friends/">Friends only</a></li>
-              <li role="presentation"><a href="/home/author/posts/foaf/">Friends of friends only</a></li>
-            </ul>
-            <br>
-            {% endif %}
 			{% for p in posts %}
  				<div class= "panel panel-default">
  					<div class= "panel-heading">

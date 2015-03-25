@@ -144,6 +144,7 @@ class Post(models.Model):
 
     # def created_on(self):
     #     time=self.published
+    #Time retrieved will be off by 6 hours, so to counter that, subtract 6 hours
     #     time= time-datetime.timedelta(minutes=360)
     #     formatted_time= time.strftime("%B %d, %Y, %I:%M%p")
     #     return formatted_time
