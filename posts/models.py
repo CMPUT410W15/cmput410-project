@@ -49,6 +49,7 @@ class Post(models.Model):
     published = models.DateTimeField(auto_now_add=True)
 
     send_author = models.ForeignKey(Author, related_name='posts_sent')
+    # receive_author is no longer supported
     receive_author = models.ForeignKey(Author, null=True, blank=True,
                                        related_name='posts_received')
     image = models.ForeignKey(Image, null=True, blank=True)

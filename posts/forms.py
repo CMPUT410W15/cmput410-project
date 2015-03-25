@@ -1,11 +1,12 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
-from posts.models import Post
+from posts.models import *
 from author.models import Author
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
- 
+from images.models import *
+
 class PostForm(forms.Form):
 
     PLAINTEXT = 0
@@ -19,35 +20,25 @@ class PostForm(forms.Form):
     PUBLIC = 4
     SERVERONLY = 5
     VISIBILITY = ((PUBLIC, 'Public'),
-              (FRIEND, 'Friend'),
               (FRIENDS, 'Friends'),
               (FOAF, 'Friend Of A Friend'),
               (SERVERONLY, 'Server Only'),
               (PRIVATE, 'Private'),)
  
     title = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=36)), label=_("Title"))
+    description = forms.CharField(required=False, max_length=200)
     content = forms.CharField(widget=forms.Textarea, label=_("Content"))
     content_type = forms.ChoiceField(widget=forms.Select, choices=CONTENT_TYPE, label=_("Content Type"))
     visibility = forms.ChoiceField(widget=forms.Select, choices=VISIBILITY)
-    receive_author = forms.CharField(required=False, widget=forms.TextInput(), label=_("Recipient"))
+   
+    image = forms.ImageField(required=False, label=_("Attach Image:"))
     send_author = models.ForeignKey(Author)
+    categories = forms.CharField(required=False, widget=forms.TextInput())
+
  
     def clean(self):
 
         return self.cleaned_data
-
-    def clean_receive_author(self):
-        if self.cleaned_data['receive_author'] != "":
-            try:
-                recipient = Author.objects.get(user=User.objects.get(username=self.cleaned_data['receive_author']))
-
-            except User.DoesNotExist:
-                raise forms.ValidationError("Recipient username is incorrect or does not exist.")
-
-
-            return recipient
-        else:
-            return
 
 class CommentForm(forms.Form):
     content= forms.CharField(max_length=150, label =_("Content"), required=True)

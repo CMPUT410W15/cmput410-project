@@ -9,7 +9,9 @@ from author.models import Author
 from posts.models import Post
 from posts.forms import *
 from login.views import *
+from images.models import *
 import json
+
 @csrf_protect
 def post(request):
     # Create post
@@ -18,27 +20,28 @@ def post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            visibility = form.cleaned_data['visibility']
-            receive_author = form.cleaned_data['receive_author']
-            if receive_author:
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    receive_author=Author.objects.get(user=User.objects.get(username=receive_author)),
-                    send_author=me,
-                )
+            post = Post.objects.create(
+                title=form.cleaned_data['title'],
+                description =form.cleaned_data['description'],
+                content=form.cleaned_data['content'],
+                content_type=form.cleaned_data['content_type'],
+                visibility=form.cleaned_data['visibility'],
+                send_author=me,
+                image = request.FILES.get('image'),
+            )
+            post.save()
+            categories = form.cleaned_data['categories']
+            category = categories.split(',')
+            for c in category:
+                c = c.strip()
+                
+                try:
+                    post.categories.add(Category.objects.create(category = c))
+                except:
+                    print c
+                    
                 post.save()
-            else:
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    send_author=me,
-                )
-                post.save()
+
             return HttpResponseRedirect('/home')
     else:
         form = PostForm()
