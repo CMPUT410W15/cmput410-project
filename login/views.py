@@ -70,6 +70,12 @@ def home(request):
     #Get everyone's public posts and get the posts from friends they received
     public_posts = [p for p in posts if p.visibility == PUBLIC]
     private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
+
+    #Was missing private posts received
+    # private_posts_sent = [p for p in author.get_posts(visibility=PRIVATE)]
+    # private_posts_received=[p for p in author.get_received_posts(visibility=PRIVATE)]
+    # private_posts=private_posts_sent+private_posts_received
+
     to_me_posts = [p for p in author.get_received_posts()]
 
     friends_posts = []
@@ -89,6 +95,7 @@ def home(request):
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
     form= CommentForm()
+    personal_stream_toggle=True
     return render(request,
                   'home.html',
                   {
@@ -96,6 +103,7 @@ def home(request):
                       'author': request.user.author,
                       'posts': all_posts,
                       'form': form,
+                      'personal_stream':personal_stream_toggle,
                   })
 
 def authorhome(request, authorpage):
@@ -144,3 +152,49 @@ def authorhome(request, authorpage):
                       'author': request.user.author,
                       'posts': all_posts
                   })
+
+def personal_stream(request):
+    #Don't show all posts here, just the posts an author is 'interested in'
+    #Assumed to be your github activity/stream (for later), friends posts, FOAF posts, private posts and posts they received
+    #Does not include public posts/server posts
+
+    posts= Post.objects.all()
+    author = request.user.author
+
+    friends = [f for f in author.get_friends()]
+    fof_dict = author.get_friends_of_friends()
+
+    #Get private posts, posts the author received, friends posts and FOAF posts
+    private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
+    to_me_posts = [p for p in author.get_received_posts()]
+    by_me_posts= [p for p in author.get_posts()]
+
+    friends_posts = []
+    posts_to_friends = [p for p in posts if p.visibility == FRIENDS]
+    for post in posts_to_friends:
+        if post.send_author in author.get_friends() or post.send_author == author:
+            friends_posts.append(post)
+
+    foaf_posts = []
+    for p in [p for p in posts if p.visibility == FOAF]:
+        foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
+        if p.send_author in fof_dict.keys() or foaf:
+            foaf_posts.append(p)
+
+
+    all_posts = set(private_posts + to_me_posts +by_me_posts + friends_posts + foaf_posts)
+    all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+    print(all_posts)
+    global_stream_toggle=True
+    form= CommentForm()
+    return render(request,
+                  'home.html',
+                  {
+                      'user': request.user,
+                      'author': request.user.author,
+                      'posts': all_posts,
+                      'form': form,
+                      'global_stream':global_stream_toggle,
+                  })
+
+

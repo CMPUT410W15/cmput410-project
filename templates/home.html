@@ -23,6 +23,14 @@
                 {% if user.email %}
                     <h4> Email: {{ user.email }}</h4>
                 {% endif %}
+
+                {% if global_stream %}
+                    <a class= "btn btn-primary" href='/home'>Global newsfeed</a>
+                {% endif %}
+                {% if personal_stream %}
+                    <a class="btn btn-primary" href="/home/author/posts">My newsfeed</a>
+                {% endif %}
+
             </div>
         </div>
     </div>
