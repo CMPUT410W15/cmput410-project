@@ -15,9 +15,10 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
 from author.models import Author, reset_foreign_authors
-from posts.models import Post, reset_foreign_posts
+from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+from posts.remote import reset_remote_posts
 
 
 @csrf_protect
@@ -63,7 +64,7 @@ def home(request):
         return HttpResponseRedirect("/accounts/login/")
     elif '/accounts/login' in request.META['HTTP_REFERER']:
         reset_foreign_authors()
-        reset_foreign_posts()
+        reset_remote_posts()
 
     posts = Post.objects.all()
     author = request.user.author

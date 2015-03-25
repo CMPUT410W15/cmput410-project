@@ -4,8 +4,7 @@ from django.db import models
 from author.models import Author
 from images.models import Image
 from django.utils.safestring import mark_safe
-from common.util import gen_uuid, get_request_to_json, get_nodes
-from dateutil import parser
+from common.util import gen_uuid
 
 PRIVATE = 0
 FRIEND = 1
@@ -27,57 +26,6 @@ CONTENT_TYPE = ((PLAINTEXT, 'PlainText'),
 
 
 # Create your models here.
-def reset_foreign_posts():
-    visibility = {
-        'PRIVATE': 0,
-        'FRIEND': 1,
-        'FRIENDS': 2,
-        'FOAF': 3,
-        'PUBLIC': 4,
-        'SERVERONLY': 5
-    }
-
-    content_type = {
-        'text/html': 0,
-        'markdown': 1,
-    }
-
-    node = get_nodes()[0]
-    for author in Author.objects.filter(user=None):
-        headers = {'Uuid': author.uid}
-        data = get_request_to_json(node.url + 'author/posts',
-                                   headers, ('api', 'test'))
-        for post in data['posts']:
-            a = Author.objects.get(uid=post['author']['id'])
-            post_data = {
-                'uid': post['guid'],
-                'title': post['title'],
-                'description': post['description'],
-                'content': post['content'],
-                'content_type': content_type[post['content-type']],
-                'visibility': visibility[post['visibility']],
-                'published': parser.parse(post['pubDate']),
-                'send_author': a
-            }
-
-            if not len(Post.objects.filter(uid=post_data['uid'])):
-                p = Post.objects.get_or_create(**post_data)[0]
-            else:
-                p = Post.objects.get(uid=post_data['uid'])
-
-            for comment in post['comments']:
-                a2 = Author.objects.get(uid=comment['author']['id'])
-                comment_data = {
-                    'uid': comment['guid'],
-                    'content': comment['comment'],
-                    'published': parser.parse(comment['pubDate']),
-                    'author': a2,
-                    'post': p
-                }
-                if not len(Comment.objects.filter(uid=comment_data['uid'])):
-                    Comment.objects.get_or_create(**comment_data)
-
-
 class Category(models.Model):
     category = models.CharField(max_length=100, unique=True)
 
