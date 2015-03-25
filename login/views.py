@@ -71,11 +71,6 @@ def home(request):
     public_posts = [p for p in posts if p.visibility == PUBLIC]
     private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
 
-    #Was missing private posts received
-    # private_posts_sent = [p for p in author.get_posts(visibility=PRIVATE)]
-    # private_posts_received=[p for p in author.get_received_posts(visibility=PRIVATE)]
-    # private_posts=private_posts_sent+private_posts_received
-
     to_me_posts = [p for p in author.get_received_posts()]
 
     friends_posts = []
