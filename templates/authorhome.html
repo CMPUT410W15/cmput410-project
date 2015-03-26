@@ -11,22 +11,24 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
     	<div class= "panel panel-default">
     		<div class= "panel-heading" style="text-align: center;">
         		<h4 class="panel-title"> {{user}} </h4>
         	</div>
-        	<div class= "panel-body" style="text-align: center;">
-        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-        		</br>
-        		</br>
-                {% if email %}
-                    <h4> Email: {{ email }}</h4>
-                {% endif %}
-       		</div>
+            <div class= "panel-body">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px text-align:center;;" class= "center-block"/>
+                <br />
+                <br />
+                <form method="POST" action="/friends/edit/">
+                    {% csrf_token %}
+                    <h5>Email:</h5><span id="profileEmail">{{ user.email }}</span> <br />
+                    <h5>Github:</h5><span id="profileGithub">{{ author.github }}</span> <br />
+              </form>
+            </div>
        	</div>
     </div>
-    <div class= "col-md-7 col-md-push-2" >
+    <div class= "col-md-7 col-md-push-1" >
 		{% if posts %}
 			{% for p in posts %}
  				<div class= "panel panel-default">
@@ -38,9 +40,9 @@
                             {% if p.receive_author %}
                                 <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
                             {% endif %}
-                            </br> 
+                            <br /> 
                             {{p.published}} 
-                            </br> 
+                            <br /> 
                             {{p.title}} 
                         </span>
                         {% if author == p.send_author %}
