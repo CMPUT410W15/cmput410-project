@@ -106,8 +106,7 @@ def home(request):
 def authorhome(request, authorpage):
     #Who is viewing their page?
     viewer = request.user.author
-    whose = User.objects.get(username=authorpage)
-    author = User.objects.get(username=authorpage).author
+    author = Author.objects.get(uid=authorpage)
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = set()
     for post in Post.objects.all():
@@ -144,8 +143,8 @@ def authorhome(request, authorpage):
     return render(request,
                   'authorhome.html',
                   {
-                      'user': authorpage,
-                      'email': whose.email,
+                      'user': author.user.username if author.user else author.displayname,
+                      'email': author.user.email if author.user else None,
                       'author': request.user.author,
                       'posts': all_posts
                   })
