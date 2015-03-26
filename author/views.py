@@ -42,3 +42,13 @@ def unfollow(request, uid):
     me = Author.objects.get(user=request.user)
     me.unfollow(Author.objects.get(uid=uid))
     return redirect('/friends/')
+
+def edit(request):
+    me = Author.objects.get(user=request.user)
+    if 'email' in request.POST:
+        request.user.email = request.POST['email']
+        request.user.save()
+    if 'github' in request.POST:
+        me.github = request.POST['github']
+        me.save()
+    return redirect('/home')
