@@ -78,7 +78,8 @@ def home(request):
     public_posts = [p for p in posts if p.visibility == PUBLIC]
     private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
 
-    to_me_posts = [p for p in author.get_received_posts()]
+    #Rendered redundant by change in the post model
+    #to_me_posts = [p for p in author.get_received_posts()]
 
     friends_posts = []
     posts_to_friends = [p for p in posts if p.visibility == FRIENDS]
@@ -92,8 +93,7 @@ def home(request):
         if p.send_author in fof_dict.keys() or foaf:
             foaf_posts.append(p)
 
-    all_posts = set(public_posts + private_posts + to_me_posts +
-                    friends_posts + foaf_posts)
+    all_posts = set(public_posts + private_posts + friends_posts + foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
     form= CommentForm()
@@ -185,7 +185,6 @@ def personal_stream(request):
 
     posts= Post.objects.all()
     author = request.user.author
-
     friends = [f for f in author.get_friends()]
     fof_dict = author.get_friends_of_friends()
 
@@ -222,6 +221,7 @@ def personal_stream(request):
 
     all_posts = set(private_posts + friends_posts + foaf_posts + by_me_posts + public_by_friends)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+    print("ALL POSTS:",all_posts)
     global_stream_toggle=True
 
     paginator= Paginator(all_posts,8) #Show 8 posts per page 
@@ -247,6 +247,7 @@ def personal_stream(request):
 
 def personal_stream_friends(request):
     #Get friends posts (ones by friends) only
+    #Need FRIENDS, FOAF, PUBLIC and SERVERONLY visibilities.
 
     posts= Post.objects.all()
     author = request.user.author
@@ -257,7 +258,26 @@ def personal_stream_friends(request):
         if post.send_author in author.get_friends():
             friends_posts.append(post)
 
-    all_posts = set(friends_posts)
+    #TODO: Need posts made by friends with visibility=PUBLIC, should be done
+    public_posts= [p for p in posts if p.visibility==PUBLIC]
+    #print(public_posts)
+    public_by_friends=[]
+    for post in public_posts:
+        if post.send_author in author.get_friends():
+            public_by_friends.append(post)
+
+    #Get FOAF posts your friends made
+    fof_dict = author.get_friends_of_friends()
+    foaf_posts = []
+    for p in [p for p in posts if p.visibility == FOAF]:
+        foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
+        if p.send_author in fof_dict.keys() or foaf:
+            #Only get FOAF posts that you didn't make and were made
+            #only by your friends
+            if p.send_author != author and p.send_author in author.get_friends():
+                foaf_posts.append(p)
+
+    all_posts = set(friends_posts+public_by_friends+foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
     global_stream_toggle=True
 
@@ -282,7 +302,8 @@ def personal_stream_friends(request):
                       'global_stream':global_stream_toggle,
                   })
 
-#Only see FOAF posts (not ones you made that is)
+#Only see FOAF posts (not ones you made that is). Will probably end up
+#removing this later cause it seems kinda pointless.
 def personal_stream_foaf(request):
     posts= Post.objects.all()
     author = request.user.author
@@ -294,9 +315,9 @@ def personal_stream_foaf(request):
         foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
         if p.send_author in fof_dict.keys() or foaf:
             #Only get FOAF posts that you didn't make.
-            if p.send_author != author:
-                foaf_posts.append(p)
+            foaf_posts.append(p)
 
+    print("FOAF posts: ",foaf_posts)
     all_posts = set(foaf_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
     #print(all_posts)
@@ -337,7 +358,7 @@ def personal_stream_following(request):
         posts= person.get_posts(visibility=PUBLIC)
         for post in posts:
             the_posts.append(post)
-    print(the_posts)
+    #print(the_posts)
     all_posts=set(the_posts)
     all_posts=sorted(all_posts, key=lambda x: x.published, reverse=True)
 
