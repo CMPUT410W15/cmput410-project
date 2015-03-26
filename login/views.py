@@ -93,7 +93,10 @@ def home(request):
         if p.send_author in fof_dict.keys() or foaf:
             foaf_posts.append(p)
 
-    all_posts = set(public_posts + private_posts + friends_posts + foaf_posts)
+    #Get server posts
+    server_posts=[p for p in posts if p.visibility==SERVERONLY]
+
+    all_posts = set(public_posts + private_posts + friends_posts + foaf_posts+ server_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
     form= CommentForm()
@@ -139,10 +142,11 @@ def authorhome(request, authorpage):
     public_posts = [p for p in posts if p.visibility == PUBLIC]
     if (viewer == author):
         private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
-        to_me_posts = [p for p in author.get_received_posts()]
+        #Rendered redundant by the change in the post model
+        #to_me_posts = [p for p in author.get_received_posts()]
     else:
         private_posts = list()
-        to_me_posts = list()
+        #to_me_posts = list()
 
     friends_posts = []
     posts_to_friends = [p for p in posts if p.visibility == FRIENDS]
@@ -153,7 +157,7 @@ def authorhome(request, authorpage):
     ###TODO: FOAF *could* be implemented for an author's home page
     ### But currently I think it should just be posts made by that author.
 
-    all_posts = set(public_posts + friends_posts + private_posts + to_me_posts)
+    all_posts = set(public_posts + friends_posts + private_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
 
     #Added pagination to the author page as well
@@ -178,23 +182,23 @@ def authorhome(request, authorpage):
                   })
 
 def personal_stream(request):
-    #Don't show all posts, just the posts an author is 'interested in'
-    #Assumed to be your github activity/stream (for later), 
-    #friends posts (PUBLIC and FRIENDS category), FOAF posts, private posts
-    #Does not include public posts/server posts
+    #Doesn't show all posts, just the posts an author is 'interested in'
+    #Assumed to be your github activity/stream (to be done later), 
+    #friends posts (both FRIENDS and PUBLIC visibilities), FOAF posts, private posts
+    #Doesn't include public posts/server posts
 
     posts= Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]
     fof_dict = author.get_friends_of_friends()
 
-    #Get private posts you made
+    #Get private posts 
     private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
 
     #This part is rendered invalid by change in post model 
     #to_me_posts = [p for p in author.get_received_posts()]
 
-    #Get posts you made regardless of visibility?
+    #Get posts you made regardless of visibility.
     by_me_posts= [p for p in author.get_posts()]
 
     #Get posts made by friends with visibility=FRIENDS
@@ -204,24 +208,29 @@ def personal_stream(request):
         if post.send_author in author.get_friends():
             friends_posts.append(post)
 
-    #Get FOAF posts others sent (and probably yourself as well)
+    #Get posts made by friends with visibility=PUBLIC
+    public_posts= [p for p in posts if p.visibility==PUBLIC]
+    public_by_friends=[]
+    for post in public_posts:
+        if post.send_author in author.get_friends():
+            public_by_friends.append(post)
+
+    #Get FOAF posts
     foaf_posts = []
     for p in [p for p in posts if p.visibility == FOAF]:
         foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
         if p.send_author in fof_dict.keys() or foaf:
             foaf_posts.append(p)
 
-    #TODO: Need posts made by friends with visibility=PUBLIC, should be done
-    public_posts= [p for p in posts if p.visibility==PUBLIC]
-    print(public_posts)
-    public_by_friends=[]
-    for post in public_posts:
-        if post.send_author in author.get_friends():
-            public_by_friends.append(post)
+    #Get posts made by you/friends with visibility=SERVER
+    all_server_posts=[p for p in posts if p.visibility==SERVERONLY]
+    server_posts=[]
+    for post in all_server_posts:
+        if post.send_author in author.get_friends() or post.send_author==author:
+            server_posts.append(post)
 
-    all_posts = set(private_posts + friends_posts + foaf_posts + by_me_posts + public_by_friends)
+    all_posts = set(private_posts + friends_posts + foaf_posts + by_me_posts + public_by_friends+server_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
-    print("ALL POSTS:",all_posts)
     global_stream_toggle=True
 
     paginator= Paginator(all_posts,8) #Show 8 posts per page 
@@ -246,19 +255,20 @@ def personal_stream(request):
                   })
 
 def personal_stream_friends(request):
-    #Get friends posts (ones by friends) only
-    #Need FRIENDS, FOAF, PUBLIC and SERVERONLY visibilities.
+    #Get friends posts (ones made by friends) only
+    #Has friends, public, FOAF and serveronly
 
     posts= Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]
+
     friends_posts = []
     posts_to_friends = [p for p in posts if p.visibility == FRIENDS]
     for post in posts_to_friends:
         if post.send_author in author.get_friends():
             friends_posts.append(post)
 
-    #TODO: Need posts made by friends with visibility=PUBLIC, should be done
+    #Get posts made by friends with visibility=PUBLIC
     public_posts= [p for p in posts if p.visibility==PUBLIC]
     #print(public_posts)
     public_by_friends=[]
@@ -277,7 +287,14 @@ def personal_stream_friends(request):
             if p.send_author != author and p.send_author in author.get_friends():
                 foaf_posts.append(p)
 
-    all_posts = set(friends_posts+public_by_friends+foaf_posts)
+    #Get posts made by friends with visibility=SERVER
+    server_posts=[p for p in posts if p.visibility==SERVERONLY]
+    server_by_friends=[]
+    for post in server_posts:
+        if post.send_author in author.get_friends():
+            server_by_friends.append(post)
+
+    all_posts = set(friends_posts+public_by_friends+foaf_posts+server_by_friends)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
     global_stream_toggle=True
 
@@ -302,116 +319,6 @@ def personal_stream_friends(request):
                       'global_stream':global_stream_toggle,
                   })
 
-#Only see FOAF posts (not ones you made that is). Will probably end up
-#removing this later cause it seems kinda pointless.
-def personal_stream_foaf(request):
-    posts= Post.objects.all()
-    author = request.user.author
 
-    fof_dict = author.get_friends_of_friends()
 
-    foaf_posts = []
-    for p in [p for p in posts if p.visibility == FOAF]:
-        foaf = any([(p.send_author in fof) for fof in fof_dict.values()])
-        if p.send_author in fof_dict.keys() or foaf:
-            #Only get FOAF posts that you didn't make.
-            foaf_posts.append(p)
-
-    print("FOAF posts: ",foaf_posts)
-    all_posts = set(foaf_posts)
-    all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
-    #print(all_posts)
-    global_stream_toggle=True
-
-    paginator= Paginator(all_posts,8) #Show 8 posts per page 
-    page= request.GET.get('page')
-    try:
-        posts=paginator.page(page)
-    except PageNotAnInteger:
-        #If page isn't an integer deliver the first page
-        posts=paginator.page(1)
-    except EmptyPage:
-        posts=paginator.page(paginator.num_pages)
-
-    form= CommentForm()
-    return render(request,
-                  'home.html',
-                  {
-                      'user': request.user,
-                      'author': request.user.author,
-                      'posts': posts,
-                      'form': form,
-                      'global_stream':global_stream_toggle,
-                  })
-
-#Get the posts for people you are following, which means friends and followees.
-#Because being friends=following and friend request=insta follow.
-def personal_stream_following(request):
-    posts=Post.objects.all()
-    author= request.user.author
-
-    #Get the people that you are following and get their public/server posts.
-    #Presumably you shouldn't see their friends, private and foaf posts.
-    the_posts=[]
-    following= author.get_followees()
-    for person in following:
-        posts= person.get_posts(visibility=PUBLIC)
-        for post in posts:
-            the_posts.append(post)
-    #print(the_posts)
-    all_posts=set(the_posts)
-    all_posts=sorted(all_posts, key=lambda x: x.published, reverse=True)
-
-    global_stream_toggle=True
-
-    paginator= Paginator(all_posts,8) #Show 8 posts per page 
-    page= request.GET.get('page')
-    try:
-        posts=paginator.page(page)
-    except PageNotAnInteger:
-        #If page isn't an integer deliver the first page
-        posts=paginator.page(1)
-    except EmptyPage:
-        posts=paginator.page(paginator.num_pages)
-
-    form= CommentForm()
-    return render(request,
-                  'home.html',
-                  {
-                      'user': request.user,
-                      'author': request.user.author,
-                      'posts': posts,
-                      'form': form,
-                      'global_stream':global_stream_toggle,
-                  })
-
-#Get the posts that only you made, regardless of visibility
-def personal_stream_me(request):
-    author=request.user.author
-    by_me_posts= [p for p in author.get_posts()]
-    all_posts = set(by_me_posts)
-    all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
-
-    global_stream_toggle=True
-
-    paginator= Paginator(all_posts,8) #Show 8 posts per page 
-    page= request.GET.get('page')
-    try:
-        posts=paginator.page(page)
-    except PageNotAnInteger:
-        #If page isn't an integer deliver the first page
-        posts=paginator.page(1)
-    except EmptyPage:
-        posts=paginator.page(paginator.num_pages)
-
-    form= CommentForm()
-    return render(request,
-                  'home.html',
-                  {
-                      'user': request.user,
-                      'author': request.user.author,
-                      'posts': posts,
-                      'form': form,
-                      'global_stream':global_stream_toggle,
-                  })
 

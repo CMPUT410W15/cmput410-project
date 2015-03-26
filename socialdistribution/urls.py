@@ -27,9 +27,6 @@ urlpatterns = patterns('',
     url(r'^home/([^/]+)/$', authorhome),
     url(r'^home/author/posts/$',personal_stream),
     url(r'^home/author/posts/friends/$',personal_stream_friends),
-    url(r'^home/author/posts/foaf/$',personal_stream_foaf),
-    url(r'^home/author/posts/following/$',personal_stream_following),
-    url(r'^home/author/posts/me/$',personal_stream_me),
     url(r'^post/(?P<post_id>[\w-]+)/$', comment, name="add_comment")
 )
 

@@ -65,10 +65,7 @@ var editProfile = function () {
         {% if global_stream %}
         <ul class="nav nav-tabs">
           <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
-          <li role="presentation"><a href="/home/author/posts/friends/">Friends only</a></li>
-          <li role="presentation"><a href="/home/author/posts/foaf/">Friends of friends only</a></li>
-          <li role="presentation"><a href="/home/author/posts/following/">People I'm following</a></li>
-          <li role="presentation"><a href="/home/author/posts/me/">Posts I made</a></li>
+          <li role="presentation"><a href="/home/author/posts/friends/">Friends posts only</a></li>
         </ul>
         <br>
         {% endif %}
@@ -234,6 +231,7 @@ var editProfile = function () {
             </div>
 
         {% else %}
+        <h4> No posts available. </h4>
         {% endif %}
     </div>
 </div>
