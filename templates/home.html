@@ -9,20 +9,46 @@
 {% load staticfiles %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#profileEditButton").click(editProfile);
+});
+
+var editProfile = function () {
+    console.log("there");
+    $("#profileEmail").replaceWith(function() {
+        return $('<input class="form-control" name="email"/>').val($(this).contents().text());
+    });
+    $("#profileGithub").replaceWith(function() {
+        return $('<input class="form-control" name="github"/>').val($(this).contents().text());
+    });
+    var $button = $("#profileEditButton");
+    $button.prop("value", "submit");
+    $button.off('click');
+    $button.html("Submit");
+    setTimeout(function(){ $button.prop("type", "submit"); }, 1); //wonderful hack
+};
+</script>
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class= "panel panel-default">
             <div class= "panel-heading" style="text-align: center;">
                 <h4 class="panel-title"> {{user.username}} </h4>
             </div>
             <div class= "panel-body" style="text-align: center;">
-                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-                </br>
-                </br>
-                {% if user.email %}
-                    <h4> Email: {{ user.email }}</h4>
-                {% endif %}
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;;" class= "center-block"/>
+                <br />
+                <br />
+                <form method="POST" action="/friends/edit/">
+                    {% csrf_token %}
+                        <h5>Email:</h5><span id="profileEmail">{{ user.email }}</span> <br />
+                        <h5>Github:</h5><span id="profileGithub">{{ author.github }}</span> <br />
+                        <br />
+                        <button id="profileEditButton" type="button" class="btn btn-default" aria-label="Edit">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit
+                        </button>
+                </form>
                 {% if global_stream %}
                     <a class= "btn btn-primary btn-block" href='/home'>Global newsfeed</a>
                 {% endif %}
@@ -33,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div class= "col-md-7 col-md-push-2" >
+    <div class= "col-md-7 col-md-push-1" >
         {% if global_stream %}
         <ul class="nav nav-tabs">
           <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
@@ -44,6 +70,24 @@
         </ul>
         <br>
         {% endif %}
+            <div class= "panel-body">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px text-align:center;;" class= "center-block"/>
+                <br />
+                <br />
+                <form method="POST" action="/friends/edit/">
+                    {% csrf_token %}
+                    <h5>Email:</h5><span id="profileEmail">{{ user.email }}</span> <br />
+                    <h5>Github:</h5><span id="profileGithub">{{ author.github }}</span> <br />
+                    <br />
+                    <button id="profileEditButton" type="button" class="btn btn-default" aria-label="Edit">
+                      <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit
+                  </button>
+              </form>
+            </div>
+        </div>
+    </div>
+    <div class= "col-md-7 col-md-push-1" >
+>>>>>>> 5990c28c4cd2b3029f39e089483ecf9e032dd837
 		{% if posts %}
 			{% for p in posts %}
  				<div class= "panel panel-default">
@@ -51,13 +95,13 @@
  						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
  							style= "height:40px; width:40px;"/> </span>
  						<span style="display:inline-block; padding-left: 5pt;"> 
-                            <a href="/home/{{p.send_author}}">{{p.send_author}} </a>
+                            <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
                             {% if p.receive_author %}
                                 <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
                             {% endif %}
-                            </br> 
+                            <br /> 
                             {{p.published}} 
-                            </br> 
+                            <br /> 
                             {{p.title}} 
                         </span>
                         {% if author == p.send_author %}
@@ -101,12 +145,10 @@
                 $(function() {
                     $('#{{p.uid}}-1').on('submit', function(event) {
                         event.preventDefault();
-                        console.log('form submitted for {{p.uid}}-1')
                         create_comment();
                     });
 
                     function create_comment() {
-                        console.log('create comment is working')
                         $.ajax({
                             url:"/post/comment/{{p.uid}}/",
                             type:"POST",

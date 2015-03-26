@@ -14,11 +14,15 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
-from author.models import Author, reset_foreign_authors
+from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from posts.remote import reset_remote_posts
+from author.remote import reset_remote_authors
+
 
 @csrf_protect
 def register(request):
@@ -58,12 +62,13 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    # if '/accounts/login' in request.META['HTTP_REFERER']:
-    #     reset_foreign_authors()
-
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
+    elif '/accounts/login' in request.META['HTTP_REFERER']:
+        reset_remote_authors()
+        reset_remote_posts()
+
     posts = Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]
@@ -117,8 +122,7 @@ def home(request):
 def authorhome(request, authorpage):
     #Who is viewing their page?
     viewer = request.user.author
-    whose = User.objects.get(username=authorpage)
-    author = User.objects.get(username=authorpage).author
+    author = Author.objects.get(uid=authorpage)
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = set()
     for post in Post.objects.all():
@@ -167,8 +171,8 @@ def authorhome(request, authorpage):
     return render(request,
                   'authorhome.html',
                   {
-                      'user': authorpage,
-                      'email': whose.email,
+                      'user': author.user.username if author.user else author.displayname,
+                      'email': author.user.email if author.user else None,
                       'author': request.user.author,
                       'posts': posts,
                   })

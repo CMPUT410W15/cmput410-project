@@ -9,8 +9,9 @@ def gen_uuid():
     """Generate a hex uuid string."""
     return str(uuid.uuid1().hex)
 
-def get_request_to_json(url):
-    req = requests.get(url)
+def get_request_to_json(url, headers={}, auth=None):
+    """Get decoded json from a Rest service."""
+    req = requests.get(url, headers=headers, auth=auth)
     if req.status_code == 200:
         return req.json()
     else:
