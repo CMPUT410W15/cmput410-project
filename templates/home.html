@@ -84,12 +84,10 @@
                 $(function() {
                     $('#{{p.uid}}-1').on('submit', function(event) {
                         event.preventDefault();
-                        console.log('form submitted for {{p.uid}}-1')
                         create_comment();
                     });
 
                     function create_comment() {
-                        console.log('create comment is working')
                         $.ajax({
                             url:"/post/comment/{{p.uid}}/",
                             type:"POST",
