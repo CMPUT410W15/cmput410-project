@@ -15,8 +15,8 @@ VISIBILITY = {
 }
 
 CONTENT_TYPE = {
-    'text/html': 0,
-    'markdown': 1,
+    u'text/html': 0,
+    u'markdown': 1,
 }
 
 
@@ -41,7 +41,7 @@ def add_remote_post(post):
         'title': post['title'],
         'description': post['description'],
         'content': post['content'],
-        'content_type': CONTENT_TYPE[post['content-type']],
+        'content_type': CONTENT_TYPE.get(post['content-type'], 0),
         'visibility': VISIBILITY[post['visibility']],
         'send_author': author
     }
@@ -62,5 +62,6 @@ def reset_remote_posts():
             headers = {'Uuid': author.uid}
             data = get_request_to_json(node.url + 'author/posts',
                                        headers, ('api', 'test'))
-            for post in data['posts']:
-                add_remote_post(post)
+            if not isinstance(data, int):
+                for post in data['posts']:
+                    add_remote_post(post)

@@ -21,7 +21,7 @@ def add_remote_connections(author1, remote_authors, node):
     ret_val = post_request_to_json(url, body, headers=headers, auth=auth)
     if isinstance(ret_val, dict):
         for uuid in ret_val['friends']:
-            author2 = Author.objects.get(uuid=friend)
+            author2 = Author.objects.get(uid=uuid)
             author1.follow(author2)
             author2.follow(author1)
 
