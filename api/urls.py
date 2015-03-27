@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     #These two must occur in this order to resolve correctly
     url(r'^friends/(?P<author_id>[\w-]+)/following$', views.following, name='following'),
     url(r'^friends/(?P<author_id1>[\w-]+)/(?P<author_id2>[\w-]+)$', views.is_following, name='is following'),
+    url(r'^friendrequest$', views.friendrequest, name='friendrequest')
 )
