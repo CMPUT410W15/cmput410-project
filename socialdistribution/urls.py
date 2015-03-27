@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^register/success/$', register_success),
     url(r'^home/$', home),
     url(r'^home/([^/]+)/$', authorhome),
+    url(r'^home/author/posts/$',personal_stream),
+    url(r'^home/author/posts/friends/$',personal_stream_friends),
     url(r'^post/(?P<post_id>[\w-]+)/$', comment, name="add_comment")
 )
 

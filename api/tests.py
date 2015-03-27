@@ -239,8 +239,8 @@ class APITests(TestCase):
         self.assertEqual(obj["comment"], "comment")
         self.assertTrue("author" in obj)
         self.assertEqual(obj["author"]["id"], "user")
-        self.assertEqual(self.post1.get_comments().count(), 1)
-
+        self.assertEqual(len(self.post1.get_comments()), 1)
+        
         # test not visible
         response = self.c.post(
             'posts/' + self.post2.uid + "/comment", data="comment"
