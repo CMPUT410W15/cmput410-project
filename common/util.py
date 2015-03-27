@@ -22,7 +22,10 @@ def post_request_to_json(url, data, headers={}, auth=None):
     response = requests.post(url, data=json.dumps(data), auth=auth,
                              headers=headers)
     if response.status_code == 200:
-        return response.json()
+        try:
+            return response.json()
+        except ValueError:
+            return response.status_code
     else:
         return response.status_code
 
