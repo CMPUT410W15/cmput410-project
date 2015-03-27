@@ -75,7 +75,9 @@ def comment(request,post_id):
         else:
             post.add_comment(me,comment_text)
             post.save()
-            response_data['content']= comment_text
+            #Display username with the comment
+            username=request.user.username
+            response_data['content']= username+": "+comment_text
             return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
         return HttpResponse(json.dumps({"nothing here": "this won't happen"}), content_type="application/json")
