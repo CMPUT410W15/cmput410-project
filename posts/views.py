@@ -18,8 +18,11 @@ def post(request):
     context = RequestContext(request)
     me = Author.objects.get(user=request.user)
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
+            image = Image.objects.create(image = request.FILES['image'])
+            image.save()
+
             post = Post.objects.create(
                 title=form.cleaned_data['title'],
                 description =form.cleaned_data['description'],
@@ -27,7 +30,7 @@ def post(request):
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                image = request.FILES.get('image'),
+                image = image,
             )
             post.save()
             categories = form.cleaned_data['categories']
@@ -56,6 +59,13 @@ def delete_post(request, uid):
     context = RequestContext(request)
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
+
+def handle_uploaded_file(f):
+    destination = open('some/file/name.txt', 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()
+
 
 @csrf_protect
 def comment(request,post_id):
