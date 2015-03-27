@@ -13,6 +13,23 @@ class AuthorTests(TestCase):
         Author.objects.create(user=user2)
         Author.objects.create(user=user3)
 
+    def test_followees(self):
+        """Test get_followees method."""
+        user1 = User.objects.get(username='John')
+        user2 = User.objects.get(username='Jack')
+        user3 = User.objects.get(username='Josh')
+
+        author1 = Author.objects.get(user=user1)
+        author2 = Author.objects.get(user=user2)
+        author3 = Author.objects.get(user=user3)
+
+        author1.follow(author2)
+        author1.follow(author3)
+        author2.follow(author3)
+
+        followees= author1.get_followees()
+        self.assertEqual(len(followees),2)
+
     def test_befriend_yourself(self):
         """Test that you cannot befriend yourself."""
         user1 = User.objects.get(username='John')

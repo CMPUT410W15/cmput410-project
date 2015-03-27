@@ -16,14 +16,16 @@
     		<div class= "panel-heading" style="text-align: center;">
         		<h4 class="panel-title"> {{user}} </h4>
         	</div>
-        	<div class= "panel-body" style="text-align: center;">
-        		<img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px;" class= "center-block"/>
-        		</br>
-        		</br>
-                {% if email %}
-                    <h4> Email: {{ email }}</h4>
-                {% endif %}
-       		</div>
+            <div class= "panel-body" style="text-align:center;">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                <br />
+                <br />
+                <form method="POST" action="/friends/edit/">
+                    {% csrf_token %}
+                    <h5>Email:</h5><span id="profileEmail">{{ user.email }}</span> <br />
+                    <h5>Github:</h5><span id="profileGithub">{{ author.github }}</span> <br />
+              </form>
+            </div>
        	</div>
     </div>
     <div class= "col-md-7 col-md-push-2" >
@@ -38,9 +40,9 @@
                             {% if p.receive_author %}
                                 <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"> </span> {{p.receive_author}}
                             {% endif %}
-                            </br> 
+                            <br /> 
                             {{p.published}} 
-                            </br> 
+                            <br /> 
                             {{p.title}} 
                         </span>
                         {% if author == p.send_author %}
@@ -84,12 +86,10 @@
                 $(function() {
                     $('#{{p.uid}}-1').on('submit', function(event) {
                         event.preventDefault();
-                        console.log('form submitted for {{p.uid}}-1')
                         create_comment();
                     });
 
                     function create_comment() {
-                        console.log('create comment is working')
                         $.ajax({
                             url:"/post/comment/{{p.uid}}/",
                             type:"POST",
@@ -171,6 +171,19 @@
                 </script>
             </div>
             {% endfor %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if posts.has_previous %}
+                        <a href="?page={{ posts.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    <span class="current">Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                    </span>
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}">Next</a>
+                    {% endif %}
+                </span>
+            </div>
         {% else %}
         {% endif %}
     </div>

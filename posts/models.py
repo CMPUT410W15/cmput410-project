@@ -92,7 +92,10 @@ class Post(models.Model):
             post=self).delete()
 
     def get_comments(self):
-        return Comment.objects.filter(post=self)
+        #Return comments sorted from newest to oldest
+        comments= Comment.objects.filter(post=self)
+        comments = sorted(comments, key=lambda x: x.published, reverse=True)
+        return comments
 
     def add_category(self, category):
         return self.categories.add(category)
@@ -145,7 +148,7 @@ class Comment(models.Model):
 
     def __unicode__(self):
         #return 'Author: %s Post: %s' % (self.author, self.post)
-        return self.content
+        return '%s: %s' %(self.author,self.content)
 
     def to_dict(self):
         return {
