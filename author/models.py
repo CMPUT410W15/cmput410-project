@@ -12,12 +12,12 @@ class FollowYourselfError(Exception): pass
 class Author(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)
-    vetted = models.BooleanField(default=False)
     host = models.CharField(max_length=100, blank=True)
     url = models.CharField(max_length=100 , blank=True)
     github = models.CharField(max_length=100, blank=True)
 
-    user = models.OneToOneField(User)
+    displayname = models.CharField(max_length=100, blank=True)
+    user = models.OneToOneField(User, null=True)
     picture = models.ForeignKey(Image, null=True, blank=True)
     connection = models.ManyToManyField("self", through='Connection',
                                         symmetrical=False,
@@ -25,13 +25,14 @@ class Author(models.Model):
 
     def __unicode__(self):
         #return '%s (%s)' % (self.user, self.uid)
-        return self.user.username
+        return self.user.username if self.user else self.displayname
 
     def to_dict(self):
+        name = self.user.username if self.user else self.displayname
         return {
             "id": self.uid,
             "host": self.host,
-            "displayname": self.user.username,
+            "displayname": name,
         }
 
     def befriend(self, author):

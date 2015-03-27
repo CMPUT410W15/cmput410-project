@@ -18,6 +18,10 @@ from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+from posts.remote import reset_remote_posts
+from author.remote import reset_remote_authors
+
+
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -32,7 +36,6 @@ def register(request):
             user.is_active = False
             user.save()
             author= Author(user=user)
-            author.vetted = False
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
@@ -60,6 +63,10 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
+    elif '/accounts/login' in request.META['HTTP_REFERER']:
+        reset_remote_authors()
+        reset_remote_posts()
+
     posts = Post.objects.all()
     author = request.user.author
     friends = [f for f in author.get_friends()]
@@ -99,14 +106,13 @@ def home(request):
 def authorhome(request, authorpage):
     #Who is viewing their page?
     viewer = request.user.author
-    whose = User.objects.get(username=authorpage)
-    author = User.objects.get(username=authorpage).author
+    author = Author.objects.get(uid=authorpage)
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = set()
     for post in Post.objects.all():
         if (post.send_author == author):
             posts.add(post)
-    
+
     #friends = [f for f in author.get_friends()]
     friends = 0
     for f in author.get_friends():
@@ -137,8 +143,8 @@ def authorhome(request, authorpage):
     return render(request,
                   'authorhome.html',
                   {
-                      'user': authorpage,
-                      'email': whose.email,
+                      'user': author.user.username if author.user else author.displayname,
+                      'email': author.user.email if author.user else None,
                       'author': request.user.author,
                       'posts': all_posts
-                  })    
+                  })
