@@ -11,13 +11,13 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
     	<div class= "panel panel-default">
     		<div class= "panel-heading" style="text-align: center;">
         		<h4 class="panel-title"> {{user}} </h4>
         	</div>
-            <div class= "panel-body">
-                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px text-align:center;;" class= "center-block"/>
+            <div class= "panel-body" style="text-align: center;">
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 <br />
                 <br />
                 <form method="POST" action="/friends/edit/">
@@ -28,7 +28,7 @@
             </div>
        	</div>
     </div>
-    <div class= "col-md-7 col-md-push-1" >
+    <div class= "col-md-7 col-md-push-2" >
 		{% if posts %}
 			{% for p in posts %}
  				<div class= "panel panel-default">

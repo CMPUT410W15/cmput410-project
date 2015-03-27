@@ -185,7 +185,8 @@ def personal_stream(request):
     #Doesn't show all posts, just the posts an author is 'interested in'
     #Assumed to be your github activity/stream (to be done later), 
     #friends posts (both FRIENDS and PUBLIC visibilities), FOAF posts, private posts
-    #Doesn't include public posts/server posts
+    #Also includes public/server posts of the people an author is following.
+    #Doesn't include public posts/server posts otherwise.
 
     posts= Post.objects.all()
     author = request.user.author
@@ -229,8 +230,24 @@ def personal_stream(request):
         if post.send_author in author.get_friends() or post.send_author==author:
             server_posts.append(post)
 
-    all_posts = set(private_posts + friends_posts + foaf_posts + by_me_posts + public_by_friends+server_posts)
+
+    #Get the people that you are following and get their public/server posts.
+    #Presumably you shouldn't see their friends, private and foaf posts.
+    following_posts=[]
+    following= author.get_followees()
+    for person in following:
+        posts_public= person.get_posts(visibility=PUBLIC)
+        posts_server= person.get_posts(visibility=SERVERONLY)
+        for post in posts_public:
+            following_posts.append(post)
+        for post in posts_server:
+            following_posts.append(post)
+
+
+    all_posts = set(private_posts + friends_posts + foaf_posts + by_me_posts + public_by_friends+server_posts+following_posts)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+
+    #Have a toggle/button to go back to the global stream
     global_stream_toggle=True
 
     paginator= Paginator(all_posts,8) #Show 8 posts per page 
@@ -296,6 +313,8 @@ def personal_stream_friends(request):
 
     all_posts = set(friends_posts+public_by_friends+foaf_posts+server_by_friends)
     all_posts = sorted(all_posts, key=lambda x: x.published, reverse=True)
+
+    #Have a toggle to go back to the global newsfeed
     global_stream_toggle=True
 
     paginator= Paginator(all_posts,8) #Show 8 posts per page 
