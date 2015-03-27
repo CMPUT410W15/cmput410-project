@@ -1,7 +1,7 @@
 """Functions for dealing with remote posts."""
 from author.models import Author
 from posts.models import Post, Comment
-from common.util import get_request_to_json, get_nodes
+from common.util import AUTH, get_request_to_json, get_nodes
 from dateutil import parser
 
 
@@ -61,7 +61,7 @@ def reset_remote_posts():
         for author in Author.objects.filter(user=None):
             headers = {'Uuid': author.uid}
             data = get_request_to_json(node.url + 'author/posts',
-                                       headers, ('api', 'test'))
+                                       headers, AUTH)
             if not isinstance(data, int):
                 for post in data['posts']:
                     add_remote_post(post)

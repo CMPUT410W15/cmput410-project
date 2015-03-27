@@ -6,6 +6,9 @@ import requests
 from management.models import Node
 
 
+AUTH = ('api', 'api')
+
+
 def gen_uuid():
     """Generate a hex uuid string."""
     return str(uuid.uuid1().hex)
