@@ -1,5 +1,6 @@
 """Generic functions shared across applications."""
 import uuid
+import json
 
 import requests
 from management.models import Node
@@ -16,6 +17,14 @@ def get_request_to_json(url, headers={}, auth=None):
         return req.json()
     else:
         return req.status_code
+
+def post_request_to_json(url, data, headers={}, auth=None):
+    response = requests.post(url, data=json.dumps(data), auth=auth,
+                             headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return response.status_code
 
 def get_nodes():
     ignore = ['host', '127.0.0.1:8000', '127.0.0.1', 'localhost']

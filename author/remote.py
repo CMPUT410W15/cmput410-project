@@ -1,20 +1,27 @@
 """Functions for dealing with remote authors."""
 from author.models import Author
-from common.util import get_request_to_json, get_nodes
+from common.util import get_request_to_json, post_request_to_json, get_nodes
 
 
 def add_remote_connections(author1, remote_authors, node):
-    for author2 in remote_authors:
-        friends_url = 'friends/%s/%s' % (author1.uid, author2.uid)
-        result = get_request_to_json(node.url + friends_url)
-        if result not in [401, 404] and result['friends'] == 'YES':
-            author1.follow(author2)
-            author2.follow(author1)
+    authors = [a for a in Author.objects.all()] + remote_authors
 
-    for author2 in Author.objects.all():
-        friends_url = 'friends/%s/%s' % (author1.uid, author2.uid)
-        result = get_request_to_json(node.url + friends_url)
-        if result not in [401, 404] and result['friends'] == 'YES':
+    url = node.url + 'friends/%s' % author1.uid
+    auth = ('api', 'test')
+    headers = {
+        'Content-Type': 'application/json',
+        'Uuid': author1.uid
+    }
+    body = {
+        "query": "friends",
+        "author": author1.uid,
+        "authors": [a.uid for a in authors]
+    }
+
+    ret_val = post_request_to_json(url, body, headers=headers, auth=auth)
+    if isinstance(ret_val, dict):
+        for uuid in ret_val['friends']:
+            author2 = Author.objects.get(uuid=friend)
             author1.follow(author2)
             author2.follow(author1)
 
