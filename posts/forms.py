@@ -31,7 +31,7 @@ class PostForm(forms.Form):
     content_type = forms.ChoiceField(widget=forms.Select, choices=CONTENT_TYPE, label=_("Content Type"))
     visibility = forms.ChoiceField(widget=forms.Select, choices=VISIBILITY)
    
-    image = forms.ImageField(required=False, label=_("Attach Image:"))
+    #image = forms.ImageField(required=False, label=_("Attach Image:"))
     send_author = models.ForeignKey(Author)
     categories = forms.CharField(required=False, widget=forms.TextInput())
 

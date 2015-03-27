@@ -27,7 +27,7 @@ def post(request):
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                image = request.FILES.get('image'),
+                #image = request.FILES.get('image'),
             )
             post.save()
             categories = form.cleaned_data['categories']
