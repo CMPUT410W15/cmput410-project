@@ -1,5 +1,6 @@
 """Functions for dealing with remote authors."""
 from author.models import Author
+from common.util import AUTH
 from common.util import get_request_to_json, post_request_to_json, get_nodes
 
 
@@ -7,7 +8,6 @@ def add_remote_connections(author1, remote_authors, node):
     authors = [a for a in Author.objects.all()] + remote_authors
 
     url = node.url + 'friends/%s' % author1.uid
-    auth = ('api', 'test')
     headers = {
         'Content-Type': 'application/json',
         'Uuid': author1.uid
@@ -18,7 +18,7 @@ def add_remote_connections(author1, remote_authors, node):
         "authors": [a.uid for a in authors]
     }
 
-    ret_val = post_request_to_json(url, body, headers=headers, auth=auth)
+    ret_val = post_request_to_json(url, body, headers=headers, auth=AUTH)
     if isinstance(ret_val, dict):
         for uuid in ret_val['friends']:
             author2 = Author.objects.get(uid=uuid)
@@ -45,25 +45,24 @@ def reset_remote_authors():
 
 def send_remote_friend_request(local_author, remote_author):
     url = "http://%s/api/friendrequest" % remote_author.host
-    auth = ('api', 'test')
     headers = {
-        'Content-Type': 'application/json',
-        'Uuid': remote_author.uid
+        "Content-Type": "application/json",
+        "Uuid": remote_author.uid
     }
     body = {
-        'query': 'friendrequest',
-        'author': {
-            'id': local_author.uid,
-            'host': auth[0],
-            'displayname': local_author.user.username
+        "query": "friendrequest",
+        "author": {
+            "id": local_author.uid,
+            "host": AUTH[0],
+            "displayname": local_author.user.username
         },
-        'friend': {
-            'id': remote_author.uid,
-            'host': remote_author.host,
-            'displayname': remote_author.displayname,
-            'url': "http://%s/author/%s" % (remote_author.host,
+        "friend": {
+            "id": remote_author.uid,
+            "host": remote_author.host,
+            "displayname": remote_author.displayname,
+            "url": "http://%s/author/%s" % (remote_author.host,
                                             remote_author.uid)
         }
     }
 
-    post_request_to_json(url, body, headers=headers, auth=auth)
+    post_request_to_json(url, body, headers=headers, auth=AUTH)
