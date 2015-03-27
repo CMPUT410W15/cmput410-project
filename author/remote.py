@@ -41,3 +41,29 @@ def reset_remote_authors():
         for author in remote_authors[:]:
             remote_authors.remove(author)
             add_remote_connections(author, remote_authors, node)
+
+
+def send_remote_friend_request(local_author, remote_author):
+    url = "http://%s/api/friendrequest" % remote_author.host
+    auth = ('api', 'test')
+    headers = {
+        'Content-Type': 'application/json',
+        'Uuid': remote_author.uid
+    }
+    body = {
+        'query': 'friendrequest',
+        'author': {
+            'id': local_author.uid,
+            'host': auth[0],
+            'displayname': local_author.user.username
+        },
+        'friend': {
+            'id': remote_author.uid,
+            'host': remote_author.host,
+            'displayname': remote_author.displayname,
+            'url': "http://%s/author/%s" % (remote_author.host,
+                                            remote_author.uid)
+        }
+    }
+
+    post_request_to_json(url, body, headers=headers, auth=auth)

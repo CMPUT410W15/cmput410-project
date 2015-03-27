@@ -19,8 +19,8 @@ def posts(request):
     return HttpResponse(
         json.dumps(
             [
-                x.to_dict() 
-                for x in Post.objects.all() 
+                x.to_dict()
+                for x in Post.objects.all()
                 if x.visible_to(request.user)
             ]
         )
@@ -44,7 +44,7 @@ def author_posts(request, author_id):
 
     return HttpResponse(
         json.dumps(
-            [ 
+            [
                 x.to_dict()
                 for x in Post.objects.filter(send_author=author)
                 if x.visible_to(request.user)
@@ -86,7 +86,7 @@ def comment(request, post_id):
 
     # return the comment. Maybe they want the id...
     return HttpResponse(json.dumps(comment.to_dict()), status=201)
-    
+
 # Get all authors on host.
 def friends(request):
     return HttpResponse(
@@ -194,3 +194,47 @@ def following(request, author_id):
             }
         )
     )
+
+
+def friendrequest(request):
+    """ The following is an example request.
+
+    POST /api/friendrequest HTTP/1.1
+    Host: http://cs410.cs.ualberta.ca:41081
+    Content-Type: application/json
+
+    {
+      "query": "friendrequest",
+      "author": {
+          "displayname": "John"
+          "id": "270f39c0cf6011e48ba1000c29737de1",
+          "host": "http://hindlebook.tamarabyte.com",
+      },
+      "friend": {
+          "displayname":"Jake",
+          "id": "745a20b31faa78a88cbae4a000013d32",
+          "host":"http://cs410.cs.ualberta.ca:41081",
+          "url":"http://cs410.cs.ualberta.ca:41081/author/745a20b31faa78a88cbae4a000013d32"
+      }
+    }
+    """
+
+    # attempt to parse JSON body
+    try:
+        request_object = json.loads(request.body)
+    except:
+        return HttpResponseBadRequest('{"message": "JSON could not be parsed"}')
+
+    try:
+        author_id = request_object['friend']['id']
+        author = Author.objects.get(uid=author_id)
+
+        rauthor_info = request_object['author']
+        rauthor_data = {'uid': rauthor_info['id'],
+                        'displayname': rauthor_info['displayname'],
+                        'host': rauthor_info['host']}
+        rauthor, _ = Author.objects.get_or_create(**rauthor_data)
+        rauthor.befriend(author)
+    except:
+        return HttpResponseNotFound('{"message": "No such author"}')
+    return HttpResponse()

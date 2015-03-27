@@ -1,5 +1,7 @@
 from django.shortcuts import render, render_to_response, redirect
 from models import *
+from common.util import post_request_to_json
+from author.remote import send_remote_friend_request
 
 def friends(request):
     me = Author.objects.get(user=request.user)
@@ -25,7 +27,12 @@ def friends(request):
 
 def befriend(request, uid):
     me = Author.objects.get(user=request.user)
-    me.befriend(Author.objects.get(uid=uid))
+    other = Author.objects.get(uid=uid)
+    me.befriend(other)
+
+    if other.user == None:
+        send_remote_friend_request(me, other)
+
     return redirect('/friends/')
 
 def unbefriend(request, uid):
