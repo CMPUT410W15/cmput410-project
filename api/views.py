@@ -9,6 +9,7 @@ import json
 
 from author.models import *
 from posts.models import *
+from django.contrib.auth.models import User
 
 #TODO restrict methods
 #TODO ordering
@@ -16,15 +17,20 @@ from posts.models import *
 
 # Get all posts visible to the currently authenticated user.
 def posts(request):
-    return HttpResponse(
-        json.dumps(
-            [
-                x.to_dict()
-                for x in Post.objects.all()
-                if x.visible_to(request.user)
-            ]
+    try:
+        usr = User.objects.get(username=request.user.uid)
+        author = Author.objects.get(user=usr)
+        return HttpResponse(
+            json.dumps(
+                [
+                    x.to_dict()
+                    for x in Post.objects.all()
+                    if x.visible_to(author)
+                ]
+            )
         )
-    )
+    except:
+        return HttpResponseBadRequest('{"message": "No such author"}')
 
 # Get all posts marked as public on the server.
 def public_posts(request):

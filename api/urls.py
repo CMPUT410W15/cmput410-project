@@ -3,8 +3,8 @@ from django.contrib import admin
 import views
 
 urlpatterns = patterns('',
-    url(r'^posts$', views.posts, name='posts'),
-    url(r'^posts/public$', views.public_posts, name='public posts'),
+    url(r'^posts$', views.public_posts, name='public posts'),
+    url(r'^author/posts$', views.posts, name='posts'),
     url(r'^author/(?P<author_id>[\w-]+)/posts$', views.author_posts, name='author posts'),
     url(r'^posts/(?P<post_id>[\w-]+)$', views.post, name='post'),
     url(r'^posts/(?P<post_id>[\w-]+)/comment$', views.comment, name='comment'),
