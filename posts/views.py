@@ -9,36 +9,42 @@ from author.models import Author
 from posts.models import Post
 from posts.forms import *
 from login.views import *
+from images.models import *
 import json
+
 @csrf_protect
 def post(request):
     # Create post
     context = RequestContext(request)
     me = Author.objects.get(user=request.user)
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            visibility = form.cleaned_data['visibility']
-            receive_author = form.cleaned_data['receive_author']
-            if receive_author:
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    receive_author=Author.objects.get(user=User.objects.get(username=receive_author)),
-                    send_author=me,
-                )
+            image = Image.objects.create(image = request.FILES['image'])
+            image.save()
+
+            post = Post.objects.create(
+                title=form.cleaned_data['title'],
+                description =form.cleaned_data['description'],
+                content=form.cleaned_data['content'],
+                content_type=form.cleaned_data['content_type'],
+                visibility=form.cleaned_data['visibility'],
+                send_author=me,
+                image = image,
+            )
+            post.save()
+            categories = form.cleaned_data['categories']
+            category = categories.split(',')
+            for c in category:
+                c = c.strip()
+                
+                try:
+                    post.categories.add(Category.objects.create(category = c))
+                except:
+                    print c
+                    
                 post.save()
-            else:
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    send_author=me,
-                )
-                post.save()
+
             return HttpResponseRedirect('/home')
     else:
         form = PostForm()
@@ -53,6 +59,13 @@ def delete_post(request, uid):
     context = RequestContext(request)
     Post.objects.filter(uid=uid).delete()
     return HttpResponseRedirect('/home')
+
+def handle_uploaded_file(f):
+    destination = open('some/file/name.txt', 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()
+
 
 @csrf_protect
 def comment(request,post_id):
