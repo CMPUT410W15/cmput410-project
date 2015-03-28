@@ -32,7 +32,7 @@ class TestClient(Client):
 class APITests(TestCase):
 
     def setUp(self):
-        user1 = User.objects.create(username='John')
+        user1 = User.objects.create(username='user')
         user2 = User.objects.create(username='Jack')
         user3 = User.objects.create(username='Josh')
         self.author1 = Author.objects.create(user=user1, uid="user", host="host")
@@ -177,7 +177,7 @@ class APITests(TestCase):
 
     def test_posts(self):
 
-        response = self.c.get('posts')
+        response = self.c.get('author/posts')
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content)
         self.assertTrue(isinstance(obj, list))
@@ -191,7 +191,7 @@ class APITests(TestCase):
 
     def test_public_posts(self):
 
-        response = self.c.get('posts/public')
+        response = self.c.get('posts')
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content)
         self.assertTrue(isinstance(obj, list))
@@ -240,7 +240,7 @@ class APITests(TestCase):
         self.assertTrue("author" in obj)
         self.assertEqual(obj["author"]["id"], "user")
         self.assertEqual(len(self.post1.get_comments()), 1)
-        
+
         # test not visible
         response = self.c.post(
             'posts/' + self.post2.uid + "/comment", data="comment"
@@ -270,7 +270,7 @@ class APITests(TestCase):
         self.assertEqual(len(obj), 3)
 
         names = [i["displayname"] for i in obj]
-        self.assertTrue("John" in names)
+        self.assertTrue("user" in names)
         self.assertTrue("Jack" in names)
         self.assertTrue("Josh" in names)
 
@@ -282,7 +282,7 @@ class APITests(TestCase):
         obj = json.loads(response.content)
         self.assertTrue(isinstance(obj, dict))
         self.assertTrue("displayname" in obj)
-        self.assertEqual(obj["displayname"], "John")
+        self.assertEqual(obj["displayname"], "user")
         self.assertTrue("connections" in obj)
         self.assertTrue(isinstance(obj["connections"], list))
         self.assertEqual(len(obj["connections"]), 1)
