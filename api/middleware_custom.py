@@ -11,7 +11,7 @@ from management.models import *
 from author.models import *
 
 import base64
- 
+
 class APIMiddleware:
 
     def process_request(self, request):
@@ -32,26 +32,26 @@ class APIMiddleware:
 
         # Check for presence of user host and password
         try:
-            user, host, password = decoded.split(':')
+            uid, host, password = decoded.split(':')
         except:
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
 
         # Check if node exists
         if not Node.objects.filter(url=host).exists():
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
-        
+
         # Check for correct password
         if password != "password":
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
-            
+
         # Monkey-patch in user to request object
         try:
             # For a known user, grab their Author object
-            request.user = Author.objects.get(uid=user)
+            request.user = Author.objects.get(uid=uid)
         except:
             # For unknown user, mock-up a new Author object
             request.user = Author()
-            request.user.uid = user
+            request.user.uid = uid
             request.user.host = host
 
     '''
