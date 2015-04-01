@@ -20,19 +20,34 @@ def post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            image = Image.objects.create(image = request.FILES['image'])
-            image.save()
+            #Check if an image was uploaded before attempting to save an image or a post
+            # with a image 
+            if 'image' in request.FILES:
+                image = Image.objects.create(image = request.FILES['image'])
+                image.save()
 
-            post = Post.objects.create(
+                post = Post.objects.create(
+                    title=form.cleaned_data['title'],
+                    description =form.cleaned_data['description'],
+                    content=form.cleaned_data['content'],
+                    content_type=form.cleaned_data['content_type'],
+                    visibility=form.cleaned_data['visibility'],
+                    send_author=me,
+                    image = image,
+                )
+                post.save()
+
+            else:
+                post = Post.objects.create(
                 title=form.cleaned_data['title'],
                 description =form.cleaned_data['description'],
                 content=form.cleaned_data['content'],
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                image = image,
-            )
-            post.save()
+                )
+                post.save()
+
             categories = form.cleaned_data['categories']
             category = categories.split(',')
             for c in category:

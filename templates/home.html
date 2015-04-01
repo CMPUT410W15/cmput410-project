@@ -68,6 +68,24 @@ var editProfile = function () {
             <li role="presentation"><a href="/home/author/posts/friends/">Friends posts only</a></li>
         </ul>
         <br>
+        {% if github_activity %}
+        <div class= "panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">My recent github activity</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <ul>
+                    {% for item in github_activity %}
+                    <li>{{item}}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% endif %}
 		{% if posts %}
 			{% for p in posts %}
