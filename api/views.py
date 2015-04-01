@@ -202,6 +202,7 @@ def following(request, author_id):
     )
 
 
+@csrf_exempt
 def friendrequest(request):
     """ The following is an example request.
 
