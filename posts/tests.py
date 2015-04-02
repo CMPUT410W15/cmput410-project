@@ -13,9 +13,11 @@ class PostTests(TestCase):
         user1 = User.objects.create(username='John')
         user2 = User.objects.create(username='Jack')
         user3 = User.objects.create(username='Josh')
+        user4 = User.objects.create(username='Anon')
         self.author1 = Author.objects.create(user=user1)
         self.author2 = Author.objects.create(user=user2)
         self.author3 = Author.objects.create(user=user3)
+        self.author4= Author.objects.create(user=user4, host='team8')
 
         self.post1 = {'title': 'Post1',
                       'content': 'I like to say hi :D',
@@ -67,6 +69,18 @@ class PostTests(TestCase):
                       'send_author': self.author1,
                       'content_type': PLAINTEXT,
                       'visibility': PUBLIC}
+
+        self.post9 = {'title': 'Post9',
+                      'content': 'stuff',
+                      'send_author': self.author4,
+                      'content_type': PLAINTEXT,
+                      'visibility': PUBLIC}
+
+    #Test getting the host of a post
+    def test_get_host(self):
+        post9=Post.objects.create(**self.post9)
+        host=post9.send_author.host
+        self.assertEqual(host,'team8')
 
     def test_get_all_friends_author1_posts(self):
         #Posts 5,6,7 are friend - 8 and 3 are public.

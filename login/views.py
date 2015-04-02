@@ -44,7 +44,9 @@ def register(request):
             )
             user.is_active = False
             user.save()
-            author= Author(user=user)
+            #Create author object with user=current user and host being team 8
+            #if an account is created on our server
+            author= Author(user=user,host='team8')
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
