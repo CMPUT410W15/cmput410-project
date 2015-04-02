@@ -95,10 +95,12 @@ var editProfile = function () {
 			{% for p in posts %}
  				<div class= "panel panel-default">
  					<div class= "panel-heading">
- 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 							style= "height:40px; width:40px;"/> </span>
+                        {% if p.send_author == author and author.has_picture %}
+                        <span class="pull-left"> <img src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        {% else %}
+ 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        {% endif %}
  						<span style="display:inline-block; padding-left: 5pt;">
-
                             {% comment "Optional note" %}
                                 <p>Check if the host of the author of the post is team 8</p>
                                 <p> If not, display their host after their username </p>

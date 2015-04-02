@@ -17,8 +17,8 @@
         		<h4 class="panel-title"> {{user}} </h4>
         	</div>
             <div class= "panel-body" style="text-align:center;">
-                {% if picture %}
-                <img src="/media/{{picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% if view_picture %}
+                <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% else %}
                 <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% endif %}
