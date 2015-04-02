@@ -22,8 +22,8 @@ from posts.remote import reset_remote_posts
 from author.remote import reset_remote_authors
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from posts.remote import reset_remote_posts
 from author.remote import reset_remote_authors
+from posts.remote import reset_remote_posts
 
 @csrf_protect
 def register(request):
@@ -176,7 +176,7 @@ def authorhome(request, authorpage):
 
 def personal_stream(request):
     #Doesn't show all posts, just the posts an author is 'interested in'
-    #Assumed to be your github activity/stream (to be done later), 
+    #Assumed to be your github activity/stream (to be done later),
     #friends posts (both FRIENDS and PUBLIC visibilities), FOAF posts, private posts
     #Also includes public/server posts of the people an author is following.
     #Doesn't include public posts/server posts otherwise.
@@ -186,10 +186,10 @@ def personal_stream(request):
     friends = [f for f in author.get_friends()]
     fof_dict = author.get_friends_of_friends()
 
-    #Get private posts 
+    #Get private posts
     private_posts = [p for p in author.get_posts(visibility=PRIVATE)]
 
-    #This part is rendered invalid by the coming change in post model 
+    #This part is rendered invalid by the coming change in post model
     to_me_posts = [p for p in author.get_received_posts()]
 
     #Get posts you made regardless of visibility.
@@ -243,7 +243,7 @@ def personal_stream(request):
     #Have a toggle/button to go back to the global stream
     global_stream_toggle=True
 
-    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    paginator= Paginator(all_posts,8) #Show 8 posts per page
     page= request.GET.get('page')
     try:
         posts=paginator.page(page)
@@ -310,7 +310,7 @@ def personal_stream_friends(request):
     #Have a toggle to go back to the global newsfeed
     global_stream_toggle=True
 
-    paginator= Paginator(all_posts,8) #Show 8 posts per page 
+    paginator= Paginator(all_posts,8) #Show 8 posts per page
     page= request.GET.get('page')
     try:
         posts=paginator.page(page)
