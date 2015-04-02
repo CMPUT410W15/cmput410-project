@@ -38,7 +38,11 @@ var editProfile = function () {
             </div>
             
             <div class= "panel-body" style="text-align:center;">
-                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% if author.has_picture %}
+                    <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% else %}
+                    <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% endif %}
                 <br />
                 <br />
                 <form method="POST" action="/friends/edit/">
@@ -136,7 +140,7 @@ var editProfile = function () {
                         {% endcomment %}
 
                         {% if p.has_image %}
-                            <img src="/media/{{p.get_image}}" style="height:324px; width:620px;">
+                            <img src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
                         {% endif %}
 
                             <h5 style= "text-decoration: underline;"> Comments </h5>

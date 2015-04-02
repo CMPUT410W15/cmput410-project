@@ -125,6 +125,17 @@ class Author(models.Model):
         else:
             return 'Team4'
 
+    def has_picture(self):
+        if self.picture==None:
+            return False
+        else:
+            return True
+
+    def get_picture(self):
+        picture_location=self.picture.image
+        return picture_location
+
+
 
 class Connection(models.Model):
     from_author = models.ForeignKey(Author, related_name="from_authors")

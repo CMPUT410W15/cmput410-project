@@ -48,6 +48,7 @@ def register(request):
             #Create author object with user=current user and host being team 8
             #if an account is created on our server
             author= Author(user=user,host='team8')
+            #Assuming that the profile picture should have public visibility
             if 'picture' in request.FILES:
                 image = Image.objects.create(image = request.FILES['picture'],
                 visibility=PUBLIC)
