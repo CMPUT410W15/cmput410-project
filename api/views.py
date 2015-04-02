@@ -19,19 +19,17 @@ from django.contrib.auth.models import User
 # Get all posts visible to the currently authenticated user.
 def posts(request):
     try:
-        usr = User.objects.get(username=request.user.uid)
-        author = Author.objects.get(user=usr)
         return HttpResponse(
             json.dumps(
                 [
                     x.to_dict()
                     for x in Post.objects.all()
-                    if x.visible_to(author)
+                    if x.visible_to(request.user)
                 ]
             )
         )
     except:
-        return HttpResponseBadRequest('{"message": "No such author"}')
+        return HttpResponseBadRequest('{"message": "Authentication Rejected"}', status=401)
 
 # Get all posts marked as public on the server.
 def public_posts(request):
@@ -49,15 +47,18 @@ def author_posts(request, author_id):
     except:
         return HttpResponseBadRequest('{"message": "No such author"}')
 
-    return HttpResponse(
-        json.dumps(
-            [
-                x.to_dict()
-                for x in Post.objects.filter(send_author=author)
-                if x.visible_to(request.user)
-            ]
+    try:
+        return HttpResponse(
+            json.dumps(
+                [
+                    x.to_dict()
+                    for x in Post.objects.filter(send_author=author)
+                    if x.visible_to(request.user)
+                ]
+            )
         )
-    )
+    except:
+        return HttpResponseBadRequest('{"message": "Authentication Rejected"}', status=401)
 
 # Get a specific single post.
 def post(request, post_id):

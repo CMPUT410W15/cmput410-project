@@ -20,27 +20,41 @@ def post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
+            #Check if an image was uploaded before attempting to save an image or a post
+            # with a image 
+            if 'image' in request.FILES:
                 image = Image.objects.create(
                     image = request.FILES['image'],
                     visibility=form.cleaned_data['visibility'], 
                     )
                 image.save()
-                print "Image was saved successfully"
-            except:
-                print "No image was added"
+                
+            else:
+
                 image = None
 
-            post = Post.objects.create(
+                post = Post.objects.create(
+                    title=form.cleaned_data['title'],
+                    description =form.cleaned_data['description'],
+                    content=form.cleaned_data['content'],
+                    content_type=form.cleaned_data['content_type'],
+                    visibility=form.cleaned_data['visibility'],
+                    send_author=me,
+                    image = image,
+                )
+                post.save()
+
+            else:
+                post = Post.objects.create(
                 title=form.cleaned_data['title'],
                 description =form.cleaned_data['description'],
                 content=form.cleaned_data['content'],
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                image = image,
-            )
-            post.save()
+                )
+                post.save()
+
             categories = form.cleaned_data['categories']
             category = categories.split(',')
             for c in category:
@@ -49,6 +63,7 @@ def post(request):
                 try:
                     post.categories.add(Category.objects.create(category = c))
                 except:
+                    # Category already exists does not need to  be added.
                     print "Category " + c + " already exists and was not added."
                     
                 post.save()
