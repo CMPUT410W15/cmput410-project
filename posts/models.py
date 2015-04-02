@@ -147,6 +147,16 @@ class Post(models.Model):
         else:
             return 'Team4'
 
+    def has_image(self):
+        if self.image==None:
+            return False
+        else:
+            return True
+
+    def get_image(self):
+        image_location=self.image.image
+        return image_location
+        
 class Comment(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)

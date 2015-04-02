@@ -130,6 +130,16 @@ var editProfile = function () {
                     </div>
                     <div class= "panel-body">
                         {{p.markdown_to_html}}
+
+                         {% comment "Optional note2" %}
+                        <p> If the post has an image, show that image <p>
+                        {% endcomment %}
+
+                        {% if p.has_image %}
+                            <p>{{p.get_image}}</p>
+                            <img src="/media/{{p.get_image}}" style="height:324px; width:620px;">
+                        {% endif %}
+
                             <h5 style= "text-decoration: underline;"> Comments </h5>
                             <ul id='{{p.uid}}-2'>
                         {% if p.get_comments %}
