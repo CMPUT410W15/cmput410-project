@@ -20,8 +20,16 @@ def post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            image = Image.objects.create(image = request.FILES['image'])
-            image.save()
+            try:
+                image = Image.objects.create(
+                    image = request.FILES['image'],
+                    visibility=form.cleaned_data['visibility'], 
+                    )
+                image.save()
+                print "Image was saved successfully"
+            except:
+                print "No image was added"
+                image = None
 
             post = Post.objects.create(
                 title=form.cleaned_data['title'],
@@ -41,7 +49,7 @@ def post(request):
                 try:
                     post.categories.add(Category.objects.create(category = c))
                 except:
-                    print c
+                    print "Category " + c + " already exists and was not added."
                     
                 post.save()
 
