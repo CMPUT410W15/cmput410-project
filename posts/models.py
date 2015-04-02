@@ -7,7 +7,6 @@ from django.utils.safestring import mark_safe
 from common.util import gen_uuid
 
 from management.models import Node
-from django.db.models import Q
 
 PRIVATE = 0
 FRIEND = 1
