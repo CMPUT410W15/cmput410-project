@@ -75,13 +75,13 @@ def send_remote_friend_request(local_author, remote_author):
             "id": remote_author.uid,
             "host": remote_author.host,
             "displayname": remote_author.displayname,
-            "url": "http://%s/author/%s" % (remote_author.host,
+            "url": "%s/author/%s" % (remote_author.host,
                                             remote_author.uid)
         }
     }
 
     if HINDLEBOOK in remote_author.host:
-        url = "http://%s/api/friendrequest" % remote_author.host
+        url = "%s/api/friendrequest" % remote_author.host
         headers = {
             "Content-Type": "application/json",
             "Uuid": remote_author.uid
@@ -89,7 +89,7 @@ def send_remote_friend_request(local_author, remote_author):
         post_request_to_json(url, body, headers=headers,
                              auth=HINDLE_AUTH)
     elif BUBBLE in remote_author.host:
-        url = "http://%s/main/api/newfriendrequest" % remote_author.host
+        url = "%s/main/api/newfriendrequest" % remote_author.host
         headers = {
             "Content-Type": "application/json",
             "Accept": "*/*"
