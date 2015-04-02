@@ -4,9 +4,12 @@ import json
 
 import requests
 from management.models import Node
+from requests.auth import AuthBase
 
-
-AUTH = ('api', 'api')
+BUBBLE = 'bubble'
+HINDLEBOOK = 'hindlebook'
+HINDLE_AUTH = ('team8', 'team8')
+BUBBLE_AUTH = ('dan:thought-bubble.herokuapp.com', 'dan')
 
 
 def gen_uuid():
@@ -16,14 +19,17 @@ def gen_uuid():
 def get_request_to_json(url, headers={}, auth=None):
     """Get decoded json from a Rest service."""
     req = requests.get(url, headers=headers, auth=auth)
+
     if req.status_code == 200:
         return req.json()
     else:
         return req.status_code
 
+
 def post_request_to_json(url, data, headers={}, auth=None):
     response = requests.post(url, data=json.dumps(data), auth=auth,
                              headers=headers)
+
     if response.status_code == 200:
         try:
             return response.json()
