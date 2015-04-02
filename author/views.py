@@ -59,3 +59,4 @@ def edit(request):
         me.github = request.POST['github']
         me.save()
     return redirect('/home')
+    

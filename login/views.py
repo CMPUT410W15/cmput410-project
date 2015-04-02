@@ -35,7 +35,7 @@ from dateutil import tz
 def register(request):
     #Create both a user and an author every time someone registers
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = User.objects.create_user(
             username=form.cleaned_data['username'],
@@ -44,15 +44,23 @@ def register(request):
             )
             user.is_active = False
             user.save()
+
             #Create author object with user=current user and host being team 8
             #if an account is created on our server
             author= Author(user=user,host='team8')
+            if 'picture' in request.FILES:
+                image = Image.objects.create(image = request.FILES['picture'],
+                visibility=PUBLIC)
+                image.save()
+            else:
+                image= None
+            author.picture=image   
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
         form = RegistrationForm()
     variables = RequestContext(request, {
-    'form': form
+    'form': form,
     })
 
     return render_to_response(

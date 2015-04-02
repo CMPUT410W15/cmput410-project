@@ -6,9 +6,16 @@
 {% block title %}User Registration{% endblock %}
 {% block head %}User Registration{% endblock %}
 {% block content %}
-     <form class="form-horizontal" method="post" action=".">{% csrf_token %}
+     <form class="form-horizontal" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
         <table border="0" class="table-condensed">
             {{ form.as_table }}
+             {% if form.errors %}
+
+                <div class="alert alert-danger" role="alert">
+                {{ form.errors }}
+                </div>
+            {% endif %}
+
         </table>
         <input class="btn btn-default" type="submit" value="Register" />
     </form>
