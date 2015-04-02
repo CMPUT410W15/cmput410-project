@@ -139,6 +139,14 @@ def authorhome(request, authorpage):
     #Who is viewing their page?
     viewer = request.user.author
     author = Author.objects.get(uid=authorpage)
+
+    #Get the display picture of the author
+    has_picture= author.has_picture()
+    if has_picture:
+        picture=author.get_picture()
+    else:
+        picture=False
+
     #Note: attributes passed in here are all lowercase regardless of capitalization
     posts = set()
     for post in Post.objects.all():
@@ -189,6 +197,7 @@ def authorhome(request, authorpage):
                       'email': author.user.email if author.user else None,
                       'author': request.user.author,
                       'posts': posts,
+                      'picture':picture,
                   })
 
 def personal_stream(request):
