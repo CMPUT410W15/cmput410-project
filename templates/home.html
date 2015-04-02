@@ -101,8 +101,11 @@ var editProfile = function () {
                             {% endcomment %}
                             {% if p.send_author.host == 'team8' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
+                            {% elif p.get_post_host == 'Team4' %}
+                                <a style="color:#006666" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>
+
                             {% else %}
-                                <a href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.send_author.host}}) </a>
+                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>
                             {% endif %}
                             
                             {% if p.receive_author %}

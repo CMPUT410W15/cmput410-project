@@ -23,7 +23,7 @@
                             {% if author.user %}
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
-                                <h3>{{ author.displayname }}</h3>
+                                <h3>{{author.displayname}} ({{author.host}})</h3>
                             {% endif %}
                             <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.uid }}';">Accept</button>
                         </div>
@@ -48,7 +48,7 @@
                             {% if author.user %}
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
-                                <h3>{{ author.displayname }}</h3>
+                                <h3>{{ author.displayname }} ({{author.host}})</h3>
                             {% endif %}
                             <button type="button" class="btn btn-danger" onClick="window.location='/friends/unbefriend/{{ author.uid }}';">Unbefriend</button>
                         </div>
@@ -72,7 +72,7 @@
                             {% if author.user %}
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
-                                <h3>{{ author.displayname }}</h3>
+                                <h3>{{ author.displayname }} ({{author.host}})</h3>
                             {% endif %}
                             <button type="button" class="btn btn-danger" onClick="window.location='/friends/unfollow/{{ author.uid }}';">Unfollow</button>
                         </div>
@@ -96,7 +96,7 @@
                             {% if author.user %}
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
-                                <h3>{{ author.displayname }}</h3>
+                                <h3>{{ author.displayname }} ({{author.host}})</h3>
                             {% endif %}
                             <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.uid }}';">Befriend</button>
                             <button type="button" class="btn btn-primary" onClick="window.location='/friends/follow/{{ author.uid }}';">Follow</button>

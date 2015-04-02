@@ -184,7 +184,7 @@ def authorhome(request, authorpage):
 
 def personal_stream(request):
     #Doesn't show all posts, just the posts an author is 'interested in'
-    #Assumed to be your github activity/stream (to be done later),
+    #Assumed to be your github activity/stream,
     #friends posts (both FRIENDS and PUBLIC visibilities), FOAF posts, private posts
     #Also includes public/server posts of the people an author is following.
     #Doesn't include public posts/server posts otherwise.
