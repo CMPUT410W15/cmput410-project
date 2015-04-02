@@ -1,9 +1,11 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.core.files import File
 
 from posts.models import *
 from author.models import *
+from images.models import *
 from management.models import *
 from middleware_custom import APIMiddleware
 

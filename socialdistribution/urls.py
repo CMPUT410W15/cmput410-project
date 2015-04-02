@@ -7,15 +7,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from posts.views import *
+from images.views import *
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'socialdistribution.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^friends/', include('author.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^post/', include('posts.urls')),
+    url(r'^images/', include('images.urls')),
 
 	url(r'^$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page),
@@ -26,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^home/([^/]+)/$', authorhome),
     url(r'^home/author/posts/$',personal_stream),
     url(r'^home/author/posts/friends/$',personal_stream_friends),
-    url(r'^post/(?P<post_id>[\w-]+)/$', comment, name="add_comment")
+    url(r'^post/(?P<post_id>[\w-]+)/$', comment, name="add_comment"),
 )
 
 urlpatterns += staticfiles_urlpatterns()

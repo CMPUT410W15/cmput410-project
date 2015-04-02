@@ -23,30 +23,26 @@ def post(request):
             #Check if an image was uploaded before attempting to save an image or a post
             # with a image 
             if 'image' in request.FILES:
-                image = Image.objects.create(image = request.FILES['image'])
+                image = Image.objects.create(
+                    image = request.FILES['image'],
+                    visibility=form.cleaned_data['visibility'], 
+                    )
                 image.save()
-
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    description =form.cleaned_data['description'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    send_author=me,
-                    image = image,
-                )
-                post.save()
-
+                
             else:
-                post = Post.objects.create(
+
+                image = None
+
+            post = Post.objects.create(
                 title=form.cleaned_data['title'],
                 description =form.cleaned_data['description'],
                 content=form.cleaned_data['content'],
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                )
-                post.save()
+                image = image,
+            )
+            post.save()
 
             categories = form.cleaned_data['categories']
             category = categories.split(',')
@@ -56,7 +52,8 @@ def post(request):
                 try:
                     post.categories.add(Category.objects.create(category = c))
                 except:
-                    print c
+                    # Category already exists does not need to  be added.
+                    print "Category " + c + " already exists and was not added."
                     
                 post.save()
 
@@ -76,7 +73,7 @@ def delete_post(request, uid):
     return HttpResponseRedirect('/home')
 
 def handle_uploaded_file(f):
-    destination = open('some/file/name.txt', 'wb+')
+    destination = open(settings.MEDIA_ROOT, 'wb+')
     for chunk in f.chunks():
         destination.write(chunk)
     destination.close()

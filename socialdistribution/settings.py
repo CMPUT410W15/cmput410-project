@@ -8,7 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-
+from django.conf import settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -142,3 +142,13 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Absolute path to the media directory
+
+if settings.DEBUG:
+    urlpatterns += patterns(
+        'django.views.static',
+        (r'media/(?P<path>.*)',
+        'serve',
+        {'document_root': settings.MEDIA_ROOT}), )

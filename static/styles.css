@@ -3,3 +3,10 @@ fieldset.inlineLabels ul {list-style:none}
 .errorlist {
     color: #a94442;
 }
+
+img.scaled{
+    width:55%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto 
+}
