@@ -25,6 +25,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from author.remote import reset_remote_authors
 from posts.remote import reset_remote_posts
 
+import json
+import requests
+import unicodedata
+from datetime import datetime
+from dateutil import tz
+
 @csrf_protect
 def register(request):
     #Create both a user and an author every time someone registers
@@ -254,6 +260,37 @@ def personal_stream(request):
         posts=paginator.page(paginator.num_pages)
 
     form= CommentForm()
+
+    #Github stuff here
+    github_username=author.github
+
+    #If there is a github username, try and get their github activity.
+    if github_username!="":
+        activity=get_github_activity(github_username)
+        #If retrieving github activity was successful, pass it to the template
+        if activity !=None:
+            return render(request,
+              'home.html',
+              {
+                  'user': request.user,
+                  'author': request.user.author,
+                  'posts': posts,
+                  'form': form,
+                  'global_stream':global_stream_toggle,
+                  'github_activity':activity,
+              })
+        else:
+            return render(request,
+              'home.html',
+              {
+                  'user': request.user,
+                  'author': request.user.author,
+                  'posts': posts,
+                  'form': form,
+                  'global_stream':global_stream_toggle,
+              })     
+
+    #If there's no github username, don't bother.
     return render(request,
                   'home.html',
                   {
@@ -330,3 +367,220 @@ def personal_stream_friends(request):
                       'form': form,
                       'global_stream':global_stream_toggle,
                   })
+
+'''Used to convert github time to local time'''
+def convert_git_time(github_time):
+    #Get the time at which you pushed to github, normalize and convert it to your local time
+    time=unicodedata.normalize("NFKD",github_time).encode("ascii","ignore")
+    new_time=time.split("T")
+    new_time= new_time[0]+" "+new_time[1][0:-1]
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+
+    utc = datetime.strptime(new_time, '%Y-%m-%d %H:%M:%S')
+
+    # Tell the datetime object that it's in UTC time zone
+    utc = utc.replace(tzinfo=from_zone)
+
+    # Convert time zone to current time zone
+    the_time = utc.astimezone(to_zone)
+    the_time= the_time.strftime("%B %d, %Y, %I:%M%p")
+
+    return the_time
+
+
+'''
+There are 25 events, not gonna support all of them cause that's too much. Only cover the most used/relevant ones.
+Supporting these 8 events because they seem like the most common ones and we are team 8: 
+IssueCommentEvent, PullRequestEvent, PushEvent, CreateEvent, DeleteEvent, 
+IssuesEvent, GollumEvent, PullRequestReviewCommentEvent.
+'''
+def get_github_activity(github_username):
+
+    #The URL for to get github activity from 
+    url="https://api.github.com/users/"+github_username+"/events"
+
+    #Get all the events pertaining to a user's github URL 
+    req= requests.get(url)
+    all_events= req.json()
+
+    status_code=req.status_code
+
+    #If status code isn't 200, some error happened. Return activity as None
+    if status_code!=200:
+        activity=None
+        return activity
+
+    #Put all github activity in this array
+    activity=[]
+    for event in all_events:
+
+        #The 'payload' of every event object
+        payload=event["payload"]
+
+        #The repository name of every event object
+        repo_name=event["repo"]["name"]
+        repo_name= unicodedata.normalize('NFKD', repo_name).encode('ascii','ignore')
+
+        #Covers push events in github activity. Won't put the various commit messages here because there could
+        #be up to 20 commits per push event as documented in the events API.
+        if event["type"] == "PushEvent":
+            #Get the branch you pushed to
+            branch= event["payload"]["ref"]
+
+            #Get branch name by doing this because "ref" is seemingly always in this format: "refs/heads/Your_branch_name_here",
+            branch=branch[11:]
+            branch=unicodedata.normalize('NFKD', branch).encode('ascii','ignore')
+
+            #Get the time at which you pushed to github, normalize and convert it to your local time
+            time=event["created_at"]
+            the_time=convert_git_time(time)
+            info= "("+ the_time +")"+ ": "+github_username +" pushed to "+branch+" at " + repo_name
+            activity.append(info)
+
+        #Covers IssueCommentEvents, need to fix the case where there are pictures embedded in the comments body and all
+        elif event["type"]=="IssueCommentEvent":
+
+            #Get the issue number
+            issue= payload["issue"]
+            issue_number= issue["number"]
+
+            #Get the contents of a comment aka the body
+            comment=payload["comment"]
+            body= comment["body"]
+            body= unicodedata.normalize('NFKD', body).encode('ascii','ignore')
+
+            #Get the time at which you pushed to github, normalize and convert it to local time
+            time=comment["updated_at"]
+            the_time=convert_git_time(time)
+            
+            info= "("+the_time+"): "+ github_username+ " commented on issue "+str(issue_number)+ " for " +repo_name + " : " + body
+            #Note to self: Apply html to markdown thing on the body later. Might just work
+            activity.append(info)
+
+
+        elif event["type"]== "PullRequestEvent":
+            #Get the pull request number
+            number=payload["number"]
+
+            #Get the action associated with the pull request
+            action=payload["action"]
+            action= unicodedata.normalize('NFKD', action).encode('ascii','ignore')
+
+            #Only handle the case where action is 'synchronize' just for grammar's sake
+            if action=="synchronize":
+                action="synchronized"
+
+            #Get title of the pull request
+            title=payload["pull_request"]["title"]
+            title= unicodedata.normalize('NFKD', title).encode('ascii','ignore')
+
+            #Get the potentially empty body of the pull request event
+            body=payload["pull_request"]["body"]
+            body= unicodedata.normalize('NFKD',body).encode('ascii','ignore')
+
+            #Get the time of the pull request, normalize and convert it to local timezone
+            time=payload["pull_request"]["updated_at"]
+            the_time=convert_git_time(time)
+
+            #Check if a comment exists for the pull request action- if not, just show the title of the pull request.
+            if body == "":
+                info= "("+ the_time +")"+ ": "+github_username +" "+action+" pull request " +str(number)+ " for "+repo_name+" : "+title
+            else:
+                info= "("+ the_time +")"+ ": "+github_username +" "+action+" pull request " +str(number)+ " for "+repo_name+" : "+title+" - "+body
+
+            activity.append(info)
+
+        elif event["type"]=="CreateEvent":
+            #Get ref_type because it holds what you created - a branch, repo, whatever.
+            ref_type= payload["ref_type"]
+            ref_type=unicodedata.normalize('NFKD',ref_type).encode('ascii','ignore')
+
+            #Get ref because it holds the name of what you created. Don't need to normalize this?
+            ref= payload["ref"]
+            #ref= unicodedata.normalize('NFKD',created).encode('ascii','ignore')
+
+            #Get the time, normalize it and convert it to local timezone
+            time= event["created_at"]
+            the_time=convert_git_time(time)
+            
+            info="("+the_time+")" +": "+github_username+" created "+ref_type+" "+ref+" at "+repo_name
+            activity.append(info)
+
+        elif event["type"]=="PullRequestReviewCommentEvent":
+            #Get the pull request number
+            number=payload["pull_request"]["number"]
+
+            comment=payload["comment"]
+            #Body of a comment cannot be blank so don't need to handle that case
+            body=comment["body"]
+            body= unicodedata.normalize('NFKD',body).encode('ascii','ignore')
+
+            #Get the time, normalize it and convert it to local timezone
+            time= comment["updated_at"]
+            the_time=convert_git_time(time)
+            info="("+the_time+")" +": "+github_username+" commented on pull request #" +str(number) +" at " +repo_name+": "+body
+            activity.append(info)
+
+        elif event["type"]== "IssuesEvent":
+            #Get the issue number
+            issue= payload["issue"]
+            number=issue["number"]
+
+            #Get the action associated with the issue
+            action=payload["action"]
+            action=unicodedata.normalize('NFKD',action).encode('ascii','ignore')
+
+            #Get title of the issue
+            title=issue["title"]
+            title= unicodedata.normalize('NFKD', title).encode('ascii','ignore')
+
+            # Don't need body
+            # body=issue["body"]
+            # body= unicodedata.normalize('NFKD',body).encode('ascii','ignore')
+
+            time= issue['updated_at']
+            the_time=convert_git_time(time)
+            info= "("+ the_time + ")" + ": " +github_username+ " " + action +" issue #"+ str(number) + " at "+repo_name+ " : " + title
+            activity.append(info)
+
+        elif event["type"]=="DeleteEvent":
+            #Get the name of what was deleted
+            ref=payload['ref']
+            ref= unicodedata.normalize('NFKD',ref).encode('ascii','ignore')
+
+            #Get what was deleted - a branch, whatever.
+            ref_type=payload['ref_type']
+            ref_type=unicodedata.normalize('NFKD',ref_type).encode('ascii','ignore')
+
+            #Get the time, normalize and convert it to local timezone
+            time= event["created_at"]
+            the_time=convert_git_time(time)
+            info="("+the_time+")" + ": "+ github_username+" deleted " +ref_type+" "+ref+" at "+ repo_name
+            activity.append(info)
+
+        elif event["type"]== "GollumEvent":
+
+            #Get the page referred to in the pages object
+            pages=payload["pages"][0]
+
+            #Get the action associated with the event
+            action=pages["action"]
+            action= unicodedata.normalize('NFKD',action).encode('ascii','ignore')
+
+            #Get title of the wiki page
+            title=pages['title']
+            title= unicodedata.normalize('NFKD',title).encode('ascii','ignore')
+
+            #Get the time, normalize and convert to local timezone
+            time= event["created_at"]
+            the_time=convert_git_time(time)
+            info="("+the_time+")" +": "+github_username+ " "+action+ " page "+title+" of the " +repo_name +" wiki."
+            activity.append(info)
+
+        #If the event is not of the 8 types above, don't do anything for it. Just skip it
+        else:
+            continue
+
+    return activity
+
