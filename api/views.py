@@ -9,6 +9,7 @@ import json
 
 from author.models import *
 from posts.models import *
+from images.models import *
 from django.contrib.auth.models import User
 
 #TODO restrict methods
@@ -245,3 +246,17 @@ def friendrequest(request):
     except:
         return HttpResponseNotFound('{"message": "No such author"}')
     return HttpResponse()
+
+# Get a specific single image.
+def image(request, image_id):
+    # check image existence
+    try:
+        image = Image.objects.get(uid=image_id)
+    except:
+        return HttpResponseNotFound('{"message": "No such image"}')
+        
+    # check image permissions
+    if not image.visible_to(request.user):
+        return HttpResponse('{"message": "Authentication Rejected"}', status=401)
+
+    return HttpResponse(json.dumps(image.to_dict()))

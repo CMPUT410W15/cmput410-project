@@ -1,9 +1,11 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.core.files import File
 
 from posts.models import *
 from author.models import *
+from images.models import *
 from management.models import *
 from middleware_custom import APIMiddleware
 
@@ -38,7 +40,8 @@ class APITests(TestCase):
         self.author1 = Author.objects.create(user=user1, uid="user", host="host")
         self.author2 = Author.objects.create(user=user2, host="host")
         self.author3 = Author.objects.create(user=user3, host="host2")
-
+        sample_image = Image.objects.create(image = File(open("sample_image.jpg")), visibility = PUBLIC)
+        sample_image2 = Image.objects.create(image = File(open("sample_image.jpg")), visibility = FRIENDS)
         # authors 1 and 3 are friends
         Connection.objects.create(
             from_author=self.author1, to_author=self.author3
@@ -95,6 +98,23 @@ class APITests(TestCase):
                          content='post7',
                          send_author=self.author3,
                          content_type=PLAINTEXT,
+                         visibility=FRIENDS
+                     )
+
+        self.post8 = Post.objects.create(
+                         title='Post8',
+                         content='post8',
+                         send_author=self.author3,
+                         content_type=PLAINTEXT,
+                         image = sample_image,
+                         visibility=PRIVATE
+                     )
+        self.post9 = Post.objects.create(
+                         title='Post9',
+                         content='post9',
+                         send_author=self.author3,
+                         content_type=PLAINTEXT,
+                         image = sample_image2,
                          visibility=FRIENDS
                      )
 
@@ -411,3 +431,29 @@ class APITests(TestCase):
         self.assertTrue(isinstance(obj, dict))
         self.assertTrue("message" in obj)
         self.assertEqual(obj["message"], "Author IDs must match")
+
+    def test_image(self):
+        
+        # test found
+        response = self.c.get('image/' + sample_image.uid)
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content)
+        self.assertTrue(isinstance(obj, dict))
+        self.assertEqual(obj["uid"], sample_image.uid)
+
+        # test not visible
+        response = self.c.get('image/' + sample_image2.uid)
+        self.assertEqual(response.status_code, 401)
+        obj = json.loads(response.content)
+        self.assertTrue(isinstance(obj, dict))
+        self.assertTrue("message" in obj)
+        self.assertEqual(obj["message"], "Authentication Rejected")
+
+        # test not found
+        response = self.c.get('image/asdf')
+        self.assertEqual(response.status_code, 404)
+        obj = json.loads(response.content)
+        self.assertTrue(isinstance(obj, dict))
+        self.assertTrue("message" in obj)
+        self.assertEqual(obj["message"], "No such post")
+
