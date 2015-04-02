@@ -33,27 +33,16 @@ def post(request):
 
                 image = None
 
-                post = Post.objects.create(
-                    title=form.cleaned_data['title'],
-                    description =form.cleaned_data['description'],
-                    content=form.cleaned_data['content'],
-                    content_type=form.cleaned_data['content_type'],
-                    visibility=form.cleaned_data['visibility'],
-                    send_author=me,
-                    image = image,
-                )
-                post.save()
-
-            else:
-                post = Post.objects.create(
+            post = Post.objects.create(
                 title=form.cleaned_data['title'],
                 description =form.cleaned_data['description'],
                 content=form.cleaned_data['content'],
                 content_type=form.cleaned_data['content_type'],
                 visibility=form.cleaned_data['visibility'],
                 send_author=me,
-                )
-                post.save()
+                image = image,
+            )
+            post.save()
 
             categories = form.cleaned_data['categories']
             category = categories.split(',')
