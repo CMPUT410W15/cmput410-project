@@ -21,7 +21,7 @@
                         <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
                         <div class="caption">
                             {% if author.user %}
-                                <h3><a href="/home/{{ author.user.username }}">{{ author.user.username }}</a></h3>
+                                <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 <h3>{{ author.displayname }}</h3>
                             {% endif %}
@@ -46,7 +46,7 @@
                         <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
                         <div class="caption">
                             {% if author.user %}
-                                <h3><a href="/home/{{ author.user.username }}">{{ author.user.username }}</a></h3>
+                                <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 <h3>{{ author.displayname }}</h3>
                             {% endif %}
@@ -70,7 +70,7 @@
                         <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
                         <div class="caption">
                             {% if author.user %}
-                                <h3><a href="/home/{{ author.user.username }}">{{ author.user.username }}</a></h3>
+                                <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 <h3>{{ author.displayname }}</h3>
                             {% endif %}
@@ -94,7 +94,7 @@
                         <img src="{% static 'profile.png' %}" alt="profile picture" style="height: 100px; display: block;"/>
                         <div class="caption">
                             {% if author.user %}
-                                <h3><a href="/home/{{ author.user.username }}">{{ author.user.username }}</a></h3>
+                                <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 <h3>{{ author.displayname }}</h3>
                             {% endif %}
