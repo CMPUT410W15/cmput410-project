@@ -1,0 +1,13 @@
+{% block body %}
+
+    {% if images %}
+        <ul>
+            {% for image in images %}
+                <li><img src= "{{ image.image.url }}">{{ image.uid }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No images.</p>
+    {% endif %}
+
+{% endblock %}
