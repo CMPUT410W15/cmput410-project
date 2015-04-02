@@ -1,9 +1,14 @@
-{% block body %}
+{% extends "base.html" %}
+{% block title %}Images{% endblock %}
+{% block head %}Images{% endblock %}
+{% block content %}
 
     {% if images %}
         <ul>
             {% for image in images %}
-                <li><img src= "{{ image.image.url }}">{{ image.uid }}</li>
+                <a href = "{{ image.image.url }}"><img src= "{{ image.image.url }}" class="scaled"></a>
+                <li>UID: {{ image.uid }}</li>
+                
             {% endfor %}
         </ul>
     {% else %}

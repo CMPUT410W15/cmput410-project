@@ -7,10 +7,9 @@ from django.contrib.sites.models import Site
 from django.http import HttpResponse
 
 # Create your views here.
-def get_image(request, uid):
-    image = Image.objects.get(uid=uid)
-
-    return HttpResponse(image.read())
+def image(request, image_id):
+    image = Image.objects.get(uid=image_id)
+    return render_to_response('image.html', {'image': image} )
 
 def images(request):
     context = RequestContext(request)

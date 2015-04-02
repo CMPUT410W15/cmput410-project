@@ -7,9 +7,8 @@ import views
 
 # Create your views here.
 urlpatterns = patterns('images.views',
+    url(r'^(?P<image_id>[\w-]+)$', views.image, name="image"),
     url(r'^$', views.images, name='images'),
-    url(r'^(?P<uid>\d+)/$', views.get_image),
-
 )
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
