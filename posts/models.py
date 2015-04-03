@@ -145,7 +145,7 @@ class Post(models.Model):
         if url in 'http://thought-bubble.herokuapp.com/main/api/':
             return 'thoughtbubble'
         else:
-            return 'Team4'
+            return 'hindlebook'
 
     def has_image(self):
         if self.image==None:

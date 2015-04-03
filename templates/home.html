@@ -102,16 +102,16 @@ var editProfile = function () {
                         {% endif %}
  						<span style="display:inline-block; padding-left: 5pt;">
                             {% comment "Optional note" %}
-                                <p>Check if the host of the author of the post is team 8</p>
-                                <p> If not, display their host after their username </p>
+                                <p>Check if the host of the author of the post is team 8 aka 'http://cs410.cs.ualberta.ca:41084'</p>
+                                <p> If not, display their host after their username and color the links different hex colors. </p>
                             {% endcomment %}
-                            {% if p.send_author.host == '' %}
+                            {% if p.send_author.host == 'http://cs410.cs.ualberta.ca:41084' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
-                            {% elif p.get_post_host == 'Team4' %}
-                                <a style="color:#006666" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>
+                            {% elif p.get_post_host == 'hindlebook' %}
+                                <a style="color:#006666" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
 
                             {% else %}
-                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>
+                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
                             {% endif %}
                             
                             {% if p.receive_author %}

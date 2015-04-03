@@ -123,7 +123,7 @@ class Author(models.Model):
             return 'thoughtbubble'
 
         else:
-            return 'Team4'
+            return 'hindlebook'
 
     def has_picture(self):
         if self.picture==None:
