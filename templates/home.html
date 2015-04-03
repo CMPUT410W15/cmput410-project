@@ -183,7 +183,7 @@ var editProfile = function () {
                 // Used to delete a post
                 function delete_post(post_id){
                     $.ajax({
-                        url : "/post/delete/", 
+                        url : "/post/delete/{{p.uid}}", 
                         type : "DELETE", 
                         data : { post_id : post_id }, 
                         success : function(json) {

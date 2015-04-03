@@ -107,8 +107,7 @@ def comment(request,post_id):
     else:
         return HttpResponse(json.dumps({"nothing here": "this won't happen"}), content_type="application/json")
 
-def delete_post(request):
-
+def delete_post(request,uid):
     if request.method == 'DELETE':
         post = Post.objects.get(uid=QueryDict(request.body).get('post_id'))
         post.delete()
