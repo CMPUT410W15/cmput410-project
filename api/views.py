@@ -21,11 +21,13 @@ def posts(request):
     try:
         return HttpResponse(
             json.dumps(
-                [
-                    x.to_dict()
-                    for x in Post.objects.all()
-                    if x.visible_to(request.user)
-                ]
+                { "posts":
+                    [
+                        x.to_dict()
+                        for x in Post.objects.all()
+                        if x.visible_to(request.user)
+                    ]
+                }
             )
         )
     except:
@@ -35,7 +37,9 @@ def posts(request):
 def public_posts(request):
     return HttpResponse(
         json.dumps(
-            [x.to_dict() for x in Post.objects.filter(visibility=PUBLIC)]
+            { "posts":
+                [x.to_dict() for x in Post.objects.filter(visibility=PUBLIC)]
+            }
         )
     )
 
@@ -50,11 +54,13 @@ def author_posts(request, author_id):
     try:
         return HttpResponse(
             json.dumps(
-                [
-                    x.to_dict()
-                    for x in Post.objects.filter(send_author=author)
-                    if x.visible_to(request.user)
-                ]
+                { "posts":
+                    [
+                        x.to_dict()
+                        for x in Post.objects.filter(send_author=author)
+                        if x.visible_to(request.user)
+                    ]
+                }
             )
         )
     except:
