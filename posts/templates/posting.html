@@ -1,29 +1,21 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
+
 {% block title %}New Post{% endblock %}
 {% block head %}New Post{% endblock %}
 {% block content %}
 
-    
-    <div class="col-sm-offset-2 col-sm-10 form-group">
-        <fieldset class="inlineLabels">
-        <table border="0" class="table">
-        <form class="form-inline" enctype="multipart/form-data" method="post" action=".">{% csrf_token %}
-            {{ form.as_table }}
-
-             {% if form.errors %}
-
-                <div class="alert alert-danger" role="alert">
-                {{ form.errors }}
-                </div>
-                
-            {% endif %}
-        </table>
-        </fieldset>
-
+<div class="col-md-6 col-md-offset-3">
+    <form enctype="multipart/form-data" method="post" action=".">{% csrf_token %}
+        {% bootstrap_form form %}
+        <div class="col-md-6 col-md-offset-3">
+        	<div class="text-center">
+            <input class="btn btn-primary btn-block" type="submit" value="Post" />
         </div>
-        <div class="text-center">
-            <input class="btn btn-default" type="submit" value="Post" />
         </div>
     </form>
+                
+
+</div>
     
 {% endblock %}

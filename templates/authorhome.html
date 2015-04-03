@@ -47,7 +47,7 @@
                                 <p>Check if the host of the author of the post is team 8</p>
                                 <p> If not, display their host after their username </p>
                             {% endcomment %}
-                            {% if p.send_author.host == 'team8' %}
+                            {% if p.send_author.host == '' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
                             {% elif p.get_post_host == 'Team4' %}
                                 <a style="color:#006666" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>

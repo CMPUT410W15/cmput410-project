@@ -105,7 +105,7 @@ var editProfile = function () {
                                 <p>Check if the host of the author of the post is team 8</p>
                                 <p> If not, display their host after their username </p>
                             {% endcomment %}
-                            {% if p.send_author.host == 'team8' %}
+                            {% if p.send_author.host == '' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
                             {% elif p.get_post_host == 'Team4' %}
                                 <a style="color:#006666" href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.get_post_host}}) </a>
@@ -128,7 +128,7 @@ var editProfile = function () {
                                 {% csrf_token %}
                                     <a href="javascript:document.forms['{{p.uid}}'].submit();">
                                         <img src= "{% static 'icons/0173-bin.svg' %}"
-                                        alt="delete icon" style= "height:30px; width:30px;"/>
+                                        alt="delete icon" style= "height:25px; width:25px;"/>
                                     </a>
                                 </form>
                             </span>
@@ -145,20 +145,12 @@ var editProfile = function () {
                             <img src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
                         {% endif %}
 
-                            <h5 style= "text-decoration: underline;"> Comments </h5>
-                            <ul id='{{p.uid}}-2'>
-                        {% if p.get_comments %}
-                            {% for comments in p.get_comments %}
-                                <li id='{{comments.uid}}'> {{comments}} </li>
-                            {% endfor %}
-                        {% endif %}
-                        </ul>
                     </div>
+
                     <div class= "panel-footer clearfix">
                         <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post'>
                             {% csrf_token %}
-                        <div id= "error{{p.uid}}"> 
-                        </div>
+                        <div id= "error{{p.uid}}"></div>
                     <div class= "col-sm-10">
                         <input class="form-control" id="content{{p.uid}}" name="content" type="text">
                     </div>
@@ -166,6 +158,16 @@ var editProfile = function () {
                         <input class="btn btn-primary" type="submit" value="Comment" />
                     </span>
                         </form>
+                        <div class="col-sm-10">
+                            <h4 style= "text-decoration: underline;"> Comments </h5>
+                                <ul id='{{p.uid}}-2'>
+                            {% if p.get_comments %}
+                                {% for comments in p.get_comments %}
+                                    <li id='{{comments.uid}}'> {{comments}} </li>
+                                {% endfor %}
+                            {% endif %}
+                            </ul>
+                        </div>
                     </div>
 
                 <script>

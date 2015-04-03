@@ -58,7 +58,8 @@ INSTALLED_APPS = (
     'posts',
     'images',
     'management',
-    'login'
+    'login',
+    'bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (
