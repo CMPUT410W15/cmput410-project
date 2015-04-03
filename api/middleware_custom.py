@@ -14,9 +14,10 @@ import base64
 
 class APIMiddleware:
 
-    def process_request(self, request):
+    def process_request(self, request, override=False):
+
         # only process API endpoints
-        if not request.path.startswith('/api'):
+        if not override and not request.path.startswith('/api'):
             return
 
         # Check auth header existence
