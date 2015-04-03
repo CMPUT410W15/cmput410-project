@@ -11,6 +11,7 @@ from posts.forms import *
 from login.views import *
 from images.models import *
 import json
+from django.http import QueryDict
 
 @csrf_protect
 def post(request):
@@ -67,10 +68,10 @@ def post(request):
         variables,
     )
 
-def delete_post(request, uid):
-    context = RequestContext(request)
-    Post.objects.filter(uid=uid).delete()
-    return HttpResponseRedirect('/home')
+# def delete_post(request, uid):
+#     context = RequestContext(request)
+#     Post.objects.filter(uid=uid).delete()
+#     return HttpResponseRedirect('/home')
 
 def handle_uploaded_file(f):
     destination = open(settings.MEDIA_ROOT, 'wb+')
@@ -81,7 +82,6 @@ def handle_uploaded_file(f):
 
 @csrf_protect
 def comment(request,post_id):
-
     #Create a comment on a post
     context= RequestContext(request)
     me = Author.objects.get(user=request.user)
@@ -107,3 +107,20 @@ def comment(request,post_id):
     else:
         return HttpResponse(json.dumps({"nothing here": "this won't happen"}), content_type="application/json")
 
+def delete_post(request):
+
+    if request.method == 'DELETE':
+        post = Post.objects.get(uid=QueryDict(request.body).get('post_id'))
+        post.delete()
+        response_data = {}
+        response_data['msg'] = 'Post was deleted.'
+
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )

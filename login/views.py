@@ -82,7 +82,7 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
-    elif '/accounts/login' in request.META['HTTP_REFERER']:
+    elif '/accounts/login/' in request.META['HTTP_REFERER']:
         reset_remote_authors()
         reset_remote_posts()
 
