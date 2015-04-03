@@ -24,9 +24,9 @@
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 {% if author.get_author_hostname == 'hindlebook' %}
-                                    <h3><a style="color:#006666" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#006666">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% else %}
-                                    <h3><a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#CC6600">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% endif %}
                             {% endif %}
                             <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.uid }}';">Accept</button>
@@ -53,9 +53,9 @@
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 {% if author.get_author_hostname == 'hindlebook' %}
-                                    <h3><a style="color:#006666" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#006666">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% else %}
-                                    <h3><a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#CC6600">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% endif %}
                             {% endif %}
                             <button type="button" class="btn btn-danger" onClick="window.location='/friends/unbefriend/{{ author.uid }}';">Unbefriend</button>
@@ -80,9 +80,9 @@
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 {% if author.get_author_hostname == 'hindlebook' %}
-                                    <h3><a style="color:#006666" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#006666">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% else %}
-                                    <h3><a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#CC6600">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% endif %}
                             {% endif %}
                             <button type="button" class="btn btn-danger" onClick="window.location='/friends/unfollow/{{ author.uid }}';">Unfollow</button>
@@ -108,9 +108,9 @@
                                 <h3><a href="/home/{{ author.uid }}">{{ author.user.username }}</a></h3>
                             {% else %}
                                 {% if author.get_author_hostname == 'hindlebook' %}
-                                    <h3><a style="color:#006666" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#006666;">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% else %}
-                                    <h3><a style="color:#CC6600" href="/home/{{p.send_author.uid}}">{{ author.displayname }} ({{author.get_author_hostname}})</a></h3>
+                                    <h3 style="color:#CC6600">{{ author.displayname }} ({{author.get_author_hostname}})</h3>
                                 {% endif %}
                             {% endif %}
                             <button type="button" class="btn btn-primary" onClick="window.location='/friends/befriend/{{ author.uid }}';">Befriend</button>
