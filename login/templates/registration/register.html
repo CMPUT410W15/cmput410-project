@@ -5,11 +5,37 @@
 {% extends "base.html" %}
 {% block title %}User Registration{% endblock %}
 {% block head %}User Registration{% endblock %}
+{% load static %}
 {% block content %}
-     <form class="form-horizontal" method="post" action=".">{% csrf_token %}
-        <table border="0" class="table-condensed">
-            {{ form.as_table }}
-        </table>
-        <input class="btn btn-default" type="submit" value="Register" />
-    </form>
+
+ {% if form.errors %}
+        <div class="alert alert-danger" role-"alert">
+        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{ form.errors }}
+        </div>
+    {% endif %}
+    {% if user.is_superuser %}
+    <h1 style="text-align: center">Please log out of administrator account before logging in</h1>
+    {% else %}
+
+    <div class= "center-div ">
+        <div class= "col-sm-8 col-md-offset-2 form-group">
+        <h2 class= "form-signin-heading"> Register </h2>
+        <fieldset class="inlineLabels">
+        <form class="margin-base-vertical" enctype="multipart/form-data" method="post" action="." runat="server">{% csrf_token %}
+            <table border="0" class="table">
+    	     
+                {{ form }}
+    	       
+            </table>
+
+
+	        <div class="text-center top30">
+                <input class="btn btn-default btn-lg" type="submit" value="Register" />
+            </div>
+    	    </form>
+        </div>
+
+    {% endif %}
 {% endblock %}

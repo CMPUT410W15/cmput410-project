@@ -18,6 +18,7 @@ from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+from images.models import *
 from posts.remote import reset_remote_posts
 from author.remote import reset_remote_authors
 
@@ -35,18 +36,31 @@ from dateutil import tz
 def register(request):
     #Create both a user and an author every time someone registers
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form=RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
+            if 'picture' in request.FILES:
+                picture=Image.objects.create(
+                    image=request.FILES['picture'],
+                    visibility=PUBLIC,  #Profile pictures default visibility is PUBLIC
+                    )
+                picture.save()
+                
+            else:
+                picture = None
+
             user = User.objects.create_user(
-            username=form.cleaned_data['username'],
-            password=form.cleaned_data['password1'],
-            email=form.cleaned_data['email'],
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'],
+                email=form.cleaned_data['email'],
             )
-            user.is_active = False
+            user.is_active=False
             user.save()
-            #Create author object with user=current user and host being team 8
-            #if an account is created on our server
-            author= Author(user=user,host='team8')
+
+            author=Author.objects.create(
+                        user=user,
+                        host = 'http://cs410.cs.ualberta.ca:41084',
+                        picture=picture,
+                    )
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
