@@ -39,6 +39,16 @@ def public_posts(request):
         )
     )
 
+# Get information about specified author
+def author(request, author_id):
+    # check author existence
+    try:
+        author = Author.objects.get(uid=author_id)
+    except:
+        return HttpResponseNotFound('{"message": "No such author"}')
+
+    return HttpResponse(json.dumps(author.to_dict()))
+
 # Get all posts by a specific author visible to the currently authenticated user.
 def author_posts(request, author_id):
     # check author existence
