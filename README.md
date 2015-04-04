@@ -25,7 +25,7 @@ This blogging/social network platform will allow the importing of other sources 
 
 Our REST API service address is located at: 
 
-	http://cs410.cs.ualberta.ca/api:41080
+	http://cs410.cs.ualberta.ca/api:41084
 	
 Hostnames will be specified per group, with usernames and passwords distributed directly to the connecting groups. 
 The full documentation can be found [here](https://github.com/CMPUT410W15/cmput410-project/wiki/API-Documentation).
