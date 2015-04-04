@@ -33,6 +33,7 @@ class Author(models.Model):
             "id": self.uid,
             "host": self.host,
             "displayname": name,
+            "url": "http://cs410.cs.ualberta.ca:41084/api/author/ " + self.uid,
         }
 
     def befriend(self, author):
