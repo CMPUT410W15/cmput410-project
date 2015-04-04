@@ -24,8 +24,8 @@ class Author(models.Model):
                                         related_name='connected_to')
 
     def __unicode__(self):
-        #return '%s (%s)' % (self.user, self.uid)
-        return self.user.username if self.user else self.displayname
+        uname = self.user.username if self.user else self.displayname
+        return '%s (%s)' % (uname, self.uid)
 
     def to_dict(self):
         name = self.user.username if self.user else self.displayname
@@ -47,11 +47,12 @@ class Author(models.Model):
     def follow(self, author):
         if author == self:
             raise FollowYourselfError
-        return Connection.objects.create(
-            from_author=self,
-            to_author=author,
-            follows=True,
-            friendship_requested=False)
+        if self not in author.get_followers():
+            return Connection.objects.create(
+                from_author=self,
+                to_author=author,
+                follows=True,
+                friendship_requested=False)
 
     def unfollow(self, author):
         Connection.objects.filter(
