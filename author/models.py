@@ -118,6 +118,26 @@ class Author(models.Model):
     def get_comments(self):
         return self.comment_set.all()
 
+    def get_author_hostname(self):
+        #Get the host of a author (their node name, not their node url)
+        url=self.host
+        if url in 'http://thought-bubble.herokuapp.com/main/api/':
+            return 'thoughtbubble'
+
+        else:
+            return 'hindlebook'
+
+    def has_picture(self):
+        if self.picture==None:
+            return False
+        else:
+            return True
+
+    def get_picture(self):
+        picture_location=self.picture.image
+        return picture_location
+
+
 
 class Connection(models.Model):
     from_author = models.ForeignKey(Author, related_name="from_authors")

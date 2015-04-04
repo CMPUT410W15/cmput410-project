@@ -6,6 +6,8 @@ from images.models import Image
 from django.utils.safestring import mark_safe
 from common.util import gen_uuid
 
+from management.models import Node
+
 PRIVATE = 0
 FRIEND = 1
 FRIENDS = 2
@@ -137,6 +139,24 @@ class Post(models.Model):
             html = renderer.render(ast)
             return mark_safe(html)
 
+    def get_post_host(self):
+        #Get the host of a post (their node name, not their node url)
+        url=self.send_author.host
+        if url in 'http://thought-bubble.herokuapp.com/main/api/':
+            return 'thoughtbubble'
+        else:
+            return 'hindlebook'
+
+    def has_image(self):
+        if self.image==None:
+            return False
+        else:
+            return True
+
+    def get_image(self):
+        image_location=self.image.image
+        return image_location
+        
 class Comment(models.Model):
     uid = models.CharField(max_length=36, unique=True,
                            editable=False, default=gen_uuid)

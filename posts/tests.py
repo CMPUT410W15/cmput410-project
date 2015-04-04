@@ -4,7 +4,7 @@ from posts.models import Post, Comment, Category
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.models import PLAINTEXT, MARKDOWN
 from author.models import Author
-
+from images.models import *
 # Create your tests here.
 
 class PostTests(TestCase):
@@ -75,6 +75,17 @@ class PostTests(TestCase):
                       'send_author': self.author4,
                       'content_type': PLAINTEXT,
                       'visibility': PUBLIC}
+
+        #Test creating a post with an image
+        self.image10= Image.objects.create(visibility=PUBLIC)
+        self.post10 = {'title': 'Image post',
+                      'content': 'image',
+                      'send_author': self.author4,
+                      'content_type': PLAINTEXT,
+                      'visibility': PUBLIC,
+                      'image':self.image10}
+
+
 
     #Test getting the host of a post
     def test_get_host(self):
@@ -263,3 +274,18 @@ class PostTests(TestCase):
         p2_categories = [c.category for c in post2.get_categories()]
         self.assertEqual("Penguins" in p2_categories, True)
         self.assertEqual("Lizards" in p2_categories, True)
+
+
+    def test_post_with_image(self):
+        '''Test making a post with an image and retrieving that image'''
+        post10= Post.objects.create(**self.post10)
+        image= post10.image
+        image_location=image.image
+        self.assertEqual(image_location,'upload/None/no-img.jpg')
+
+    def test_post_without_image(self):
+        '''Test making a post without an image and see if the image attribute is None as expected'''
+        post9= Post.objects.create(**self.post9)
+        no_image=post9.image
+        self.assertEqual(no_image,None)
+

@@ -38,7 +38,11 @@ var editProfile = function () {
             </div>
             
             <div class= "panel-body" style="text-align:center;">
-                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% if author.has_picture %}
+                    <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% else %}
+                    <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% endif %}
                 <br />
                 <br />
                 <form method="POST" action="/friends/edit/">
@@ -89,20 +93,25 @@ var editProfile = function () {
         {% endif %}
 		{% if posts %}
 			{% for p in posts %}
- 				<div class= "panel panel-default">
+ 				<div id= "post-{{p.uid}}" class= "panel panel-default">
  					<div class= "panel-heading">
- 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" 
- 							style= "height:40px; width:40px;"/> </span>
+                        {% if p.send_author == author and author.has_picture %}
+                        <span class="pull-left"> <img src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        {% else %}
+ 						<span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        {% endif %}
  						<span style="display:inline-block; padding-left: 5pt;">
-
                             {% comment "Optional note" %}
-                                <p>Check if the host of the author of the post is team 8</p>
-                                <p> If not, display their host after their username </p>
+                                <p>Check if the host of the author of the post is team 8 aka 'http://cs410.cs.ualberta.ca:41084'</p>
+                                <p> If not, display their host after their username and color the links different hex colors. </p>
                             {% endcomment %}
-                            {% if p.send_author.host == 'team8' %}
+                            {% if p.send_author.host == 'http://cs410.cs.ualberta.ca:41084' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
+                            {% elif p.get_post_host == 'hindlebook' %}
+                                <a style="color:#006666" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
+
                             {% else %}
-                                <a href="/home/{{p.send_author.uid}}">{{p.send_author}} ({{p.send_author.host}}) </a>
+                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
                             {% endif %}
                             
                             {% if p.receive_author %}
@@ -115,32 +124,30 @@ var editProfile = function () {
                         </span>
                         {% if author == p.send_author %}
                             <span class="pull-right">
-                                <form id="{{p.uid}}" method="POST" action="/post/delete/{{p.uid}}">
-                                {% csrf_token %}
-                                    <a href="javascript:document.forms['{{p.uid}}'].submit();">
-                                        <img src= "{% static 'icons/0173-bin.svg' %}"
-                                        alt="delete icon" style= "height:30px; width:30px;"/>
-                                    </a>
-                                </form>
+                                <a id= "delete-{{p.uid}}">
+                                    <img src= "{% static 'icons/0173-bin.svg' %}"
+                                    alt="delete icon" style= "height:25px; width:25px;"/>
+                                </a>
                             </span>
                         {% endif %}
                     </div>
                     <div class= "panel-body">
                         {{p.markdown_to_html}}
-                            <h5 style= "text-decoration: underline;"> Comments </h5>
-                            <ul id='{{p.uid}}-2'>
-                        {% if p.get_comments %}
-                            {% for comments in p.get_comments %}
-                                <li id='{{comments.uid}}'> {{comments}} </li>
-                            {% endfor %}
+
+                         {% comment "Optional note2" %}
+                        <p> If the post has an image, show that image <p>
+                        {% endcomment %}
+
+                        {% if p.has_image %}
+                            <img src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
                         {% endif %}
-                        </ul>
+
                     </div>
+
                     <div class= "panel-footer clearfix">
                         <form id= "{{p.uid}}-1" class= "form-horizontal" method= 'post'>
                             {% csrf_token %}
-                        <div id= "error{{p.uid}}"> 
-                        </div>
+                        <div id= "error{{p.uid}}"></div>
                     <div class= "col-sm-10">
                         <input class="form-control" id="content{{p.uid}}" name="content" type="text">
                     </div>
@@ -148,6 +155,16 @@ var editProfile = function () {
                         <input class="btn btn-primary" type="submit" value="Comment" />
                     </span>
                         </form>
+                        <div class="col-sm-10">
+                            <h4 style= "text-decoration: underline;"> Comments </h5>
+                                <ul id='{{p.uid}}-2'>
+                            {% if p.get_comments %}
+                                {% for comments in p.get_comments %}
+                                    <li id='{{comments.uid}}'> {{comments}} </li>
+                                {% endfor %}
+                            {% endif %}
+                            </ul>
+                        </div>
                     </div>
 
                 <script>
@@ -157,6 +174,37 @@ var editProfile = function () {
                         create_comment();
                     });
 
+                    $("#post-{{p.uid}}").on('click', 'a[id^=delete-]', function(){
+                        var post_id = $(this).attr('id').split('-')[1];
+                        console.log(post_id)
+                        delete_post(post_id);
+                    });
+
+                // Used to delete a post
+                function delete_post(post_id){
+                    $.ajax({
+                        url : "/post/delete/{{p.uid}}", 
+                        type : "DELETE", 
+                        data : { post_id : post_id }, 
+                        success : function(json) {
+                          $('#post-'+post_id).hide(); 
+                          console.log("Deleted the post");
+                        },
+
+                        error : function(xhr,errmsg,err) {
+                            // Show an error
+                            $('#error{{p.uid}}').html("<div> <p class='text-danger'> An error occured in deletion. </p>" +"</div>");
+                            console.log(xhr.status + ": " + xhr.responseText); 
+                            //Get rid of error message in 2 seconds
+                            setTimeout(function() {
+                                $("#error{{p.uid}}").html("<div> </div>");
+                            }, 2000); 
+                        }
+
+                    });
+
+                };
+                    //Used to post a comment to a post.
                     function create_comment() {
                         $.ajax({
                             url:"/post/comment/{{p.uid}}/",
