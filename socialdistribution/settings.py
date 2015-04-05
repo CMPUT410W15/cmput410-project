@@ -59,7 +59,8 @@ INSTALLED_APPS = (
     'posts',
     'images',
     'management',
-    'login'
+    'login',
+    'bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -144,7 +145,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Absolute path to the media directory
 
 if settings.DEBUG:

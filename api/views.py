@@ -22,11 +22,13 @@ def posts(request):
     try:
         return HttpResponse(
             json.dumps(
-                [
-                    x.to_dict()
-                    for x in Post.objects.all()
-                    if x.visible_to(request.user)
-                ]
+                { "posts":
+                    [
+                        x.to_dict()
+                        for x in Post.objects.all()
+                        if x.visible_to(request.user)
+                    ]
+                }
             )
         )
     except:
@@ -36,9 +38,21 @@ def posts(request):
 def public_posts(request):
     return HttpResponse(
         json.dumps(
-            [x.to_dict() for x in Post.objects.filter(visibility=PUBLIC)]
+            { "posts":
+                [x.to_dict() for x in Post.objects.filter(visibility=PUBLIC)]
+            }
         )
     )
+
+# Get information about specified author
+def author(request, author_id):
+    # check author existence
+    try:
+        author = Author.objects.get(uid=author_id)
+    except:
+        return HttpResponseNotFound('{"message": "No such author"}')
+
+    return HttpResponse(json.dumps(author.to_dict()))
 
 # Get all posts by a specific author visible to the currently authenticated user.
 def author_posts(request, author_id):
@@ -51,11 +65,13 @@ def author_posts(request, author_id):
     try:
         return HttpResponse(
             json.dumps(
-                [
-                    x.to_dict()
-                    for x in Post.objects.filter(send_author=author)
-                    if x.visible_to(request.user)
-                ]
+                { "posts":
+                    [
+                        x.to_dict()
+                        for x in Post.objects.filter(send_author=author)
+                        if x.visible_to(request.user)
+                    ]
+                }
             )
         )
     except:

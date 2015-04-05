@@ -36,7 +36,9 @@ from dateutil import tz
 def register(request):
     #Create both a user and an author every time someone registers
     if request.method == 'POST':
+
         form=RegistrationForm(request.POST, request.FILES)
+
         if form.is_valid():
             if 'picture' in request.FILES:
                 picture=Image.objects.create(
@@ -56,17 +58,33 @@ def register(request):
             user.is_active=False
             user.save()
 
+
             author=Author.objects.create(
                         user=user,
                         host = 'http://cs410.cs.ualberta.ca:41084',
                         picture=picture,
                     )
+
+            #Create author object with user=current user, and set host = 'http://cs410.cs.ualberta.ca:41084'
+            author= Author(user=user,host='http://cs410.cs.ualberta.ca:41084')
+
+            #Assuming that the profile picture should have public visibility for now?
+            if 'picture' in request.FILES:
+                image = Image.objects.create(image = request.FILES['picture'],
+                visibility=PUBLIC)
+                image.save()
+
+            else:
+                image= None
+
+            author.picture=image
+
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
         form = RegistrationForm()
     variables = RequestContext(request, {
-    'form': form
+    'form': form,
     })
 
     return render_to_response(
@@ -88,7 +106,7 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
-    elif '/accounts/login' in request.META['HTTP_REFERER']:
+    elif '/accounts/login/' in request.META['HTTP_REFERER']:
         reset_remote_authors()
         reset_remote_posts()
 
@@ -187,6 +205,12 @@ def authorhome(request, authorpage):
     except EmptyPage:
         posts=paginator.page(paginator.num_pages)
 
+    #Only if you are viewing your own page can you see your profile picture.
+    view_picture=False
+    if viewer==author:
+        if author.has_picture():
+            view_picture=True
+
     return render(request,
                   'authorhome.html',
                   {
@@ -194,11 +218,12 @@ def authorhome(request, authorpage):
                       'email': author.user.email if author.user else None,
                       'author': request.user.author,
                       'posts': posts,
+                      'view_picture':view_picture,
                   })
 
 def personal_stream(request):
     #Doesn't show all posts, just the posts an author is 'interested in'
-    #Assumed to be your github activity/stream (to be done later),
+    #Assumed to be your github activity/stream,
     #friends posts (both FRIENDS and PUBLIC visibilities), FOAF posts, private posts
     #Also includes public/server posts of the people an author is following.
     #Doesn't include public posts/server posts otherwise.

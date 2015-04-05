@@ -3,10 +3,12 @@
 ### 	March 2, 2015
 ### No explicit license -->
 {% extends "base.html" %}
+{% load bootstrap3 %}
 {% block title %}User Registration{% endblock %}
 {% block head %}User Registration{% endblock %}
 {% load static %}
 {% block content %}
+
 
  {% if form.errors %}
         <div class="alert alert-danger" role-"alert">
@@ -26,7 +28,7 @@
         <form class="margin-base-vertical" enctype="multipart/form-data" method="post" action="." runat="server">{% csrf_token %}
             <table border="0" class="table">
     	     
-                {{ form }}
+                {% bootstrap_form form %}
     	       
             </table>
 

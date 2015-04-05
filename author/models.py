@@ -24,8 +24,8 @@ class Author(models.Model):
                                         related_name='connected_to')
 
     def __unicode__(self):
-        #return '%s (%s)' % (self.user, self.uid)
-        return self.user.username if self.user else self.displayname
+        uname = self.user.username if self.user else self.displayname
+        return '%s (%s)' % (uname, self.uid)
 
     def to_dict(self):
         name = self.user.username if self.user else self.displayname
@@ -33,6 +33,7 @@ class Author(models.Model):
             "id": self.uid,
             "host": self.host,
             "displayname": name,
+            "url": "http://cs410.cs.ualberta.ca:41084/api/author/ " + self.uid,
         }
 
     def befriend(self, author):
@@ -47,11 +48,12 @@ class Author(models.Model):
     def follow(self, author):
         if author == self:
             raise FollowYourselfError
-        return Connection.objects.create(
-            from_author=self,
-            to_author=author,
-            follows=True,
-            friendship_requested=False)
+        if self not in author.get_followers():
+            return Connection.objects.create(
+                from_author=self,
+                to_author=author,
+                follows=True,
+                friendship_requested=False)
 
     def unfollow(self, author):
         Connection.objects.filter(
@@ -115,6 +117,26 @@ class Author(models.Model):
 
     def get_comments(self):
         return self.comment_set.all()
+
+    def get_author_hostname(self):
+        #Get the host of a author (their node name, not their node url)
+        url=self.host
+        if url in 'http://thought-bubble.herokuapp.com/main/api/':
+            return 'thoughtbubble'
+
+        else:
+            return 'hindlebook'
+
+    def has_picture(self):
+        if self.picture==None:
+            return False
+        else:
+            return True
+
+    def get_picture(self):
+        picture_location=self.picture.image
+        return picture_location
+
 
 
 class Connection(models.Model):

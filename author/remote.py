@@ -9,8 +9,8 @@ def add_remote_connections(author1, remote_authors, node):
     authors = [a for a in Author.objects.all()] + remote_authors
     body = {
         "query": "friends",
-        "author": author1.uid,
-        "authors": [a.uid for a in authors if a.uid != author1.uid]
+        "author": str(author1.uid),
+        "authors": [str(a.uid) for a in authors if a.uid != author1.uid]
     }
 
     if HINDLEBOOK in node.url:
@@ -89,7 +89,7 @@ def send_remote_friend_request(local_author, remote_author):
         post_request_to_json(url, body, headers=headers,
                              auth=HINDLE_AUTH)
     elif BUBBLE in remote_author.host:
-        url = "http://%s/main/api/newfriendrequest" % remote_author.host
+        url = "http://%s/main/api/newfriendrequest/" % remote_author.host
         headers = {
             "Content-Type": "application/json",
             "Accept": "*/*"
