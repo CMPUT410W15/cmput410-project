@@ -112,6 +112,10 @@ class Post(models.Model):
         #               (FOAF, 'FriendOfAFriend'),
         #               (PUBLIC, 'Public'),
         #               (SERVERONLY, 'ServerOnly'))
+
+        if self.send_author == author:
+            return True
+
         if self.visibility == PUBLIC:
             return True
         elif self.visibility == FRIEND:

@@ -9,7 +9,6 @@ urlpatterns = patterns('',
     url(r'^author/(?P<author_id>[\w-]+)/posts$', views.author_posts, name='author posts'),
     url(r'^posts/(?P<post_id>[\w-]+)$', views.post, name='post'),
     url(r'^posts/(?P<post_id>[\w-]+)/comment$', views.comment, name='comment'),
-    url(r'^image/(?P<image_id>[\w-]+)$', views.image, name='image'),
     url(r'^friends$', views.friends, name='friends'),
     url(r'^friends/(?P<author_id>[\w-]+)$', views.friend, name='friend'),
 

@@ -12,9 +12,10 @@ class RegistrationForm(forms.Form):
     username = forms.RegexField(regex=r'^\w+$', widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Username"), error_messages={ 'invalid': _("This value must contain only letters, numbers and underscores.") })
     email = forms.EmailField(widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Email address"))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value='False')), label=_("Password"))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value='False')), label=_("Password (again)"))
-    github = forms.CharField(max_length=100,required=False, label=_('Github account:'))
-    picture = forms.ImageField(required=False, label=_("Upload profile picture:"))
+
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value='False')), label=_("Confirm Password"))
+    github = forms.CharField(max_length=100,required=False, label=_('Github account'))
+    picture = forms.ImageField(required=False, label=_("Attach Profile Image"))
 
     def clean_username(self):
         try:

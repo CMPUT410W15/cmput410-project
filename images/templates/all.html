@@ -6,7 +6,7 @@
     {% if images %}
         <ul>
             {% for image in images %}
-                <a href = "{{ image.image.url }}"><img src= "{{ image.image.url }}" class="scaled"></a>
+                <a href = "{{ image.get_url }}"><img src= "{{ image.get_url }}" class="scaled"></a>
                 <li>UID: {{ image.uid }}</li>
                 
             {% endfor %}

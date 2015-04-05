@@ -29,6 +29,7 @@ LOGIN_EXEMPT_URLS = (
     r'^register/',
     r'^admin/',
     r'^api/',
+    r'^images/.+',
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
