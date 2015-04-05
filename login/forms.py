@@ -14,8 +14,8 @@ class RegistrationForm(forms.Form):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value='False')), label=_("Password"))
 
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value='False')), label=_("Confirm Password"))
-    github = forms.CharField(max_length=100,required=False, label=_('Github account:'))
-    picture = forms.ImageField(required=False, label=_("Attach Profile Image:"))
+    github = forms.CharField(max_length=100,required=False, label=_('Github account'))
+    picture = forms.ImageField(required=False, label=_("Attach Profile Image"))
 
     def clean_username(self):
         try:
