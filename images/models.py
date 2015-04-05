@@ -1,5 +1,7 @@
 from django.db import models
 from common.util import gen_uuid
+import uuid
+import os
 
 PRIVATE = 0
 FRIEND = 1
@@ -8,7 +10,6 @@ FOAF = 3
 PUBLIC = 4
 SERVERONLY = 5
 VISIBILITY = ((PRIVATE, 'Private'),
-              (FRIEND, 'Friend'),
               (FRIENDS, 'Friends'),
               (FOAF, 'FriendOfAFriend'),
               (PUBLIC, 'Public'),

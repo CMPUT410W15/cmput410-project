@@ -3,13 +3,16 @@
 ### 	March 2, 2015
 ### No explicit license -->
 {% extends "base.html" %}
+{% load bootstrap3 %}
 {% block title %}User Registration{% endblock %}
 {% block head %}User Registration{% endblock %}
 {% block content %}
-     <form class="form-horizontal" method="post" action=".">{% csrf_token %}
-        <table border="0" class="table-condensed">
-            {{ form.as_table }}
-        </table>
-        <input class="btn btn-default" type="submit" value="Register" />
+<div class="col-md-6 col-md-offset-3">
+     <form method="post" action="." enctype="multipart/form-data">{% csrf_token %}
+        {% bootstrap_form form %}
+    <div class="text-center">
+        <input class="btn btn-primary" type="submit" value="Register" />
+    </div>
     </form>
+</div>
 {% endblock %}

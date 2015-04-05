@@ -182,6 +182,9 @@ class APITests(TestCase):
         response = self.c.get('author/posts')
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content)
+        self.assertTrue(isinstance(obj, dict))
+        self.assertTrue("posts" in obj)
+        obj = obj["posts"]
         self.assertTrue(isinstance(obj, list))
         self.assertEqual(len(obj), 5)
         titles = [i["title"] for i in obj]
@@ -196,6 +199,9 @@ class APITests(TestCase):
         response = self.c.get('posts')
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content)
+        self.assertTrue(isinstance(obj, dict))
+        self.assertTrue("posts" in obj)
+        obj = obj["posts"]
         self.assertTrue(isinstance(obj, list))
         self.assertEqual(len(obj), 1)
         titles = [i["title"] for i in obj]

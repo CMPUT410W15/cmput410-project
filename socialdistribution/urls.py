@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     url(r'^post/', include('posts.urls')),
     url(r'^images/', include('images.urls')),
 
-	url(r'^$', 'django.contrib.auth.views.login'),
+	url(r'^$', home),
     url(r'^logout/$', logout_page),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'), # If user is not login it will redirect to login page
     url(r'^register/$', register),
@@ -29,6 +29,6 @@ urlpatterns = patterns('',
     url(r'^home/author/posts/$',personal_stream),
     url(r'^home/author/posts/friends/$',personal_stream_friends),
     url(r'^post/(?P<post_id>[\w-]+)/$', comment, name="add_comment"),
-)
+)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()

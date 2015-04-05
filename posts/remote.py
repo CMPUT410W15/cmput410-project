@@ -79,7 +79,7 @@ def reset_remote_posts():
                                            headers, HINDLE_AUTH)
             elif BUBBLE in author.host:
                 data = get_request_to_json(node.url + 'author/posts2/',
-                                           headers, BUBBLE_AUTH)
+                                           auth=BUBBLE_AUTH)
             else:
                 data = 0
 
