@@ -174,6 +174,10 @@ class Comment(models.Model):
         #return 'Author: %s Post: %s' % (self.author, self.post)
         return '%s: %s' %(self.author,self.content)
 
+    #To display only the username or display name with comment, not uid as well
+    def get_comment_body(self):
+        return '%s: %s' %(self.author.get_name(),self.content)
+
     def to_dict(self):
         return {
             "author": self.author.to_dict(),

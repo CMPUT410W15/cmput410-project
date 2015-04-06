@@ -137,6 +137,11 @@ class Author(models.Model):
         picture_location=self.picture.image
         return picture_location
 
+    #Get the name of an author (their username or displayname)
+    def get_name(self):
+        uname = self.user.username if self.user else self.displayname
+        return '%s' % (uname)
+
 
 
 class Connection(models.Model):
