@@ -61,6 +61,7 @@ class AuthorUpdate(UpdateView):
     fields = ['github', 'picture']
     template_name_suffix = '_update_form'
 
+#Konrad's old edit function
 # def edit(request):
 #     me = Author.objects.get(user=request.user)
 #     if 'email' in request.POST:
@@ -70,12 +71,6 @@ class AuthorUpdate(UpdateView):
 #         me.github = request.POST['github']
 #         me.save()
 #     return redirect('/home')
-
-# class UserUpdate(UpdateView):
-#     model=User
-#     fields=['email']
-#     template_name_suffix= '_update_form'
-
 
 @csrf_protect
 def edit(request):

@@ -30,9 +30,3 @@ class RegistrationForm(forms.Form):
                 raise forms.ValidationError(_("The two password fields did not match."))
         return self.cleaned_data
 
-# class AuthorForm(forms.Form):
-#     picture = forms.ImageField(required=False, label=_("Upload profile picture:"))
-#     github = forms.CharField(max_length=100,required=False, label=_('Github account:'))
-
-#     def clean(self):
-#         return self.cleaned_data

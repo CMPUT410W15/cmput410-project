@@ -7,20 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.forms import ImageField
 
-#These forms are to update the github, picture and email of a user.
-
-# class AuthorUpdateForm(forms.ModelForm):
-#     class Meta:
-#         model=Author
-#         fields=('github', 'picture',)
-#         widgets = {'picture':ImageField,
-#         }
-
-# class UserUpdateForm(forms.ModelForm):
-#     class Meta:
-#         model=User
-#         fields=('email',)
-
+#Used to update the github, picture and email of a user.
 class UserUpdateForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Email address"))
     github = forms.CharField(max_length=100,required=False, label=_('Github account'))

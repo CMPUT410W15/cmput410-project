@@ -68,10 +68,6 @@ def post(request):
         variables,
     )
 
-# def delete_post(request, uid):
-#     context = RequestContext(request)
-#     Post.objects.filter(uid=uid).delete()
-#     return HttpResponseRedirect('/home')
 
 def handle_uploaded_file(f):
     destination = open(settings.MEDIA_ROOT, 'wb+')

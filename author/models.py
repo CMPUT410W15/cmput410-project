@@ -142,6 +142,8 @@ class Author(models.Model):
         uname = self.user.username if self.user else self.displayname
         return '%s' % (uname)
 
+    #Return whether or not an author is of this server - for profile picture purposes.
+    def from_this_server(self):
 
 
 class Connection(models.Model):

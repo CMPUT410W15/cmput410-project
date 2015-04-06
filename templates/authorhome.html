@@ -1,10 +1,3 @@
-<!--### Source material taken from:
-###		https://mayukhsaha.wordpress.com/2013/05/09/simple-login-and-user-registration-application-using-django/
-### 	March 2, 2015
-### No explicit license -->
-
-
-<!-- Still a work in progress -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}{{user}}'s Home Page{% endblock %}
@@ -12,10 +5,10 @@
 
 <div class="row">
     <div class="col-md-3">
-    	<div class= "panel panel-default">
-    		<div class= "panel-heading" style="text-align: center; word-wrap: break-word;">
-        		<h4 class="panel-title"> {{user}} </h4>
-        	</div>
+        <div class= "panel panel-default">
+            <div class= "panel-heading" style="text-align: center; word-wrap: break-word;">
+                <h4 class="panel-title"> {{user}} </h4>
+            </div>
             <div class= "panel-body" style="text-align:center; word-wrap: break-word;">
                 {% if view_picture %}
                 <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
@@ -30,7 +23,7 @@
                     <h5>Github:</h5><span id="profileGithub">{{ github }}</span> <br />
               </form>
             </div>
-       	</div>
+        </div>
     </div>
     <div class= "col-md-9" >
         {% if posts %}
@@ -113,13 +106,11 @@
                         event.preventDefault();
                         create_comment();
                     });
-
                     $("#post-{{p.uid}}").on('click', 'a[id^=delete-]', function(){
                         var post_id = $(this).attr('id').split('-')[1];
                         console.log(post_id)
                         delete_post(post_id);
                     });
-
                 // Used to delete a post
                 function delete_post(post_id){
                     $.ajax({
@@ -130,7 +121,6 @@
                           $('#post-'+post_id).hide(); 
                           console.log("Deleted the post");
                         },
-
                         error : function(xhr,errmsg,err) {
                             // Show an error
                             $('#error{{p.uid}}').html("<div> <p class='text-danger'> An error occured in deletion. </p>" +"</div>");
@@ -140,9 +130,7 @@
                                 $("#error{{p.uid}}").html("<div> </div>");
                             }, 2000); 
                         }
-
                     });
-
                 };
                     //Used to post a comment to a post.
                     function create_comment() {
@@ -150,7 +138,6 @@
                             url:"/post/comment/{{p.uid}}/",
                             type:"POST",
                             data: {the_comment: $('#content{{p.uid}}').val() },
-
                             success: function(json) {
                                 $('#content{{p.uid}}').val('');
                                 console.log(json)
@@ -163,13 +150,11 @@
                                 $('#error{{p.uid}}').html("<div> <p class='text-danger'> Can't post an empty comment. </p>" +"</div>");
                                 console.log(xhr.status + ": " + xhr.responseText);
                                 console.log(errmsg);
-
                                 //Get rid of error message in 2 seconds
                                 setTimeout(function() {
                                     $("#error{{p.uid}}").html("<div> </div>");
                                 }, 2000);
                             }
-
                         });
                     };
                      /*
@@ -195,7 +180,6 @@
                     /*
                     The functions below will create a header with csrftoken
                     */
-
                     function csrfSafeMethod(method) {
                         // these HTTP methods do not require CSRF protection
                         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -213,7 +197,6 @@
                             // or any other URL that isn't scheme relative or absolute i.e relative.
                             !(/^(\/\/|http:|https:).*/.test(url));
                     }
-
                     $.ajaxSetup({
                         beforeSend: function(xhr, settings) {
                             if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
