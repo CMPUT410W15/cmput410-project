@@ -54,7 +54,7 @@ class APITests(TestCase):
         )
         self.sample_image = Image.objects.create(image=File(open("images/sample_image.png")), visibility=PUBLIC)
         self.sample_image2 = Image.objects.create(image=File(open("images/sample_image.png")), visibility=PRIVATE)
-        
+
         self.post2 = Post.objects.create(
                          title='Post2',
                          content='stuff about things!',
@@ -80,10 +80,10 @@ class APITests(TestCase):
               'image' : self.sample_image2,
               }
 
-        Node.objects.create(url="host")
+        Node.objects.create(name="user", url="host", password="password")
 
         self.c = TestClient()
-    
+
     def test_create_image_post(self):
         """Test Post with Image creation.
 
@@ -99,7 +99,7 @@ class APITests(TestCase):
 
     @override_settings(MEDIA_ROOT='/tmp/django_test')
     def test_get_image(self):
-        
+
         # test found, check for file validity, NOT file contents
         response = self.c.get(self.sample_image.uid)
         self.assertEqual(response.status_code, 200)
@@ -113,7 +113,7 @@ class APITests(TestCase):
         import os
         self.assertTrue(os.path.isfile(fname))
 
-        # Check length with original 
+        # Check length with original
         test_size = os.path.getsize('images/img.png')
         sample_size = os.path.getsize('images/sample_image.png')
         self.assertEqual(test_size, sample_size )

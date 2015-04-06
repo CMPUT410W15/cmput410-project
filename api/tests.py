@@ -100,7 +100,7 @@ class APITests(TestCase):
                          visibility=FRIENDS
                      )
 
-        Node.objects.create(url="host")
+        Node.objects.create(name="user", url="host", password="password")
 
         self.c = TestClient()
 
