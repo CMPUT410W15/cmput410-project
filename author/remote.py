@@ -1,6 +1,5 @@
 """Functions for dealing with remote authors."""
 from author.models import Author, Connection
-from common.util import HINDLE_AUTH, BUBBLE_AUTH
 from common.util import get_request_to_json, post_request_to_json, get_nodes
 from common.util import BUBBLE, HINDLEBOOK
 import threading
@@ -21,7 +20,7 @@ def add_remote_connections(author1, remote_authors, node, lock):
             'Uuid': author1.uid
         }
         ret_val = post_request_to_json(url, body, headers=headers,
-                                       auth=HINDLE_AUTH)
+                                       auth=(node.name, node.password))
     elif BUBBLE in node.url:
         url = node.url + "checkfriends/?user=%s" % author1.uid
         headers = {
@@ -30,7 +29,7 @@ def add_remote_connections(author1, remote_authors, node, lock):
         }
 
         ret_val = post_request_to_json(url, body, headers=headers,
-                                       auth=BUBBLE_AUTH)
+                                       auth=(node.name, node.password))
     if isinstance(ret_val, dict):
         for uuid in ret_val['friends']:
             with lock:
@@ -50,7 +49,7 @@ def reset_remote_authors():
             authors = get_request_to_json(node.url + 'authors')
         elif BUBBLE in node.url:
             authors = get_request_to_json(node.url + 'getallauthors/',
-                                          auth=BUBBLE_AUTH)
+                                          auth=(node.name, node.password))
             authors = authors['authors']
 
         for author in authors:
@@ -92,8 +91,9 @@ def send_remote_friend_request(local_author, remote_author):
             "Content-Type": "application/json",
             "Uuid": remote_author.uid
         }
+        node = [n for n in get_nodes() if HINDLEBOOK in n.url][0]
         post_request_to_json(url, body, headers=headers,
-                             auth=HINDLE_AUTH)
+                             auth=(node.name, node.password))
     elif BUBBLE in remote_author.host:
         url = "http://%s/main/api/newfriendrequest/" % remote_author.host
         headers = {

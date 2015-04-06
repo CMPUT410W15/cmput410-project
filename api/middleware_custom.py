@@ -37,12 +37,13 @@ class APIMiddleware:
         except:
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
 
+        node = Node.objects.filter(url=host)
         # Check if node exists
-        if not Node.objects.filter(url=host).exists():
+        if not node.exists():
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
 
         # Check for correct password
-        if password != "password":
+        if password != node.password:
             return HttpResponse('{"message": "Authentication Rejected"}', status=401)
 
         # Monkey-patch in user to request object

@@ -4,12 +4,10 @@ import json
 
 import requests
 from management.models import Node
-from requests.auth import AuthBase
+
 
 BUBBLE = 'bubble'
 HINDLEBOOK = 'hindlebook'
-HINDLE_AUTH = ('team8', 'team8')
-BUBBLE_AUTH = ('dan:thought-bubble.herokuapp.com', 'dan')
 
 
 def gen_uuid():

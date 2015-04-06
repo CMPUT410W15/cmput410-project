@@ -2,7 +2,7 @@
 from author.models import Author
 from posts.models import Post, Comment
 from common.util import get_request_to_json, get_nodes
-from common.util import HINDLEBOOK, HINDLE_AUTH, BUBBLE, BUBBLE_AUTH
+from common.util import HINDLEBOOK, BUBBLE
 from dateutil import parser
 import threading
 
@@ -75,10 +75,10 @@ def update_posts_mutex(node, author, lock):
     if HINDLEBOOK in author.host:
         headers = {'Uuid': author.uid}
         data = get_request_to_json(node.url + 'author/posts',
-                                   headers, HINDLE_AUTH)
+                                   headers, (node.name, node.password))
     elif BUBBLE in author.host:
         data = get_request_to_json(node.url + 'author/posts2/',
-                                   auth=BUBBLE_AUTH)
+                                   auth=(node.name, node.password))
     else:
         data = 0
 
