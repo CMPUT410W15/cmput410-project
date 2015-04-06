@@ -71,16 +71,18 @@
 			{% for p in posts %}
  				<div id= "post-{{p.uid}}" class= "panel panel-default" style="word-wrap: break-word;">
  					<div class= "panel-heading">
-                        {% if p.send_author == author and author.has_picture %}
+                        {% if p.send_author.has_picture %}
                         <span class="pull-left"> <img class="img-responsive" src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% else %}
  						<span class="pull-left"> <img class="img-responsive" src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% endif %}
  						<span style="display:inline-block; padding-left: 5pt;">
+
                             {% comment "Optional note" %}
                                 <p>Check if the host of the author of the post is team 8 aka 'http://cs410.cs.ualberta.ca:41084'</p>
                                 <p> If not, display their host after their username and color the links different hex colors. </p>
                             {% endcomment %}
+
                             {% if p.send_author.host == 'http://cs410.cs.ualberta.ca:41084' %}
                                 <a href="/home/{{p.send_author.uid}}">{{p.send_author.get_name}} </a>
                             {% elif p.get_post_host == 'hindlebook' %}
@@ -111,7 +113,8 @@
                         {{p.markdown_to_html}}
 
                          {% comment "Optional note2" %}
-                        <p> If the post has an image, show that image <p>
+                        <p> If the post has an image, show that image </p>
+                        <p> Will fix the image in posts later </p>
                         {% endcomment %}
 
                         {% if p.has_image %}

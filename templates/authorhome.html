@@ -10,30 +10,86 @@
                 <h4 class="panel-title"> {{user}} </h4>
             </div>
             <div class= "panel-body" style="text-align:center; word-wrap: break-word;">
-                {% if view_picture %}
+
+                {% comment %}
+                <p> Display picture if author has one.</p>
+                {% endcomment %}
+
+                {% if author.has_picture %}
                 <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% else %}
                 <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% endif %}
+
                 <br />
                 <br />
-                <form method="POST" action="/friends/edit/">
-                    {% csrf_token %}
-                    <h5>Email:</h5><span id="profileEmail">{{ email }}</span> <br />
-                    <h5>Github:</h5><span id="profileGithub">{{ github }}</span> <br />
-              </form>
+                    <h5>Email:</h5><span id="profileEmail">{{ user.email }}</span> <br />
+                    <h5>Github:</h5><span id="profileGithub">{{ user.github }}</span> <br />
+                    <br />
+
+                    {% if can_edit %}
+                        <a class= 'btn btn-default btn-block' href= '/friends/edit/'>Edit </a>
+                    {% endif %}
+
+                    {% comment Read_this_note %}
+
+                    <p> Commented this block out because the code for it is missing from
+                        the view function and I dunno how you want this page handled. </p>
+
+                    {% if global_stream %}
+                    <br/>
+                    <a class= "btn btn-default btn-block" href='/home'>Global newsfeed</a>
+                    {% endif %}
+                    {% if personal_stream %}
+                        <br/>
+                        <a class="btn btn-default btn-block" href="/home/author/posts">My newsfeed</a>
+                    {% endif %}
+
+                    {% endcomment %}
             </div>
         </div>
     </div>
     <div class= "col-md-9" >
+        {% comment read_this_note %}
+
+        <p> Commented this block out because the code for it is missing from
+            the view function and I dunno how you want this page handled. </p>
+
+        {% if global_stream %}
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="/home/author/posts/">All posts</a></li>
+            <li role="presentation"><a href="/home/author/posts/friends/">Friends posts only</a></li>
+        </ul>
+        <br>
+        {% if github_activity %}
+        <div class= "panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">My recent github activity</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <ul>
+                    {% for item in github_activity %}
+                    <li>{{item}}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endcomment %}
+
         {% if posts %}
             {% for p in posts %}
-                <div id= "post-{{p.uid}}" class= "panel panel-default" style="word-wrap: break-word;">
+                <div id= "post-{{p.uid}}" class= "panel panel-default">
                     <div class= "panel-heading">
                         {% if p.send_author == author and author.has_picture %}
-                        <span class="pull-left"> <img class="img-responsive" src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        <span class="pull-left"> <img src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% else %}
-                        <span class="pull-left"> <img class="img-responsive" src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        <span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% endif %}
                         <span style="display:inline-block; padding-left: 5pt;">
                             {% comment "Optional note" %}
@@ -41,12 +97,12 @@
                                 <p> If not, display their host after their username and color the links different hex colors. </p>
                             {% endcomment %}
                             {% if p.send_author.host == 'http://cs410.cs.ualberta.ca:41084' %}
-                                <a href="/home/{{p.send_author.uid}}">{{p.send_author.get_name}} </a>
+                                <a href="/home/{{p.send_author.uid}}">{{p.send_author}} </a>
                             {% elif p.get_post_host == 'hindlebook' %}
-                                <a style="color:#006666" href="/home/{{p.send_author.uid}}/">{{p.send_author.get_name}} ({{p.get_post_host}}) </a>
+                                <a style="color:#006666" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
 
                             {% else %}
-                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}/">{{p.send_author.get_name}} ({{p.get_post_host}}) </a>
+                                <a style="color:#CC6600" href="/home/{{p.send_author.uid}}/">{{p.send_author}} ({{p.get_post_host}}) </a>
                             {% endif %}
                             
                             {% if p.receive_author %}
@@ -74,16 +130,8 @@
                         {% endcomment %}
 
                         {% if p.has_image %}
-                            <img class="img-responsive" src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
+                            <img src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
                         {% endif %}
-                        <h4 style= "text-decoration: underline;"> Comments </h4>
-                            <ul id='{{p.uid}}-2'>
-                            {% if p.get_comments %}
-                                {% for comments in p.get_comments %}
-                                    <li id='{{comments.uid}}'> {{comments.get_comment_body}} </li>
-                                {% endfor %}
-                            {% endif %}
-                            </ul>
 
                     </div>
 
@@ -98,6 +146,16 @@
                         <input class="btn btn-primary" type="submit" value="Comment" />
                     </span>
                         </form>
+                        <div class="col-sm-10">
+                            <h4 style= "text-decoration: underline;"> Comments </h5>
+                                <ul id='{{p.uid}}-2'>
+                            {% if p.get_comments %}
+                                {% for comments in p.get_comments %}
+                                    <li id='{{comments.uid}}'> {{comments}} </li>
+                                {% endfor %}
+                            {% endif %}
+                            </ul>
+                        </div>
                     </div>
 
                 <script>
@@ -230,6 +288,5 @@
         {% endif %}
     </div>
 </div>
-
 
 {% endblock %}

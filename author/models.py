@@ -144,7 +144,12 @@ class Author(models.Model):
 
     #Return whether or not an author is of this server - for profile picture purposes.
     def from_this_server(self):
-
+        host='http://cs410.cs.ualberta.ca:41084'
+        if self.host==host:
+            return True
+        else:
+            return False
+            
 
 class Connection(models.Model):
     from_author = models.ForeignKey(Author, related_name="from_authors")
