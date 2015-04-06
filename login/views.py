@@ -205,6 +205,7 @@ def authorhome(request, authorpage):
                       'posts': posts,
                       'github':author.github,
                       'can_edit':can_edit,
+                      'person':author,
                   })
 
 def personal_stream(request):

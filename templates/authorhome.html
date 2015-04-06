@@ -15,8 +15,8 @@
                 <p> Display picture if author has one.</p>
                 {% endcomment %}
 
-                {% if author.has_picture %}
-                <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% if person.has_picture %}
+                <img src="/media/{{person.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% else %}
                 <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% endif %}
@@ -43,7 +43,7 @@
         {% comment read_this_note %}
 
         <p> Commented this previous block out because the code for it is missing from
-            the view function and I dunno how you want this page handled. </p>
+            the view function and I dunno how you want this page handled since it's your page, not mine. </p>
 
         {% endcomment %}
 
@@ -52,7 +52,7 @@
                 <div id= "post-{{p.uid}}" class= "panel panel-default">
                     <div class= "panel-heading">
                         {% if p.send_author.has_picture %}
-                        <span class="pull-left"> <img src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        <span class="pull-left"> <img src= "/media/{{p.send_author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% else %}
                         <span class="pull-left"> <img src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% endif %}

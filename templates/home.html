@@ -71,8 +71,8 @@
 			{% for p in posts %}
  				<div id= "post-{{p.uid}}" class= "panel panel-default" style="word-wrap: break-word;">
  					<div class= "panel-heading">
-                        {% if p.send_author == author and author.has_picture %}
-                        <span class="pull-left"> <img class="img-responsive" src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
+                        {% if p.send_author.has_picture %}
+                        <span class="pull-left"> <img class="img-responsive" src= "/media/{{p.send_author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% else %}
  						<span class="pull-left"> <img class="img-responsive" src= "{% static 'profile.png' %}" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% endif %}
