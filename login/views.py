@@ -18,6 +18,7 @@ from author.models import Author
 from posts.models import Post
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from posts.forms import *
+from images.models import *
 from posts.remote import reset_remote_posts
 from author.remote import reset_remote_authors
 
@@ -35,15 +36,34 @@ from dateutil import tz
 def register(request):
     #Create both a user and an author every time someone registers
     if request.method == 'POST':
-        form = RegistrationForm(request.POST, request.FILES)
+
+        form=RegistrationForm(request.POST, request.FILES)
+
         if form.is_valid():
+            if 'picture' in request.FILES:
+                picture=Image.objects.create(
+                    image=request.FILES['picture'],
+                    visibility=PUBLIC,  #Profile pictures default visibility is PUBLIC
+                    )
+                picture.save()
+
+            else:
+                picture = None
+
             user = User.objects.create_user(
-            username=form.cleaned_data['username'],
-            password=form.cleaned_data['password1'],
-            email=form.cleaned_data['email'],
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'],
+                email=form.cleaned_data['email'],
             )
-            user.is_active = False
+            user.is_active=False
             user.save()
+
+
+            author=Author.objects.create(
+                        user=user,
+                        host = 'http://cs410.cs.ualberta.ca:41084',
+                        picture=picture,
+                    )
 
             #Create author object with user=current user, and set host = 'http://cs410.cs.ualberta.ca:41084'
             author= Author(user=user,host='http://cs410.cs.ualberta.ca:41084')
@@ -58,6 +78,7 @@ def register(request):
                 image= None
 
             author.picture=image
+
             author.save()
             return HttpResponseRedirect('/register/success/')
     else:
@@ -85,7 +106,7 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
-    elif '/accounts/login/' in request.META['HTTP_REFERER']:
+    elif '/accounts/login/' in request.META.get('HTTP_REFERER', []):
         reset_remote_authors()
         reset_remote_posts()
 
@@ -308,7 +329,7 @@ def personal_stream(request):
                   'posts': posts,
                   'form': form,
                   'global_stream':global_stream_toggle,
-              })     
+              })
 
     #If there's no github username, don't bother.
     return render(request,
@@ -411,16 +432,16 @@ def convert_git_time(github_time):
 
 '''
 There are 25 events, not gonna support all of them cause that's too much. Only cover the most used/relevant ones.
-Supporting these 8 events because they seem like the most common ones and we are team 8: 
-IssueCommentEvent, PullRequestEvent, PushEvent, CreateEvent, DeleteEvent, 
+Supporting these 8 events because they seem like the most common ones and we are team 8:
+IssueCommentEvent, PullRequestEvent, PushEvent, CreateEvent, DeleteEvent,
 IssuesEvent, GollumEvent, PullRequestReviewCommentEvent.
 '''
 def get_github_activity(github_username):
 
-    #The URL for to get github activity from 
+    #The URL for to get github activity from
     url="https://api.github.com/users/"+github_username+"/events"
 
-    #Get all the events pertaining to a user's github URL 
+    #Get all the events pertaining to a user's github URL
     req= requests.get(url)
     all_events= req.json()
 
@@ -473,7 +494,7 @@ def get_github_activity(github_username):
             #Get the time at which you pushed to github, normalize and convert it to local time
             time=comment["updated_at"]
             the_time=convert_git_time(time)
-            
+
             info= "("+the_time+"): "+ github_username+ " commented on issue "+str(issue_number)+ " for " +repo_name + " : " + body
             #Note to self: Apply html to markdown thing on the body later. Might just work
             activity.append(info)
@@ -523,7 +544,7 @@ def get_github_activity(github_username):
             #Get the time, normalize it and convert it to local timezone
             time= event["created_at"]
             the_time=convert_git_time(time)
-            
+
             info="("+the_time+")" +": "+github_username+" created "+ref_type+" "+ref+" at "+repo_name
             activity.append(info)
 
@@ -603,4 +624,3 @@ def get_github_activity(github_username):
             continue
 
     return activity
-

@@ -120,7 +120,7 @@ def friends(request):
         )
     )
 
-# Get information and connections about one author on host.
+# Get information and friends about one author on host.
 @csrf_exempt
 def friend(request, author_id):
 
@@ -136,7 +136,7 @@ def friend(request, author_id):
 
     # add connections
     d = author.to_dict()
-    d['connections'] = [i.to_dict() for i in author.get_followees()]
+    d['connections'] = [i.to_dict() for i in author.get_friends()]
 
     return HttpResponse(json.dumps(d))
 
@@ -157,12 +157,12 @@ def is_following(request, author_id1, author_id2):
                     author_id1,
                     author_id2,
                 ],
-                "friends" : "YES" if author1.is_followee(author2) else "NO",
+                "friends" : "YES" if author1.is_friend(author2) else "NO",
             }
         )
     )
 
-# Query which members of a list of authors are following a specified author.
+# Query which members of a list of authors are friends with a specified author.
 def which_following(request, author_id):
     # check author existence
     try:
@@ -188,34 +188,34 @@ def which_following(request, author_id):
     except:
         return HttpResponseBadRequest('{"message": "JSON could not be parsed"}')
 
-    all_followee_ids = set([i.uid for i in author.get_followees()])
+    all_friend_ids = set([i.uid for i in author.get_friends()])
 
     return HttpResponse(
         json.dumps(
             {
                 "query": "friends",
                 "author": author_id,
-                "authors": list(all_followee_ids & author_ids), #intersection
+                "authors": list(all_friend_ids & author_ids), #intersection
             }
         )
     )
 
-# Get the authors on the host following a specific author.
-def following(request, author_id):
+# Get the authors on the host are friends with a specific author.
+def friends_with(request, author_id):
     # check author existence
     try:
         author = Author.objects.get(uid=author_id)
     except:
         return HttpResponseBadRequest('{"message": "No such author"}')
 
-    all_follower_ids = [i.uid for i in author.get_followers()]
+    all_friend_ids = [i.uid for i in author.get_friends()]
 
     return HttpResponse(
         json.dumps(
             {
                 "query": "friends",
                 "author": author_id,
-                "authors": all_follower_ids,
+                "authors": all_friend_ids,
             }
         )
     )

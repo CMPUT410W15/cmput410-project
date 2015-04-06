@@ -1,4 +1,28 @@
-fieldset.inlineLabels ul {list-style:none}
+.top5 { margin-top:5px; }
+.top5e { margin-top:5em; }
+.top7 { margin-top:7px; }
+.top10 { margin-top:10px; }
+.top10e { margin-top:10em; }
+.top15 { margin-top:15px; }
+.top17 { margin-top:17px; }
+.top30 { margin-top:30px; }
+.top30e { margin-top:30em; }
+.top60e { margin-top:60em; }
+
+.bot5 { margin-bottom:5px; }
+.bot5e { margin-bottom:5em; }
+.bot7 { margin-bottom:7px; }
+.bot10 { margin-bottom:10px; }
+.bot15 { margin-bottom:15px; }
+.bot17 { margin-bottom:17px; }
+.bot30 { margin-bottom:30px; }
+
+.footing { margin-bottom: 5em; }
+
+
+fieldset.inlineLabels ul {
+    list-style:none;
+}
 
 .errorlist {
     color: #a94442;
@@ -10,3 +34,32 @@ img.scaled{
     margin-left: auto;
     margin-right: auto 
 }
+
+.form-signin-heading {
+   
+    padding-bottom: 10pt;
+}
+
+.center_div{
+    padding-top: 30pt;
+    margin: 0 auto;
+    width:90% /* value of your choice which suits your alignment */
+}
+
+td input {
+    display:block;
+    width: 100%;
+    padding:6px 12px;
+    font-size:14px;
+    line-height:1.42857143;
+    color:#555;
+    background-color:#fff;
+    background-image:none;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+th label {
+  font-size: 16px;
+}
+
