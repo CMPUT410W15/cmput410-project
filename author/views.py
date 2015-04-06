@@ -7,6 +7,7 @@ from author.forms import *
 from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
 from django.views.decorators.csrf import csrf_protect
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 
 def friends(request):
     me = Author.objects.get(user=request.user)
@@ -99,7 +100,7 @@ def edit(request):
             me.picture=picture
             me.save()
                 
-            return redirect('/home')
+            return HttpResponseRedirect('/home')
     else:
         form= UserUpdateForm()
 

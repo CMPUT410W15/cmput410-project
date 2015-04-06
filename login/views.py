@@ -191,12 +191,6 @@ def authorhome(request, authorpage):
     except EmptyPage:
         posts=paginator.page(paginator.num_pages)
 
-    #Only if you are viewing your own page can you see your profile picture.
-    # view_picture=False
-    # if viewer==author:
-    #     if author.has_picture():
-    #         view_picture=True
-
     can_edit=False
     #Only if you are viewing your own page can you edit your details.
     if viewer==author:
