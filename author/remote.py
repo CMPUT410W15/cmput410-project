@@ -3,9 +3,10 @@ from author.models import Author, Connection
 from common.util import HINDLE_AUTH, BUBBLE_AUTH
 from common.util import get_request_to_json, post_request_to_json, get_nodes
 from common.util import BUBBLE, HINDLEBOOK
+import threading
 
 
-def add_remote_connections(author1, remote_authors, node):
+def add_remote_connections(author1, remote_authors, node, lock):
     authors = [a for a in Author.objects.all()] + remote_authors
     body = {
         "query": "friends",
@@ -32,12 +33,14 @@ def add_remote_connections(author1, remote_authors, node):
                                        auth=BUBBLE_AUTH)
     if isinstance(ret_val, dict):
         for uuid in ret_val['friends']:
-            author2 = Author.objects.get(uid=uuid)
-            author1.follow(author2)
-            author2.follow(author1)
+            with lock:
+                author2 = Author.objects.get(uid=uuid)
+                author1.follow(author2)
+                author2.follow(author1)
 
 
 def reset_remote_authors():
+    lock = threading.Lock()
     for author in Author.objects.filter(user=None):
         Connection.objects.filter(from_author=author).delete()
 
@@ -60,7 +63,10 @@ def reset_remote_authors():
 
         for author in remote_authors[:]:
             remote_authors.remove(author)
-            add_remote_connections(author, remote_authors, node)
+            thread = threading.Thread(target=add_remote_connections,
+                                      args=(author, remote_authors,
+                                            node, lock))
+            thread.start()
 
 
 def send_remote_friend_request(local_author, remote_author):

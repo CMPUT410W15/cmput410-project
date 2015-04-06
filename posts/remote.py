@@ -4,6 +4,7 @@ from posts.models import Post, Comment
 from common.util import get_request_to_json, get_nodes
 from common.util import HINDLEBOOK, HINDLE_AUTH, BUBBLE, BUBBLE_AUTH
 from dateutil import parser
+import threading
 
 
 VISIBILITY = {
@@ -70,24 +71,33 @@ def add_remote_post(post, author):
             pass
 
 
+def update_posts_mutex(node, author, lock):
+    if HINDLEBOOK in author.host:
+        headers = {'Uuid': author.uid}
+        data = get_request_to_json(node.url + 'author/posts',
+                                   headers, HINDLE_AUTH)
+    elif BUBBLE in author.host:
+        data = get_request_to_json(node.url + 'author/posts2/',
+                                   auth=BUBBLE_AUTH)
+    else:
+        data = 0
+
+    with lock:
+        if not isinstance(data, int):
+            for post in data['posts']:
+                uid = post['author']['id']
+                try:
+                    author = Author.objects.get(uid=uid)
+                    add_remote_post(post, author)
+                except:
+                    pass
+
+
 def reset_remote_posts():
+    lock = threading.Lock()
+
     for node in get_nodes():
         for author in Author.objects.filter(user=None):
-            if HINDLEBOOK in author.host:
-                headers = {'Uuid': author.uid}
-                data = get_request_to_json(node.url + 'author/posts',
-                                           headers, HINDLE_AUTH)
-            elif BUBBLE in author.host:
-                data = get_request_to_json(node.url + 'author/posts2/',
-                                           auth=BUBBLE_AUTH)
-            else:
-                data = 0
-
-            if not isinstance(data, int):
-                for post in data['posts']:
-                    uid = post['author']['id']
-                    try:
-                        author = Author.objects.get(uid=uid)
-                        add_remote_post(post, author)
-                    except:
-                        pass
+            thread = threading.Thread(target=update_posts_mutex,
+                                      args=(node, author, lock))
+            thread.start()
