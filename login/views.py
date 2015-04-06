@@ -46,7 +46,7 @@ def register(request):
                     visibility=PUBLIC,  #Profile pictures default visibility is PUBLIC
                     )
                 picture.save()
-                
+
             else:
                 picture = None
 
@@ -106,7 +106,7 @@ def home(request):
     #Note: attributes passed in here are all lowercase regardless of capitalization
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
-    elif '/accounts/login/' in request.META['HTTP_REFERER']:
+    elif '/accounts/login/' in request.META.get('HTTP_REFERER', []):
         reset_remote_authors()
         reset_remote_posts()
 
@@ -329,7 +329,7 @@ def personal_stream(request):
                   'posts': posts,
                   'form': form,
                   'global_stream':global_stream_toggle,
-              })     
+              })
 
     #If there's no github username, don't bother.
     return render(request,
@@ -432,16 +432,16 @@ def convert_git_time(github_time):
 
 '''
 There are 25 events, not gonna support all of them cause that's too much. Only cover the most used/relevant ones.
-Supporting these 8 events because they seem like the most common ones and we are team 8: 
-IssueCommentEvent, PullRequestEvent, PushEvent, CreateEvent, DeleteEvent, 
+Supporting these 8 events because they seem like the most common ones and we are team 8:
+IssueCommentEvent, PullRequestEvent, PushEvent, CreateEvent, DeleteEvent,
 IssuesEvent, GollumEvent, PullRequestReviewCommentEvent.
 '''
 def get_github_activity(github_username):
 
-    #The URL for to get github activity from 
+    #The URL for to get github activity from
     url="https://api.github.com/users/"+github_username+"/events"
 
-    #Get all the events pertaining to a user's github URL 
+    #Get all the events pertaining to a user's github URL
     req= requests.get(url)
     all_events= req.json()
 
@@ -494,7 +494,7 @@ def get_github_activity(github_username):
             #Get the time at which you pushed to github, normalize and convert it to local time
             time=comment["updated_at"]
             the_time=convert_git_time(time)
-            
+
             info= "("+the_time+"): "+ github_username+ " commented on issue "+str(issue_number)+ " for " +repo_name + " : " + body
             #Note to self: Apply html to markdown thing on the body later. Might just work
             activity.append(info)
@@ -544,7 +544,7 @@ def get_github_activity(github_username):
             #Get the time, normalize it and convert it to local timezone
             time= event["created_at"]
             the_time=convert_git_time(time)
-            
+
             info="("+the_time+")" +": "+github_username+" created "+ref_type+" "+ref+" at "+repo_name
             activity.append(info)
 
@@ -624,4 +624,3 @@ def get_github_activity(github_username):
             continue
 
     return activity
-
