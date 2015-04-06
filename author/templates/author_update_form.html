@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% load staticfiles %}
+{% block title %}Edit your profile{% endblock %}
+{% block content %}
+
+
+<div class="row">
+    <div class="col-md-3">
+        <div class= "panel panel-default">
+            <div class= "panel-heading" style="text-align: center; word-wrap: break-word;">
+                <h4 class="panel-title"> {{user.username}} </h4>
+            </div>
+            
+            <div class= "panel-body" style="text-align:center; word-wrap: break-word;">
+                {% if author.has_picture %}
+                    <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% else %}
+                    <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                {% endif %}
+
+                <br />
+                <br />
+                <h5>Email:</h5><span id="profileEmail">{{ email }}</span> <br />
+                <h5>Github:</h5><span id="profileGithub">{{ github }}</span> <br />
+                <br />
+                <a class= "btn btn-default btn-block" href='/home'>Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class= "col-md-9">
+    <h4 style='text-align:center;'> Update your information</h4>
+</br>
+    <form action="" method="post" enctype="multipart/form-data"> {%csrf_token %}
+    	{% bootstrap_field form.email %}
+    	{% bootstrap_field form.github %}
+    	{% bootstrap_field form.picture %}
+
+		<input class= "btn btn-default" type= "submit" value= "Update details" />
+	</form>
+
+</form>
+    </div>
+</div>
+{% endblock %}

@@ -2,6 +2,11 @@ from django.shortcuts import render, render_to_response, redirect
 from models import *
 from common.util import post_request_to_json
 from author.remote import send_remote_friend_request
+from django.views.generic.edit import UpdateView
+from author.forms import *
+from posts.models import PRIVATE, FRIEND, FRIENDS, FOAF, PUBLIC, SERVERONLY
+from django.views.decorators.csrf import csrf_protect
+from django.template import RequestContext
 
 def friends(request):
     me = Author.objects.get(user=request.user)
@@ -50,13 +55,61 @@ def unfollow(request, uid):
     me.unfollow(Author.objects.get(uid=uid))
     return redirect('/friends/')
 
+
+class AuthorUpdate(UpdateView):
+    model = Author
+    fields = ['github', 'picture']
+    template_name_suffix = '_update_form'
+
+# def edit(request):
+#     me = Author.objects.get(user=request.user)
+#     if 'email' in request.POST:
+#         request.user.email = request.POST['email']
+#         request.user.save()
+#     if 'github' in request.POST:
+#         me.github = request.POST['github']
+#         me.save()
+#     return redirect('/home')
+
+# class UserUpdate(UpdateView):
+#     model=User
+#     fields=['email']
+#     template_name_suffix= '_update_form'
+
+
+@csrf_protect
 def edit(request):
-    me = Author.objects.get(user=request.user)
-    if 'email' in request.POST:
-        request.user.email = request.POST['email']
-        request.user.save()
-    if 'github' in request.POST:
-        me.github = request.POST['github']
-        me.save()
-    return redirect('/home')
+    me= Author.objects.get(user=request.user)
+    me_as_user= request.user
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, request.FILES)
+        if form.is_valid():
+            #Update the user's email and author github
+            email=form.cleaned_data['email']
+            me_as_user.email=email
+            me_as_user.save()
+
+            github= form.cleaned_data['github']
+            me.github=github
+
+            if 'picture' in request.FILES:
+                picture = Image.objects.create(
+                    image = request.FILES['picture'],
+                    visibility=PUBLIC, 
+                    )
+                picture.save()
+            else:
+                picture= None
+
+            me.picture=picture
+            me.save()
+                
+            return redirect('/home')
+    else:
+        form= UserUpdateForm()
+
+    variables = RequestContext(request, { 'form': form, 'email':request.user.email, 'github':me.github, 'author':me, })
+    return render_to_response('author_update_form.html',
+        variables,
+        )
     
