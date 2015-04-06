@@ -16,16 +16,18 @@
                 {% endcomment %}
 
                 {% if person.has_picture %}
-                <img src="/media/{{person.get_picture}}/" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                <img src="/media/{{person.get_picture}}/" alt="profile picture" style="height:160px; max-width:100%; text-align:center;" class= "center-block"/>
                 {% else %}
                 <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% endif %}
 
                 <br />
                 <br />
+                    {% if person.from_this_server %}
                     <h5>Email:</h5><span id="profileEmail">{{ email }}</span> <br />
                     <h5>Github:</h5><span id="profileGithub">{{ github }}</span> <br />
                     <br />
+                    {% endif %}
 
                     {% if can_edit %}
                         <a class= 'btn btn-default btn-block' href= '/friends/edit/'>Edit </a>
@@ -95,9 +97,16 @@
                         {% endcomment %}
 
                         {% if p.has_image %}
-                            <img src="/media/{{p.get_image}}/" style="height:324px; width:620px;">
+                            <img src="/media/{{p.get_image}}/" style="height:324px; max-width:100%;">
                         {% endif %}
-
+                        <h4 style= "text-decoration: underline;"> Comments </h4>
+                            <ul id='{{p.uid}}-2'>
+                            {% if p.get_comments %}
+                                {% for comments in p.get_comments %}
+                                    <li id='{{comments.uid}}'> {{comments.get_comment_body}} </li>
+                                {% endfor %}
+                            {% endif %}
+                            </ul>
                     </div>
 
                     <div class= "panel-footer clearfix">
@@ -111,16 +120,6 @@
                         <input class="btn btn-primary" type="submit" value="Comment" />
                     </span>
                         </form>
-                        <div class="col-sm-10">
-                            <h4 style= "text-decoration: underline;"> Comments </h5>
-                                <ul id='{{p.uid}}-2'>
-                            {% if p.get_comments %}
-                                {% for comments in p.get_comments %}
-                                    <li id='{{comments.uid}}'> {{comments.get_comment_body}} </li>
-                                {% endfor %}
-                            {% endif %}
-                            </ul>
-                        </div>
                     </div>
 
                 <script>
