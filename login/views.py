@@ -65,21 +65,6 @@ def register(request):
                         picture=picture,
                     )
 
-            #Create author object with user=current user, and set host = 'http://cs410.cs.ualberta.ca:41084'
-            author= Author(user=user,host='http://cs410.cs.ualberta.ca:41084')
-
-            #Assuming that the profile picture should have public visibility for now?
-            if 'picture' in request.FILES:
-                image = Image.objects.create(image = request.FILES['picture'],
-                visibility=PUBLIC)
-                image.save()
-
-            else:
-                image= None
-
-            author.picture=image
-
-            author.save()
             return HttpResponseRedirect('/register/success/')
     else:
         form = RegistrationForm()
