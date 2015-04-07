@@ -91,6 +91,7 @@ var editProfile = function () {
 			{% for p in posts %}
  				<div id= "post-{{p.uid}}" class= "panel panel-default">
  					<div class= "panel-heading">
+
                         {% if p.send_author == author and author.has_picture %}
                         <span class="pull-left"> <img src= "/media/{{author.get_picture}}/" alt="profile picture" style= "height:40px; width:40px;"/> </span>
                         {% else %}
