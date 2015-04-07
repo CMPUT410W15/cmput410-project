@@ -97,7 +97,9 @@
                         {% endcomment %}
 
                         {% if p.has_image %}
-                            <img src="/media/{{p.get_image}}/" style="height:324px; max-width:100%;">
+                        <div align="center">
+                            <img class="img-responsive" src="/media/{{p.get_image}}/" style="max-height:400px;  max-width:100%;">
+                        </div>
                         {% endif %}
                         <h4 style= "text-decoration: underline;"> Comments </h4>
                             <ul id='{{p.uid}}-2'>

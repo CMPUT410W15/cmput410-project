@@ -21,7 +21,7 @@
                 {% if author.has_picture %}
                     <img src="/media/{{author.get_picture}}/" alt="profile picture" style="height:160px; max-width:100%; text-align:center;" class= "center-block"/>
                 {% else %}
-                    <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
+                <img src="{% static 'profile.png' %}" alt="profile picture" style="height:160px; width:160px; text-align:center;" class= "center-block"/>
                 {% endif %}
                 <br />
                 <br />
@@ -121,7 +121,9 @@
                         {% endcomment %}
 
                         {% if p.has_image %}
-                            <img class="img-responsive" src="/media/{{p.get_image}}/" style="height:324px;  max-width:100%;">
+                        <div align="center">
+                            <img class="img-responsive" src="/media/{{p.get_image}}/" style="max-height:400px;  max-width:100%;">
+                        </div>
                         {% endif %}
                     </br>
                         <h4 style= "text-decoration: underline;"> Comments </h4>
