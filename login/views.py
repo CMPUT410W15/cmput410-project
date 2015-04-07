@@ -61,7 +61,7 @@ def register(request):
 
             author=Author.objects.create(
                         user=user,
-                        host = 'http://cs410.cs.ualberta.ca:41084',
+                        host = 'http://cs410.cs.ualberta.ca:41084/api',
                         picture=picture,
                     )
 
