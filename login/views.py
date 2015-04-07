@@ -93,8 +93,11 @@ def home(request):
     if request.user.is_superuser:
         return HttpResponseRedirect("/accounts/login/")
     elif '/accounts/login/' in request.META.get('HTTP_REFERER', []):
-        reset_remote_authors()
-        reset_remote_posts()
+        try:
+            reset_remote_authors()
+            reset_remote_posts()
+        except Exception, e:
+            print str(e)
 
     posts = Post.objects.all()
     author = request.user.author
